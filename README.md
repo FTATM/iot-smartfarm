@@ -174,4 +174,3 @@ flutter run
 
 ---
 
-> หากต้องการเพิ่ม Diagram, Screenshot หรือ API Flow สามารถต่อยอด README นี้ได้ทันที ✨
