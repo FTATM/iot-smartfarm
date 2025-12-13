@@ -66,8 +66,8 @@ class _mainboardPageState extends State<mainboardPage> {
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
+    // final maxwidth = MediaQuery.of(context).size.width;
+    // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
     // ดึง item ลำดับที่ 6 - 12 (index 6 ถึง 12)
     // final selected1_6 = data.sublist(1, 6);
     // final selected6_12 = data.sublist(6, 12);
@@ -82,7 +82,7 @@ class _mainboardPageState extends State<mainboardPage> {
             _currentIndex = index;
           });
         },
-        selectedItemColor: const Color.fromARGB(255, 255, 145, 1),
+        selectedItemColor: const Color.fromARGB(255,5, 91, 30 ),
         unselectedItemColor: Colors.black,
 
         items: const [

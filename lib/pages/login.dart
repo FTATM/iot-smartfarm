@@ -22,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   String baseURL = "";
 
+  String statuslogin = '';
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
     baseURL = "49.0.69.152/iotsf/api-app";
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
-
 
     setState(() => _isLoading = false);
 
@@ -92,17 +93,105 @@ class _LoginPageState extends State<LoginPage> {
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 70, 70, 70),
+      backgroundColor: Colors.white,
       // appBar: AppBar(title: const Text('เข้าสู่ระบบ')),
       body: SafeArea(
         child: Stack(
           children: [
-            SizedBox(
+            Center(
+              child: Container(
+                width: maxwidth > 400 ? 400 : maxwidth,
+                color: Colors.white,
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // SizedBox(
+                    //   height: 50,
+                    //   child: Text("Login", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    // ),
+                    SizedBox(height: maxheight * 0.2, child: Image.asset("../../assets/images/Logo.png", width: 120)),
+                    SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: maxwidth,
+                            child: Text("Your Username", style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          SizedBox(
+                            height: 60,
+                            child: TextField(
+                              controller: _usernameController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: maxwidth,
+                            child: Text("Your Password", style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          SizedBox(
+                            // height: 60,
+                            child: TextField(
+                              controller: _passwordController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                              ),
+                              obscureText: true,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 50,
+                            child: Align(
+                              alignment: AlignmentGeometry.topCenter,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(statuslogin),
+                                  GestureDetector(child: Text("Forgotten Password.")),
+                                ],
+                              ),
+                            ),
+                          ),
+                          _isLoading
+                              ? const CircularProgressIndicator()
+                              : SizedBox(
+                                  width: maxwidth,
+                                  height: 45,
+                                  child: TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 255, 130, 1)),
+                                      shape: WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8), // 👈 ปรับตรงนี้
+                                        ),
+                                      ),
+                                    ),
+
+                                    onPressed: _login,
+                                    child: const Text('Login', style: TextStyle(color: Colors.white)),
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text("Now fixed User admin"),
+                  ],
+                ),
+              ),
+            ),
+            Container(
               width: maxwidth,
               child: Align(
-                alignment: AlignmentGeometry.bottomRight,
+                alignment: AlignmentGeometry.topRight,
                 child: GestureDetector(
-                  child: Icon(Icons.settings, size: 36, color: Colors.white),
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.all(20),
+                    child: Icon(Icons.settings, size: maxwidth * 0.05, color: Colors.black),
+                  ),
                   onTap: () {
                     showDialog(
                       context: context,
@@ -110,6 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                         return StatefulBuilder(
                           builder: (context, setStateDialog) => AlertDialog(
                             title: Text("ตั้งค่า server"),
+                            backgroundColor: Colors.white,
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -117,7 +207,6 @@ class _LoginPageState extends State<LoginPage> {
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: maxwidth * 0.15,
                                         height: maxheight * 0.05,
                                         child: Text('Result : ', style: TextStyle(color: Colors.black)),
                                       ),
@@ -128,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
 
                                 TextField(
                                   controller: _IpServerController,
-                                  decoration: const InputDecoration(labelText: 'IP server.'),
+                                  decoration: const InputDecoration(labelText: 'IP/DNS server.'),
                                   onChanged: (value) {
                                     setStateDialog(() {
                                       baseURL = '$value/${_PathtoAPIController.text}';
@@ -178,46 +267,6 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     );
                   },
-                ),
-              ),
-            ),
-            Align(
-              alignment: AlignmentGeometry.center,
-              child: Container(
-                width: maxwidth * 0.7,
-                height: maxheight * 0.4 < 350 ? 350 : maxheight * 0.4,
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(12))),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: Text("Login", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      ),
-                      TextField(
-                        controller: _usernameController,
-                        decoration: const InputDecoration(labelText: 'ชื่อผู้ใช้'),
-                      ),
-                      TextField(
-                        controller: _passwordController,
-                        decoration: const InputDecoration(labelText: 'รหัสผ่าน'),
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 10),
-                      Text("Now fixed User admin"),
-                      const SizedBox(height: 20),
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 255, 130, 1)),
-                              ),
-                              onPressed: _login,
-                              child: const Text('Login', style: TextStyle(color: Colors.white)),
-                            ),
-                    ],
-                  ),
                 ),
               ),
             ),
