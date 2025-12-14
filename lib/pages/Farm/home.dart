@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final maxwidth = MediaQuery.of(context).size.width;
+    final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
     return Scaffold(
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
@@ -32,13 +34,47 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: SafeArea(
-      child: Container(
-        child: SingleChildScrollView(child: Column(children: [
-
-          ],
-        )),
+        child: Container(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.amber,
+                  width: maxwidth,
+                  height: 200,
+                  child: Center(
+                    child: Container(
+                      width: maxwidth * 0.8,
+                      height: 200 * 0.7,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Text("Temperature"),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.purple,
+                  width: maxwidth,
+                  height: maxheight * 0.7,
+                  child: Align(
+                    alignment: AlignmentGeometry.bottomCenter,
+                    child: Container(
+                      width: maxwidth,
+                      decoration: BoxDecoration(color: Colors.white,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(24))
+                      ),
+                      height: maxheight * 0.6,
+                      child: Text("data"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-    )
     );
   }
 }
