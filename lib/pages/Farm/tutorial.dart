@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iot_app/components/session.dart';
 
 class TutorialPage extends StatefulWidget {
 
@@ -16,6 +17,23 @@ class _TutorialPageState extends State<TutorialPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text("Toturial"));
+    final maxwidth = MediaQuery.of(context).size.width;
+    final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          color: Colors.white,
+          width: maxwidth,
+          height: maxheight ,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
