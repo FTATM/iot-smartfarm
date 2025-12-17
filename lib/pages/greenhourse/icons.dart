@@ -44,14 +44,14 @@ class _IconsPageState extends State<IconsPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
     }
     final maxwidth = MediaQuery.of(context).size.width;
     // final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppbarWidget(txtt: 'Icons Management'),
-      drawer: const SideBarWidget(),
+      // drawer: const SideBarWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           TextEditingController input = TextEditingController();

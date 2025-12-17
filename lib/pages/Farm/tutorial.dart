@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iot_app/components/session.dart';
 
 class TutorialPage extends StatefulWidget {
 

@@ -58,14 +58,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
 
-    final selected1_6 = data.sublist(1, 6);
+    // final selected1_6 = data.sublist(1, 6);
     final selected6_12 = data.sublist(6, 12);
-    final selected12_16 = data.sublist(12, 16);
+    // final selected12_16 = data.sublist(12, 16);
 
     return Scaffold(
       floatingActionButton: Visibility(
@@ -233,9 +233,7 @@ class _HomePageState extends State<HomePage> {
                                     child: Column(
                                       children: [
                                         Container(
-                                          // color: Colors.lightBlue,
                                           width: maxwidth / 9,
-                                          // padding: EdgeInsets.all(8),
                                           child: Image.network(
                                             // ignore: prefer_interpolation_to_compose_strings
                                             "${user['baseURL']}../" +

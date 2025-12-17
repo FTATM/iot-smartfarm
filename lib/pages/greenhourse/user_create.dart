@@ -58,7 +58,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
     }
     final maxwidth = MediaQuery.of(context).size.width;
     return Scaffold(

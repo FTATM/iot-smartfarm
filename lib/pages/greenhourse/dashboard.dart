@@ -109,14 +109,14 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 250, 250),
       appBar: AppbarWidget(txtt: user['b_name'] ?? "Loading..."),
-      drawer: const SideBarWidget(),
+      // drawer: const SideBarWidget(),
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(

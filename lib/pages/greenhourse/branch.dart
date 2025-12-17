@@ -43,7 +43,7 @@ class _BranchPageState extends State<BranchPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
@@ -51,7 +51,7 @@ class _BranchPageState extends State<BranchPage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppbarWidget(txtt: 'Branch Management'),
-      drawer: const SideBarWidget(),
+      // drawer: const SideBarWidget(),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
