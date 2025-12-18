@@ -98,7 +98,6 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                             setState(() {
                               data['name'] = value;
                             });
-                            print(data);
                           },
                         ),
                       ),
@@ -126,7 +125,6 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                             setState(() {
                               data['type_dashboard_id'] = value;
                             });
-                            print(data);
                           },
                         ),
                       ),
@@ -254,7 +252,6 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                               listvalues[0] = value;
                               data['data'] = listvalues;
                             });
-                            print(data);
                           },
                         ),
                       ),
@@ -287,7 +284,6 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                                 listvalues[1] = value;
                                 data['data'] = listvalues;
                               });
-                              print(data);
                             },
                           ),
                         ),

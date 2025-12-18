@@ -2,12 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
-// import 'package:iot_app/components/session.dart';
-import 'package:iot_app/components/sidebar.dart';
-// import 'package:iot_app/pages/config-Create.dart';
 import 'package:file_picker/file_picker.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -149,7 +144,6 @@ class _IconsPageState extends State<IconsPage> {
                               prefs.remove(originalName);
                             }
                             final newIcons = await ApiService.fetchIcons();
-                            print(newIcons['data']);
                             setState(() {
                               icons = newIcons['data'] as List;
                             });
@@ -221,7 +215,6 @@ class _IconsPageState extends State<IconsPage> {
                               width: 20,
                               child: GestureDetector(
                                 onTap: () {
-                                  print("Delete clicked");
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -235,7 +228,6 @@ class _IconsPageState extends State<IconsPage> {
                                             var response = await ApiService.deleteIconById(item);
                                             if (response['status'] == 'success') {
                                               final newIcons = await ApiService.fetchIcons();
-                                              print(newIcons['data']);
                                               setState(() {
                                                 icons = newIcons['data'] as List;
                                               });

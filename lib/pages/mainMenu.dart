@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iot_app/pages/Farm/HomeOld.dart';
+import 'package:iot_app/pages/greenhourse/HomeOld.dart';
 import 'package:iot_app/pages/Farm/live.dart';
 import 'package:iot_app/pages/Farm/profile.dart';
 import 'package:iot_app/pages/Farm/tutorial.dart';
@@ -34,7 +34,10 @@ class _mainboardPageState extends State<mainboardPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     return Scaffold(
       body: Navigator(
@@ -43,6 +46,7 @@ class _mainboardPageState extends State<mainboardPage> {
           return MaterialPageRoute(builder: (_) => _pages[_currentIndex]);
         },
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
@@ -66,4 +70,5 @@ class _mainboardPageState extends State<mainboardPage> {
       ),
     );
   }
+
 }

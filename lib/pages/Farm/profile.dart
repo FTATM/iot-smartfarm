@@ -20,21 +20,31 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isLoading = true;
   bool _isOpen = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     final maxwidth = MediaQuery.of(context).size.width;
     // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
           color: Colors.white,
           width: maxwidth,
           child: SingleChildScrollView(
@@ -48,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     spacing: 8,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(width: 125, height: 150, child: Image.asset('../assets/images/Logo.png')),
+                      Container(width: 125, height: 150, child: Image.asset('assets/images/Logo.png')),
                       Container(
                         child: Text(CurrentUser['name'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ),

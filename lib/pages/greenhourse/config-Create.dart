@@ -385,7 +385,6 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                                         }
                                         item['list_time_of_work'] = listTime.join(',');
                                       });
-                                      print(item['list_time_of_work']);
                                     },
                                   );
                                 }).toList(),
@@ -414,7 +413,6 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                               TextButton(
                                 onPressed: () async {
                                   var res = await ApiService.createMonitorById(item);
-                                  print(res);
                                   if (res['status'] == 'success') {
                                     Navigator.of(context).pop(); // ปิด popup
                                   }

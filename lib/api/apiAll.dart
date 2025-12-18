@@ -30,6 +30,29 @@ class ApiService {
     }
   }
 
+  // ฟังก์ชันตรวจสอบผู้ใช้
+  static Future<Map<String, dynamic>> checkUser(Map<String, dynamic> item) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}check-user.php"),
+        body: {'id': item['id'], 'username': item['username'], 'password': item['password']},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
   // update hardresetpasswordById
   static Future<Map<String, dynamic>> updateHardResetPasswordById(Map<String, dynamic> list) async {
     try {
@@ -491,7 +514,7 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-  
+
   // update SubDashboard
   static Future<Map<String, dynamic>> deleteSubDashboardById(Map<String, dynamic> list) async {
     try {
@@ -1052,5 +1075,4 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-
 }

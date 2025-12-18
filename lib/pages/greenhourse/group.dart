@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
-import 'package:iot_app/components/sidebar.dart';
 
 class GroupPage extends StatefulWidget {
   const GroupPage({super.key});

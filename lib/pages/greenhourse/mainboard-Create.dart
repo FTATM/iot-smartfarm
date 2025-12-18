@@ -20,7 +20,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
   List<dynamic> icons = [];
   Map<String, dynamic> typeofValues = {"1": "Manaul", "2": "Time", "3": "Time custom"};
 
-  List<TextEditingController> namesControllers = [];
+  List<TextEditingController> labelControllers = [];
   List<TextEditingController> manualController = [];
 
   @override
@@ -36,7 +36,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
       user = CurrentUser;
       isLoading = false;
 
-      namesControllers = data.map((item) => TextEditingController(text: item['name']?.toString() ?? '')).toList();
+      labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
       manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
   }
@@ -172,7 +172,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
                               // color: Colors.cyan,
                               width: (maxwidth - 16) * 0.4,
                               child: TextField(
-                                controller: namesControllers[index],
+                                controller: labelControllers[index],
                                 decoration: InputDecoration(labelText: "Label", border: OutlineInputBorder()),
                                 onChanged: (value) {
                                   setState(() {
@@ -233,7 +233,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
                                     // ignore: prefer_interpolation_to_compose_strings
                                     "${user['baseURL']}../" +
                                         icons.firstWhere(
-                                          (i) => i['id'] == data[0]['icon_id'],
+                                          (i) => i['id'] == item['icon_id'],
                                           orElse: () => {"path": "img/icons/ph.png"},
                                         )['path'],
                                   ),

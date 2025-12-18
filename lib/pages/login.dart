@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                       //   height: 50,
                       //   child: Text("Login", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       // ),
-                      SizedBox(height: maxheight * 0.2, child: Image.asset("../../assets/images/Logo.png", width: 120)),
+                      SizedBox(height: maxheight * 0.2, child: Image.asset("assets/images/Logo.png", width: 120)),
                       SizedBox(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,

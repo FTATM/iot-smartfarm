@@ -7,7 +7,6 @@ import 'package:iot_app/components/EditDashboardItemDialog.dart';
 import 'package:iot_app/components/AddDashboardItemDialog.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
-import 'package:iot_app/components/sidebar.dart';
 import 'package:iot_app/functions/function.dart';
 import 'package:iot_app/pages/greenhourse/dashboard-Create.dart';
 
@@ -40,7 +39,6 @@ class _DashboardPageState extends State<DashboardPage> {
     // _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
     // final response = await ApiService.fetchDashboardBybranchId(CurrentUser['branch_id'].toString());
     // if (!mounted) return;
-    // print("update");
     // setState(() {
     // data = response['data'] as List;
     // });
@@ -170,7 +168,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   children: data.asMap().entries.map((entry) {
                     int index = entry.key;
                     var item = entry.value;
-                    // print('${index} ${item}');
                     final bg = hexToColor(item['sub_bg_color_code'] ?? '#999999');
                     return Stack(
                       children: [
@@ -188,7 +185,6 @@ class _DashboardPageState extends State<DashboardPage> {
                             setState(() {
                               item[keyVal] = newVal; // อัปเดตค่าจริงใน parent !!
                             });
-                            print(item);
                           },
                         ),
                         SizedBox(
@@ -382,7 +378,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                             result['label_color_code'];
                                                                       });
 
-                                                                      print(data);
                                                                       var response =
                                                                           await ApiService.createSubDashboard(data);
                                                                       if (response['status'] == 'success') {
@@ -458,7 +453,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                         );
 
                                                                         if (result != null) {
-                                                                          print(result);
                                                                           if (result['delete']) {
                                                                             var response =
                                                                                 await ApiService.deleteSubDashboardById(
@@ -566,9 +560,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                           // );
                                                         });
 
-                                                        var res = await ApiService.updateDashboardById(item);
+                                                        await ApiService.updateDashboardById(item);
 
-                                                        print(res);
                                                         final responsedata = await ApiService.fetchDashboardBybranchId(
                                                           CurrentUser['branch_id'].toString(),
                                                         );

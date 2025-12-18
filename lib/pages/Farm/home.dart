@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.grey,
                           borderRadius: BorderRadius.all(Radius.circular(100)),
                         ),
-                        child: Image.asset('../assets/images/pinmap.png', width: 30),
+                        child: Image.asset('assets/images/pinmap.png', width: 30),
                       ),
                       Text(data[0]['value'], style: TextStyle(fontSize: 18)),
                     ],
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                       height: 200 * 0.7,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage("../assets/images/photorealistic-scene-poultry-far.png"),
+                          image: AssetImage("assets/images/photorealistic-scene-poultry-far.png"),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(Colors.white12, BlendMode.screen),
                         ),

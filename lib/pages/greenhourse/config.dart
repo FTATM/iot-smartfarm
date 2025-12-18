@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
-import 'package:iot_app/components/sidebar.dart';
 import 'package:iot_app/pages/greenhourse/config-Create.dart';
 
 class ConfigPage extends StatefulWidget {
@@ -571,7 +570,6 @@ class _ConfigPageState extends State<ConfigPage> {
                                                               setState(() {
                                                                 item['list_time_of_work'] = listTime.join(',');
                                                               });
-                                                              print(item['list_time_of_work']);
                                                             },
                                                           );
                                                         }).toList(),
@@ -595,10 +593,6 @@ class _ConfigPageState extends State<ConfigPage> {
                                         TextButton(
                                           onPressed: () async {
                                             Navigator.of(context).pop(); // ปิด popup
-                                            // print(
-                                            //   'ID ${item['monitor_id']} : ${item['is_min']} ${item['is_max']}',
-                                            // );
-                                            // print(data[index]);
 
                                             setState(() {
                                               data[index] = Map<String, dynamic>.from(item);
@@ -606,7 +600,6 @@ class _ConfigPageState extends State<ConfigPage> {
                                             });
 
                                             await ApiService.updateMonitorById(item);
-                                            // print(res);
                                           },
                                           child: const Text('บันทึก'),
                                         ),
