@@ -151,7 +151,7 @@ class _LivePageState extends State<LivePage> {
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height;
+    // final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(backgroundColor: Colors.white, title: const Text('Live Camera')),
@@ -160,7 +160,7 @@ class _LivePageState extends State<LivePage> {
         child: Column(
           spacing: 12,
           children: [
-            /// LIVE VIEW
+            // LIVE VIEW
             Container(
               width: maxwidth,
               height: maxwidth * 0.5,
@@ -175,7 +175,7 @@ class _LivePageState extends State<LivePage> {
                     ),
             ),
 
-            /// STATUS
+            // STATUS
             Row(
               children: [
                 Icon(Icons.circle, size: 12, color: isConnected ? Colors.green : Colors.red),
@@ -184,7 +184,7 @@ class _LivePageState extends State<LivePage> {
               ],
             ),
 
-            /// SELECT CAMERA
+            // SELECT CAMERA
             DropdownButton<String>(
               hint: const Text('Select Camera here.'),
               value: selectedRoom,
@@ -205,20 +205,22 @@ class _LivePageState extends State<LivePage> {
                   border: TableBorder.all(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(8)),
                   columnWidths: const {0: FlexColumnWidth(1.5), 1: FlexColumnWidth(2), 2: FlexColumnWidth(2)},
                   children: [
-                    TableRow(children: [Text("Name"), Text("Position"), Text("Tempureture")]),
+                    TableRow(
+                      children: [
+                        SizedBox(height: 30, child:Center(child: Text("Name")),),
+                        SizedBox(height: 30, child:Center(child: Text("Position")),),
+                        SizedBox(height: 30, child:Center(child: Text("Tempurature")),),
+                      ],
+                    ),
                     ..._datatemp.reversed.map((item) {
                       return TableRow(
                         children: [
-                          SizedBox(width: maxwidth * 0.2, height: 40, child: Text(item['class'])),
-                          SizedBox(width: maxwidth * 0.3, height: 40, child: Text(item['bbox'].toString())),
-                          SizedBox(
-                            width: maxwidth * 0.2,
-                            height: 40,
-                            child: Text("${item['max_temp'].toStringAsFixed(2)} °C"),
-                          ),
+                          SizedBox(height: 40, child: Text(item['class'])),
+                          SizedBox(height: 40, child: Text(item['bbox'].toString())),
+                          SizedBox(height: 40, child: Text("${item['max_temp'].toStringAsFixed(2)} °C")),
                         ],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
