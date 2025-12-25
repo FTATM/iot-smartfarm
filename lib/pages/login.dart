@@ -52,8 +52,8 @@ class _LoginPageState extends State<LoginPage> {
     //   return;
     // }
 
-    username = "admin";
-    password = "abc+123";
+    username = username == "" ? "admin" : username;
+    password = password == "" ? "abc+123" : password;
     baseURL = "49.0.69.152/iotsf/api-app";
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');

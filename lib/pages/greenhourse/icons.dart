@@ -135,7 +135,7 @@ class _IconsPageState extends State<IconsPage> {
                               ? originalName
                               : "${input.text.trim()}.png";
 
-                          bool success = await ApiService.uploadFile(saveName, fileBytes!);
+                          bool success = await ApiService.uploadIconFile(saveName, fileBytes!);
                           if (success) {
                             if (kIsWeb)
                               html.window.localStorage.remove(originalName);

@@ -35,6 +35,7 @@ Color hexToColor(String hex) {
   return Color(int.parse(hex, radix: 16));
 }
 
+
 class ClockService {
   final ValueNotifier<DateTime> currentTime = ValueNotifier(DateTime.now());
   Timer? _timer;

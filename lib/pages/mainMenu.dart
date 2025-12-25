@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/pages/greenhourse/HomeOld.dart';
 import 'package:iot_app/pages/Farm/live.dart';
-import 'package:iot_app/pages/Farm/profile.dart';
+import 'package:iot_app/pages/Farm/settings.dart';
 import 'package:iot_app/pages/Farm/tutorial.dart';
-import 'package:iot_app/pages/Farm/home.dart';
+import 'package:iot_app/pages/greenhourse/dashboard.dart';
 
 class mainboardPage extends StatefulWidget {
   const mainboardPage({super.key});
@@ -17,7 +17,10 @@ class _mainboardPageState extends State<mainboardPage> {
   int _currentIndex = 0;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-  final List<Widget> _pages = [HomePage(), HomeOldPage(), LivePage(), TutorialPage(), ProfilePage()];
+  final List<Widget> _pages = [
+    HomeOldPage(), 
+    DashboardPage(), 
+    LivePage(), TutorialPage(), SettingsPage()];
 
   @override
   void initState() {
@@ -65,7 +68,7 @@ class _mainboardPageState extends State<mainboardPage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home 2"),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: "Live"),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "Toturials"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
         ],
       ),
     );

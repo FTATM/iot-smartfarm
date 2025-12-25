@@ -22,7 +22,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
     Color.fromARGB(255, 240, 240, 240),
     Color.fromARGB(255, 240, 240, 240),
     Color.fromARGB(255, 240, 240, 240),
-    Color.fromARGB(255, 224, 224, 224),
+    Color.fromARGB(255, 189, 189, 189),
   ];
 
   @override
@@ -64,10 +64,12 @@ class _HomeOldPageState extends State<HomeOldPage> {
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
+
+    final fs_small = maxwidth < 400 ? 12.0 : 14.0;
     // ดึง item ลำดับที่ 6 - 12 (index 6 ถึง 12)
     final selected1_6 = data.sublist(1, 6);
-    final selected6_12 = data.sublist(6, 12);
-    final selected12_16 = data.sublist(12, 16);
+    final selected6_15 = data.sublist(6, 15);
+    final selected15_19 = data.sublist(15, 19);
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: Visibility(
@@ -85,32 +87,19 @@ class _HomeOldPageState extends State<HomeOldPage> {
       body: Container(
         width: maxwidth,
         // height: maxheight,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 255, 255, 255),
-              Color.fromARGB(255, 255, 255, 255),
-              Color.fromARGB(255, 255, 255, 255),
-              Color.fromARGB(255, 237, 255, 255),
-            ],
-            // radius: 3
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          // color: Colors.white,
-        ),
+        decoration: BoxDecoration(color: Colors.white),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    spacing: 8,
                     children: [
                       Container(
-                        width: maxwidth * 0.45,
+                        width: maxwidth * 0.45 - 12,
+                        height: maxheight * 0.3,
                         child: Image.network(
                           // ignore: prefer_interpolation_to_compose_strings
                           "${user['baseURL']}../" +
@@ -120,64 +109,80 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               )['path'],
                         ),
                       ),
-                      Flexible(
-                        child: Container(
-                          height: maxheight * 0.3 - 8,
-                          // color: Colors.amber,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 8,
-                            children: selected1_6.map((item) {
-                              return Flexible(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Container(
-                                      width: (maxwidth * 0.5) * 0.5 - 6,
-                                      // height: maxheight * 0.05,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: colorlist,
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                        // border: Border.all(width: 0.5),
-                                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          item['label_text'].length > 11
-                                              ? item['label_text'].substring(0, 7) + '...'
-                                              : item['label_text'],
-                                          style: TextStyle(color: Colors.black87),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: (maxwidth * 0.5) * 0.45 - 6,
-                                      // height: maxheight * 0.05,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: colorlist,
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                        // border: Border.all(width: 0.5),
-                                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          item['value'].length > 10
-                                              ? item['value'].substring(0, 7) + '...'
-                                              : item['value'],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                      Container(
+                        width: maxwidth * 0.5 - 12,
+                        height: maxheight * 0.3,
+                        // color: Colors.amber,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/images/bg-icon-large.png"),
+                            fit: BoxFit.cover,
+                            // colorFilter: ColorFilter.mode(Colors.white54, BlendMode.screen),
                           ),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          // boxShadow: [BoxShadow(
+                          //   color: Colors.black12,
+                          //   blurRadius: 5,
+                          //   spreadRadius: 2
+                          // )]
+                        ),
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 8,
+                          children: selected1_6.map((item) {
+                            return Flexible(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    width: ((maxwidth * 0.5) - 12) * 0.45 - 8,
+                                    // height: maxheight * 0.05,
+                                    decoration: BoxDecoration(
+                                      // gradient: LinearGradient(
+                                      //   colors: colorlist,
+                                      //   begin: Alignment.topCenter,
+                                      //   end: Alignment.bottomCenter,
+                                      // ),
+                                      color: Colors.black12,
+                                      // border: Border.all(width: 0.5),
+                                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        item['label_text'].length > 11
+                                            ? item['label_text'].substring(0, 8) + '...'
+                                            : item['label_text'],
+                                        style: TextStyle(color: Colors.black, fontSize: fs_small),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: ((maxwidth * 0.5) - 12) * 0.45 - 8,
+                                    // height: maxheight * 0.05,
+                                    decoration: BoxDecoration(
+                                      // gradient: LinearGradient(
+                                      //   colors: colorlist,
+                                      //   begin: Alignment.topCenter,
+                                      //   end: Alignment.bottomCenter,
+                                      // ),
+                                      color: Colors.black12,
+                                      // border: Border.all(width: 0.5),
+                                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        item['value'].length > 11
+                                            ? item['value'].substring(0, 8) + '...'
+                                            : item['value'],
+                                        style: TextStyle(color: Colors.black, fontSize: fs_small),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ],
@@ -186,57 +191,69 @@ class _HomeOldPageState extends State<HomeOldPage> {
 
                 Container(
                   width: maxheight,
-                  child: Wrap(
-                    children: selected6_12.map((item) {
-                      return Container(
-                        width: (maxwidth / 3),
-                        padding: EdgeInsets.all(8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: colorlist,
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
-                          padding: EdgeInsets.all(4),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: maxwidth / 9,
-                                child: Image.network(
-                                  // ignore: prefer_interpolation_to_compose_strings
-                                  "${user['baseURL']}../" +
-                                      icons.firstWhere(
-                                        (i) => i['id'] == item['icon_id'],
-                                        orElse: () => {"path": "img/icons/ph.png"},
-                                      )['path'],
-                                ),
+                  child: Center(
+                    child: Wrap(
+                      children: selected6_15.map((item) {
+                        return Container(
+                          width: (maxwidth / 3) - 4,
+                          padding: EdgeInsets.all(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/bg-icon-small.png"),
+                                fit: BoxFit.fill,
+                                // colorFilter: ColorFilter.mode(Colors.white54, BlendMode.screen),
                               ),
-                              Text(item['label_text']),
-                              Text(item['value']),
-                            ],
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: maxwidth / 9,
+                                  child: Image.network(
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    "${user['baseURL']}../" +
+                                        icons.firstWhere(
+                                          (i) => i['id'] == item['icon_id'],
+                                          orElse: () => {"path": "img/icons/ph.png"},
+                                        )['path'],
+                                  ),
+                                ),
+                                Container(
+                                  width: (maxwidth / 3),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+                                    color: Colors.black12,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(item['label_text'], style: TextStyle(color: Colors.black)),
+                                      Text("${item['value']} ${item['unitofvalue'] == '' ? "x" : item['unitofvalue']}"),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
 
                 Container(
                   width: maxwidth,
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(12),
                   child: Center(
                     child: Container(
-                      width: maxwidth * 0.9,
+                      // width: maxwidth * 0.9,
                       child: Column(
-                        spacing: 4,
-                        children: selected12_16.map((item) {
+                        spacing: 12,
+                        children: selected15_19.map((item) {
                           return Container(
                             width: maxwidth,
-                            height: maxheight * 0.05,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: maxheight * 0.06,
+                            padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: colorlist,
@@ -247,23 +264,43 @@ class _HomeOldPageState extends State<HomeOldPage> {
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  spacing: 10,
-                                  children: [
-                                    SizedBox(
-                                      width: maxwidth * 0.075,
-                                      child: Image.network(
-                                        // ignore: prefer_interpolation_to_compose_strings
-                                        "${user['baseURL']}../" +
-                                            icons.firstWhere(
-                                              (i) => i['id'] == item['icon_id'],
-                                              orElse: () => {"path": "img/icons/ph.png"},
-                                            )['path'],
-                                      ),
+                                Container(
+                                  height: maxheight * 0.05,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    borderRadius: BorderRadius.horizontal(
+                                      left: Radius.circular(8),
+                                      right: Radius.circular(20),
                                     ),
-                                    SizedBox(width: maxwidth * 0.3, child: Text(item['label_text'])),
-                                  ],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        offset: Offset(0, 3),
+                                        color: Colors.black12,
+                                        blurRadius: 3,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    spacing: 10,
+                                    children: [
+                                      SizedBox(width: 5),
+                                      Container(
+                                        width: maxwidth * 0.06,
+                                        child: Image.network(
+                                          // ignore: prefer_interpolation_to_compose_strings
+                                          "${user['baseURL']}../" +
+                                              icons.firstWhere(
+                                                (i) => i['id'] == item['icon_id'],
+                                                orElse: () => {"path": "img/icons/ph.png"},
+                                              )['path'],
+                                        ),
+                                      ),
+                                      SizedBox(width: maxwidth * 0.4, child: Text(item['label_text'])),
+                                    ],
+                                  ),
                                 ),
                                 Container(
                                   width: maxwidth * 0.25,

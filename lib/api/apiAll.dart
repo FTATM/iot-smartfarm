@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:iot_app/components/session.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class ApiService {
   // 🔹 ใส่ URL ของ PHP API ที่คุณสร้างไว้
@@ -368,9 +370,9 @@ class ApiService {
   }
 
   // insert icons
-  static Future<bool> uploadFile(String name, Uint8List bytes) async {
+  static Future<bool> uploadIconFile(String name, Uint8List bytes) async {
     try {
-      var request = http.MultipartRequest('POST', Uri.parse("${baseUrl}insert-icon.php"));
+      var request = http.MultipartRequest('POST', Uri.parse("${baseUrl}create-icon.php"));
 
       request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: name));
 
@@ -1073,6 +1075,67 @@ class ApiService {
     } catch (e) {
       // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  // fetch PDFs
+  static Future<Map<String, dynamic>> fetchPDFsByBId(String id) async {
+    try {
+      final response = await http.post(Uri.parse("${baseUrl}fetch-pdfs.php"), body: {'bid': id});
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  // fetch pdf file
+  static Future<File> loadPdfFromServer(String fileId, String bid) async {
+    final url = Uri.parse('${baseUrl}get-pdf_view.php?id=$fileId&bid=$bid');
+
+    final response = await http.get(url);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load PDF');
+    }
+
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/temp_$fileId.pdf');
+
+    // ✅ ต้องใช้ bodyBytes เท่านั้น
+    await file.writeAsBytes(response.bodyBytes, flush: true);
+
+    return file;
+  }
+
+  // insert icons
+  static Future<bool> uploadpdfFile(String name, String bid, Uint8List bytes) async {
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse("${baseUrl}create-pdf.php"));
+
+      request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: name));
+      request.fields['bid'] = bid;
+
+      var response = await request.send();
+
+      // แปลง StreamedResponse เป็น String
+      var responseBody = await response.stream.bytesToString();
+
+      print("Status code: ${response.statusCode}");
+      print("Body: $responseBody");
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Upload error: $e");
+      return false;
     }
   }
 }

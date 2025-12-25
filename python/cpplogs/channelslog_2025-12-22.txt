@@ -1,0 +1,188 @@
+[2025-12-22 15:07:23.923] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:07:23.923] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:07:23.923] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:07:23.970] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:07:23.970] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:07:23.980] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:07:23.983] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:07:23.989] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:07:23.989] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:07:23.989] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:07:24.009] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"cCcRtD+63xgnsmD6bUqs9/1/vj8ke3TrRQ+4d+WLN1fCL3KI6d/Oslt7goZolAThhFLapJp1LmzxYhsDDBVDzuZ90BnCnczg2dud69D/v5lzBCXeDAIcma96tTCjHuhRkRwVjwlGmNLgfp3fko4/OWEQ4PK+7wC+sQ+oRCpu9xc=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:07:24.146] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":4},"retcode":10003,"retmsg":"message field is empty.","sequence":1}
+[2025-12-22 15:07:24.987] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":39,"message":{"h":512,"type":2,"w":640,"x":0,"y":0},"sequence":2,"token":""}
+[2025-12-22 15:20:40.760] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:20:40.760] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:20:40.760] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:20:40.764] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:20:40.764] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:20:40.768] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:20:40.770] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:20:40.772] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:20:40.772] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:20:40.772] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:20:40.773] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"iR5hOVoH8Dk+J4bK828EkpQ643D3BtUhUmpX79oeZKWtPfd9ww4r5Bn5oK9bp0xq9NlcSkcQykeYZeB5vPDG8jDCuoLoDKSrRWV9mw9XYgSVo//YmLNhhEgDadakVvRy7sLARkz9CC+Y8VT5xx5nkdctLoQCUBoRVnuIqAgG2cU=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:20:40.776] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":4},"retcode":10003,"retmsg":"message field is empty.","sequence":1}
+[2025-12-22 15:20:41.781] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":39,"message":{"h":512,"type":2,"w":640,"x":0,"y":0},"sequence":2,"token":""}
+[2025-12-22 15:20:41.895] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":39,"retcode":10005,"retmsg":"user is not login.","sequence":2}
+[2025-12-22 15:21:50.854] [channels.dll] [warning] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=2): Connection closed by peer (EOF)
+[2025-12-22 15:21:50.855] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:21:50.855] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:21:55.870] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:21:55.870] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:21:55.873] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:21:55.876] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:21:55.876] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:21:55.876] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:21:55.877] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"iR5hOVoH8Dk+J4bK828EkpQ643D3BtUhUmpX79oeZKWtPfd9ww4r5Bn5oK9bp0xq9NlcSkcQykeYZeB5vPDG8jDCuoLoDKSrRWV9mw9XYgSVo//YmLNhhEgDadakVvRy7sLARkz9CC+Y8VT5xx5nkdctLoQCUBoRVnuIqAgG2cU=","username":""},"sequence":3,"token":""}
+[2025-12-22 15:21:55.882] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":3},"retcode":10003,"retmsg":"message field is empty.","sequence":3}
+[2025-12-22 15:22:10.216] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:22:10.216] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:22:10.216] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:22:10.220] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:22:10.220] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:22:10.224] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:22:10.226] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:22:10.229] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:22:10.229] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:22:10.229] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:22:10.229] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"l3JjcCGPu1K3IlsvMeWrZ3s3xTAFiKClKTmXHNf9Xh7fpYPSbqSxOzh1dtEzrZzStyrSKOGL2gXcqYn+fwaj2o472kclU+VUA/3p56XJsNkANeZBUa64sFhtzNVtMEV3W6wFJ+jpYysg2mEag7GrZlZS1IMUyJGTYazU+Iv0msM=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:22:10.231] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":2},"retcode":10003,"retmsg":"message field is empty.","sequence":1}
+[2025-12-22 15:22:15.229] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":39,"message":{"h":512,"type":2,"w":640,"x":0,"y":0},"sequence":2,"token":""}
+[2025-12-22 15:22:15.344] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":39,"retcode":10005,"retmsg":"user is not login.","sequence":2}
+[2025-12-22 15:22:44.208] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:22:44.208] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:22:44.208] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:22:44.212] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:22:44.212] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:22:44.216] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:22:44.219] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:22:44.221] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:22:44.221] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:22:44.221] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:22:44.221] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"fUOOnwN+gqdc8SaH6NPvc4wXfiTz3EYaYJx+iuJA3uR8f9tHAjnTRmxoREAQBIsg/CHkzYldeg8lqAQZzoXKtBpSZVyFhyskdFKJfVEMTT1srJn4vqj93/kZgyQhXFJVaM12F/l6eesGhL8nqzH1OF1ApCwGKjWRZftJWsnPTgQ=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:22:44.224] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":1},"retcode":10003,"retmsg":"message field is empty.","sequence":1}
+[2025-12-22 15:22:49.217] [channels.dll] [info] playInFrameCallback  url:rtsp://192.168.1.168/ü&
+[2025-12-22 15:22:50.230] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":39,"message":{"h":512,"type":2,"w":640,"x":0,"y":0},"sequence":2,"token":""}
+[2025-12-22 15:22:50.313] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":39,"retcode":10005,"retmsg":"user is not login.","sequence":2}
+[2025-12-22 15:23:54.312] [channels.dll] [warning] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=2): Connection closed by peer (EOF)
+[2025-12-22 15:23:54.313] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:23:54.313] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:23:59.318] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:23:59.318] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:23:59.320] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:23:59.323] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:23:59.323] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:23:59.323] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:23:59.324] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"fUOOnwN+gqdc8SaH6NPvc4wXfiTz3EYaYJx+iuJA3uR8f9tHAjnTRmxoREAQBIsg/CHkzYldeg8lqAQZzoXKtBpSZVyFhyskdFKJfVEMTT1srJn4vqj93/kZgyQhXFJVaM12F/l6eesGhL8nqzH1OF1ApCwGKjWRZftJWsnPTgQ=","username":""},"sequence":3,"token":""}
+[2025-12-22 15:23:59.326] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":0,"lock_time":300},"retcode":10010,"retmsg":"user is locking.","sequence":3}
+[2025-12-22 15:24:45.912] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:24:45.913] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:24:45.913] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:24:45.916] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:24:45.916] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:24:45.920] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:24:45.923] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:24:45.925] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:24:45.925] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:24:45.925] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:24:45.925] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"kcocXemJ6bNNBlLt8Z44fY1Kz/+FRPEL3+Ymgou+ebEuF3AcwVoYsZPmgoRK1sg6fTNyuWyiufiulXvByJBRN4RgjXonZBeDRXQI+ELLt6oXxj9mhY9i44Cm12NcMUglNSUWKV4yiE9Nq2a2rdvxRARINs6JsXWXHNu2Q7bNGVE=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:24:45.927] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"lock_time":253},"retcode":10010,"retmsg":"user is locking.","sequence":1}
+[2025-12-22 15:26:03.863] [channels.dll] [info] ========================================spdlog channels====================================================
+[2025-12-22 15:26:03.863] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:26:03.863] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:1
+[2025-12-22 15:26:03.867] [channels.dll] [info] create channel:192.168.1.168
+[2025-12-22 15:26:03.867] [channels.dll] [info] <<<<<<<<<<<<<ccccccccccccccccccccc<<<<<<<<<<<channel count:2
+[2025-12-22 15:26:03.871] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:26:03.874] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:26:03.877] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:26:03.877] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:26:03.877] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:26:03.877] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":1,"token":""}
+[2025-12-22 15:26:03.880] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"lock_time":175},"retcode":10010,"retmsg":"user is locking.","sequence":1}
+[2025-12-22 15:26:06.882] [channels.dll] [info] playInFrameCallback  url:rtsp://192.168.1.168/ü&
+[2025-12-22 15:26:06.884] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":39,"message":{"h":512,"type":2,"w":640,"x":0,"y":0},"sequence":2,"token":""}
+[2025-12-22 15:26:06.921] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":39,"retcode":10005,"retmsg":"user is not login.","sequence":2}
+[2025-12-22 15:27:13.949] [channels.dll] [warning] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=2): Connection closed by peer (EOF)
+[2025-12-22 15:27:13.950] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:27:13.950] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:27:18.950] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:27:18.950] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:27:18.952] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:27:18.954] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:27:18.954] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:27:18.954] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:27:18.955] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":3,"token":""}
+[2025-12-22 15:27:18.958] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"lock_time":100},"retcode":10010,"retmsg":"user is locking.","sequence":3}
+[2025-12-22 15:28:29.029] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:28:29.029] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:28:29.029] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:28:29.030] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:28:34.036] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:28:34.036] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:28:34.039] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:28:34.041] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:28:34.041] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:28:34.042] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:28:34.042] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":4,"token":""}
+[2025-12-22 15:28:34.045] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"lock_time":25},"retcode":10010,"retmsg":"user is locking.","sequence":4}
+[2025-12-22 15:29:44.117] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:29:44.118] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:29:44.118] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:29:44.118] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:29:49.123] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:29:49.123] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:29:49.125] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:29:49.127] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:29:49.127] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:29:49.127] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:29:49.128] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":5,"token":""}
+[2025-12-22 15:29:49.130] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":4},"retcode":10003,"retmsg":"message field is empty.","sequence":5}
+[2025-12-22 15:30:59.196] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:30:59.197] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:30:59.197] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:30:59.197] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:31:04.211] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:31:04.211] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:31:04.213] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:31:04.215] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:31:04.215] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:31:04.215] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:31:04.216] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":6,"token":""}
+[2025-12-22 15:31:04.218] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":3},"retcode":10003,"retmsg":"message field is empty.","sequence":6}
+[2025-12-22 15:32:14.276] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:32:14.276] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:32:14.276] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:32:14.277] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:32:19.289] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:32:19.289] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:32:19.291] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:32:19.293] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:32:19.293] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:32:19.293] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:32:19.294] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":7,"token":""}
+[2025-12-22 15:32:19.296] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":2},"retcode":10003,"retmsg":"message field is empty.","sequence":7}
+[2025-12-22 15:33:29.356] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:33:29.357] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:33:29.357] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:33:29.357] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:33:34.359] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:33:34.359] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:33:34.362] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:33:34.365] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:33:34.365] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:33:34.365] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:33:34.366] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":8,"token":""}
+[2025-12-22 15:33:34.369] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":1},"retcode":10003,"retmsg":"message field is empty.","sequence":8}
+[2025-12-22 15:34:44.433] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] Error in read (code=995): The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:34:44.433] [channels.dll] [error] [ws://192.168.1.168:9980/api/v1/control] releasing resource1 read 
+[2025-12-22 15:34:44.433] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Reconnecting in 5s..
+[2025-12-22 15:34:44.433] [channels.dll] [error] Error during close: The I/O operation has been aborted because of either a thread exit or an application request
+[2025-12-22 15:34:49.438] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] now connecting ..
+[2025-12-22 15:34:49.439] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_resolve (ws)
+[2025-12-22 15:34:49.441] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] connect_plain (ws)
+[2025-12-22 15:34:49.444] [channels.dll] [info] Handshake succeeded
+[2025-12-22 15:34:49.444] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] on_ws_handshake (ws)
+[2025-12-22 15:34:49.444] [channels.dll] [info] [WebSocket][ws://192.168.1.168:9980/api/v1/control] Connected (ws)
+[2025-12-22 15:34:49.444] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]send:{"action":"request","cmdtype":501,"message":{"password":"MA031KE0ja7wi3LGJCz7g3bUdIArgPQFGM9KCvNpxOWQe4T92qwW6VO7o8Yzu0rOATEe9r0YNJ8HMzlcKvUwlyawXY+nwsQUmNibx0zlsH+C3iAuUGOOObj0CsC7r/WFmDIoK7nQh0KrfAOrC+r2kuxS8ljURySN+ivwQMPjzyw=","username":""},"sequence":9,"token":""}
+[2025-12-22 15:34:49.447] [channels.dll] [info] [ws://192.168.1.168:9980/api/v1/control]receive:{"action":"response","cmdtype":501,"message":{"count":0,"lock_time":300},"retcode":10010,"retmsg":"user is locking.","sequence":9}
