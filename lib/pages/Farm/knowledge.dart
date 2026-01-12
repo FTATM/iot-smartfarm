@@ -13,6 +13,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
   bool isLoading = true;
   List<dynamic> tables = [];
 
+  Color primaryColor = Color.fromARGB(255, 255, 131, 0);
+  Color blackColor = Colors.black;
+  Color whiteColor = Colors.white;
+
   @override
   void initState() {
     super.initState();
@@ -58,7 +62,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
         ],
       ),
     );
-
   }
 
   // ───────────────── Single Table ─────────────────
@@ -66,8 +69,11 @@ class _KnowledgePageState extends State<KnowledgePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${item['label']}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.only(top: 10),
+          color: primaryColor,
+          child: Text("${item['label']}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
 
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -121,13 +127,20 @@ class _KnowledgePageState extends State<KnowledgePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(parent['label'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-
-        const SizedBox(height: 8),
+        Container(
+          width: 500,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: primaryColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+          ),
+          child: Text(parent['label'], style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Table(
             border: TableBorder.all(color: Colors.grey.shade300),
+
             columnWidths: {
               0: const FlexColumnWidth(0.75),
               for (int i = 0; i < childList.length + 1; i++) i + 1: const FlexColumnWidth(1),
