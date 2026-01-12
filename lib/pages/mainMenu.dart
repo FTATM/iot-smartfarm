@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:iot_app/pages/Farm/knowledge.dart';
 import 'package:iot_app/pages/greenhourse/HomeOld.dart';
 import 'package:iot_app/pages/Farm/live.dart';
 import 'package:iot_app/pages/Farm/settings.dart';
-import 'package:iot_app/pages/Farm/tutorial.dart';
 import 'package:iot_app/pages/greenhourse/dashboard.dart';
 
 class mainboardPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _mainboardPageState extends State<mainboardPage> {
   final List<Widget> _pages = [
     HomeOldPage(), 
     DashboardPage(), 
-    LivePage(), TutorialPage(), SettingsPage()];
+    LivePage(), KnowledgePage(), SettingsPage()];
 
   @override
   void initState() {
@@ -64,11 +64,11 @@ class _mainboardPageState extends State<mainboardPage> {
         unselectedItemColor: Colors.black,
 
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home 1"),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home 2"),
-          BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: "Live"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "Toturials"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: "Dashboard"),
+          BottomNavigationBarItem(icon: Icon(Icons.camera_alt_outlined), label: "Live"),
+          BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined), label: "Knowledge"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "Settings"),
         ],
       ),
     );

@@ -1079,7 +1079,7 @@ class ApiService {
   }
 
   // fetch PDFs
-  static Future<Map<String, dynamic>> fetchPDFsByBId(String id) async {
+  static Future<Map<String, dynamic>> fetchPDFsById(String id) async {
     try {
       final response = await http.post(Uri.parse("${baseUrl}fetch-pdfs.php"), body: {'bid': id});
 
@@ -1136,6 +1136,102 @@ class ApiService {
     } catch (e) {
       print("Upload error: $e");
       return false;
+    }
+  }
+
+  // fetch Table Knowledge
+  static Future<Map<String, dynamic>> fetchTablesknowledgeById(String id) async {
+    try {
+      final response = await http.post(Uri.parse("${baseUrl}fetch-tableknowledge.php"), body: {'bid': id});
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  // update groups
+  static Future<Map<String, dynamic>> updateScheduleAll(List<dynamic> list) async {
+    try {
+      // print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}update-schedule.php"),
+        body: {'json': jsonEncode(list)},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  // update Column
+  static Future<Map<String, dynamic>> deleteColumnById(Map<String, dynamic> list) async {
+    try {
+      // print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}delete-column.php"),
+        //  headers: {'Content-Type': 'application/json'},
+        body: {'json': jsonEncode(list)},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+    // update Column
+  static Future<Map<String, dynamic>> deleteRowById(Map<String, dynamic> list) async {
+    try {
+      // print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}delete-row.php"),
+        //  headers: {'Content-Type': 'application/json'},
+        body: {'json': jsonEncode(list)},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
 }

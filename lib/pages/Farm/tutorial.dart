@@ -1,15 +1,8 @@
-import 'dart:convert';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
-import 'package:iot_app/components/ViewPDF.dart';
 import 'package:iot_app/components/session.dart';
 import 'package:iot_app/pages/Farm/guidebook.dart';
 import 'package:iot_app/pages/Farm/knowledge.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_html/html.dart' as html;
 
 class TutorialPage extends StatefulWidget {
   const TutorialPage({super.key});
@@ -32,7 +25,7 @@ class _TutorialPageState extends State<TutorialPage> {
   }
 
   Future<void> prepare() async {
-    final res = await ApiService.fetchPDFsByBId(CurrentUser['branch_id']);
+    final res = await ApiService.fetchPDFsById(CurrentUser['branch_id']);
     final bres = await ApiService.fetchBranchAll();
     setState(() {
       pdfs = res['data'] ?? [];

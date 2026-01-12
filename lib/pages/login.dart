@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
@@ -30,13 +31,14 @@ class _LoginPageState extends State<LoginPage> {
     loadConfig();
   }
 
-  void loadConfig() async {
+  Future<void> loadConfig() async {
     final config = await ServerConfig.loadServerConfig();
 
     setState(() {
       _IpServerController.text = config['ip'] ?? "";
       _PathtoAPIController.text = config['path'] ?? "";
       baseURL = "${_IpServerController.text}/${_PathtoAPIController.text}";
+
     });
   }
 
@@ -52,9 +54,9 @@ class _LoginPageState extends State<LoginPage> {
     //   return;
     // }
 
-    username = username == "" ? "admin" : username;
+    username = username == "" ? "superadmin" : username;
     password = password == "" ? "abc+123" : password;
-    baseURL = "49.0.69.152/iotsf/api-app";
+    // baseURL = "49.0.69.152/iotsf/api-app";
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
 
@@ -73,9 +75,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(response['message'] ?? 'เข้าสู่ระบบไม่สำเร็จ')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาดในการเชื่อมต่อ')));
     }
   }
 
@@ -86,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         // appBar: AppBar(title: const Text('เข้าสู่ระบบ')),
         body: SafeArea(
@@ -106,6 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: maxheight * 0.2, child: Image.asset("assets/images/Logo.png", width: 120)),
                       SizedBox(
                         child: Column(
+                          spacing: 4,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             SizedBox(
@@ -171,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text("Now fixed User admin"),
+                      Text(baseURL),
                     ],
                   ),
                 ),
@@ -248,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                                       _IpServerController.text.trim(),
                                       _PathtoAPIController.text.trim(),
                                     );
-
+                                  await loadConfig();
                                     Navigator.pop(context);
                                   },
                                   child: Text("บันทึก"),

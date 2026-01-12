@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/components/session.dart';
 import 'package:iot_app/pages/Farm/account.dart';
+import 'package:iot_app/pages/Farm/guidebook.dart';
 import 'package:iot_app/pages/Farm/schedules.dart';
 import 'package:iot_app/pages/greenhourse/branch.dart';
 import 'package:iot_app/pages/greenhourse/config.dart';
@@ -60,9 +61,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Container(width: 125, height: 150, child: Image.asset('assets/images/Logo.png')),
                       Container(
-                        child: Text(CurrentUser['name'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        child: Text(CurrentUser['name']??"NULL", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
-                      Container(child: Text("@${CurrentUser['username']}")),
+                      Container(child: Text("@${CurrentUser['username']??"NULL"}")),
                     ],
                   ),
                 ),
@@ -173,6 +174,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: _menuItem("Schedule", Icons.schedule, Colors.black),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const SchedulePage()));
+                        },
+                      ),
+                      GestureDetector(
+                        child: _menuItem("Knowledge", Icons.menu_book, Colors.black),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GuidebookPage()));
                         },
                       ),
                       const Divider(),

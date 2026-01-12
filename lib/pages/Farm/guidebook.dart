@@ -30,7 +30,7 @@ class _GuidebookPageState extends State<GuidebookPage> {
   }
 
   Future<void> prepare() async {
-    final res = await ApiService.fetchPDFsByBId(CurrentUser['branch_id']);
+    final res = await ApiService.fetchPDFsById(CurrentUser['branch_id']);
     final bres = await ApiService.fetchBranchAll();
     setState(() {
       pdfs = res['data'] ?? [];

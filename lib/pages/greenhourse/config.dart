@@ -323,7 +323,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                                 children: [
                                                   SizedBox(width: maxwidth * 0.15, child: Text('Group :')),
                                                   SizedBox(
-                                                    width: maxwidth * 0.5,
+                                                    width: 150,
                                                     child: DropdownButton<String>(
                                                       value: item['group_id'],
                                                       items: groups.map<DropdownMenuItem<String>>((group) {
@@ -353,7 +353,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                                 children: [
                                                   SizedBox(width: maxwidth * 0.15, child: Text('Device :')),
                                                   SizedBox(
-                                                    width: maxwidth * 0.5,
+                                                    width: 150,
                                                     child: DropdownButton<String>(
                                                       value: item['device_id'],
                                                       items: devices.map<DropdownMenuItem<String>>((device) {
@@ -386,7 +386,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                                 children: [
                                                   SizedBox(width: maxwidth * 0.15, child: Text('Type :')),
                                                   SizedBox(
-                                                    width: maxwidth * 0.5,
+                                                    width: 150,
                                                     child: DropdownButton<String>(
                                                       value: item['type_id'],
                                                       items: types.map<DropdownMenuItem<String>>((type) {
@@ -416,7 +416,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                                 children: [
                                                   SizedBox(width: maxwidth * 0.15, child: Text('Data :')),
                                                   SizedBox(
-                                                    width: maxwidth * 0.5,
+                                                    width: 150,
                                                     child: DropdownButton<String>(
                                                       value: item['datax_id'],
                                                       items: dataxs.map<DropdownMenuItem<String>>((datax) {

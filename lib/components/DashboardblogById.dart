@@ -77,7 +77,6 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         height: sizeheight,
         padding: EdgeInsets.all(4),
         child: Container(
-          // padding: EdgeInsets.all(2),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -158,6 +157,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
           ),
         ),
       );
+
+
     } else if (type == '2') {
       // Pie Chart
       // final labels = jsonDecode(labelJson) ?? [];
