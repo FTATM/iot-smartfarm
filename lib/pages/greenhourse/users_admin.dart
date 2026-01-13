@@ -52,491 +52,806 @@ class _UserAdminPageState extends State<UserAdminPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Color(0xFFE8E8E8),
       appBar: AppbarWidget(txtt: 'Users Management'),
-      // drawer: const SideBarWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateUserPage())).then((_) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateUserPage()),
+          ).then((_) {
             _fetchData();
           });
         },
-        backgroundColor: Colors.white,
-        child: Icon(Icons.add),
+        backgroundColor: Color(0xFFFF8C42),
+        child: Icon(Icons.add, color: Colors.white, size: 32),
       ),
       body: SafeArea(
-        child: Container(
-          width: maxwidth,
-          height: maxheight - kToolbarHeight,
-          decoration: BoxDecoration(color: Colors.white),
-          child: SingleChildScrollView(
-            child: Column(
-              spacing: 4,
-              children: [
-                Container(
-                  width: maxwidth,
-                  height: 50,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
+        child: Column(
+          children: [
+            // Filter tabs section
+            Container(
+              width: maxwidth,
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              decoration: BoxDecoration(color: Colors.white),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: 'all' == selectrole ? Color(0xFFFF8C42) : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: 'all' == selectrole ? Color(0xFFFF8C42) : Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          "All",
+                          style: TextStyle(
+                            color: 'all' == selectrole ? Colors.white : Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          selectrole = 'all';
+                        });
+                        filterUsersFunction();
+                      },
+                    ),
+                    SizedBox(width: 8),
+                    ...roles.map((r) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: GestureDetector(
                           child: Container(
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                             decoration: BoxDecoration(
-                              color: 'all' == selectrole ? const Color.fromARGB(255, 30, 31, 79) : Colors.white,
-                              boxShadow: [BoxShadow(color: Colors.black12, spreadRadius: 1, blurRadius: 1)],
+                              color: r['role_num'] == selectrole ? Color(0xFFFF8C42) : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: r['role_num'] == selectrole ? Color(0xFFFF8C42) : Colors.grey[300]!,
+                                width: 1,
+                              ),
                             ),
                             child: Text(
-                              "All",
-                              style: TextStyle(color: 'all' == selectrole ? Colors.white : Colors.black),
+                              r['rule_name'],
+                              style: TextStyle(
+                                color: r['role_num'] == selectrole ? Colors.white : Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           onTap: () {
                             setState(() {
-                              selectrole = 'all';
+                              selectrole = r['role_num'];
                             });
                             filterUsersFunction();
                           },
                         ),
-                        ...roles.map((r) {
-                          return GestureDetector(
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(7, 10, 7, 10),
-                              decoration: BoxDecoration(
-                                color: r['role_num'] == selectrole
-                                    ? const Color.fromARGB(255, 30, 31, 79)
-                                    : Colors.white,
-                                boxShadow: [BoxShadow(color: Colors.black12, spreadRadius: 1, blurRadius: 1)],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+            // Users list section
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.all(16),
+                itemCount: filterUsers.length,
+                itemBuilder: (context, index) {
+                  var item = filterUsers[index];
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {
+                          _showEditDialog(context, item, index, maxwidth);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              // Avatar
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFFE5D3),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  color: Color(0xFFFF8C42),
+                                  size: 32,
+                                ),
                               ),
-                              child: Text(
-                                r['rule_name'],
-                                style: TextStyle(color: r['role_num'] == selectrole ? Colors.white : Colors.black),
+                              SizedBox(width: 16),
+                              // User info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item['name'] ?? item['username'] ?? "",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      item['email'] ?? "",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                              // Status badge
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: item['status'] == '1' 
+                                      ? Color(0xFFE8F5E9) 
+                                      : Color(0xFFFFEBEE),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  item['status'] == '1' ? "เปิดใช้งาน" : "ปิดใช้งาน",
+                                  style: TextStyle(
+                                    color: item['status'] == '1' 
+                                        ? Color(0xFF4CAF50) 
+                                        : Color(0xFFE57373),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, dynamic item, int index, double maxwidth) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              width: maxwidth * 0.9,
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with back button
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.black87),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              nameControllers[index].text = item['name'] ?? '';
+                              emailControllers[index].text = item['email'] ?? '';
+                              phoneControllers[index].text = item['phone_number'] ?? '';
+                              addressControllers[index].text = item['address'] ?? '';
+                              temp = filterUsers.map((e) => Map<String, dynamic>.from(e)).toList();
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            'แก้ไขโปรไฟล์',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                            onTap: () {
-                              setState(() {
-                                selectrole = r['role_num'];
-                              });
-                              filterUsersFunction();
-                            },
-                          );
-                        }),
+                          ),
+                        ),
+                        SizedBox(width: 40), // Balance the back button
                       ],
                     ),
                   ),
-                ),
-                ...filterUsers.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  var item = entry.value;
-                  return Container(
-                    width: maxwidth,
-                    height: maxheight * 0.1,
-                    padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
-                    child: GestureDetector(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(color: const Color.fromARGB(31, 63, 58, 58), spreadRadius: 1, blurRadius: 1),
-                          ],
-                        ),
-                        padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['username'] ?? "",
-                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(item['email'] ?? "", style: TextStyle(color: Colors.grey, fontSize: 10)),
-                                ],
+                  
+                  // Scrollable content
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 10),
+                          
+                          // Profile Avatar
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFFE5D3),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              color: Color.fromARGB(255, 255, 131, 0),
+                              size: 50,
+                            ),
+                          ),
+                          
+                          SizedBox(height: 16),
+                          
+                          // Profile Details Title
+                          Text(
+                            'Profile Details',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          
+                          SizedBox(height: 32),
+                          
+                          // Full Name Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'FULL NAME',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
-                            ),
-                            Container(
-                              width: maxwidth * 0.2,
-                              child: Text(item['status'] == '1' ? "เปิดใช้งาน" : "ปิดใช้งาน", textAlign: TextAlign.end),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return StatefulBuilder(
-                              builder: (context, setStateDialog) {
-                                return AlertDialog(
-                                  titlePadding: EdgeInsets.all(12),
-                                  contentPadding: EdgeInsets.all(12),
-                                  actionsPadding: EdgeInsets.all(12),
-                                  backgroundColor: Colors.white,
-                                  title: Container(height: 40, child: Center(child: Text("Edit Profile"))),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                child: TextField(
+                                  controller: nameControllers[index],
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.badge_outlined, color: Colors.grey[400]),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      temp[index]['name'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Security / Change Password
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'SECURITY',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () {
+                                    _showPasswordDialog(context, item);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    child: Row(
                                       children: [
-                                        const Divider(height: 0.5),
-                                        SizedBox(height: 20, child: Text('Name', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 0.25),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          ),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              border: InputBorder.none,
+                                        Icon(Icons.lock_outline, color: Colors.grey[400]),
+                                        SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            'Change Password',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
                                             ),
-                                            controller: nameControllers[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                temp[index]['name'] = value;
-                                              });
-                                            },
                                           ),
                                         ),
-                                        SizedBox(height: 20),
-                                        SizedBox(height: 20, child: Text('Password', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 0.25, color: Colors.deepOrange),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          ),
-                                          child: TextButton(
-                                            onPressed: () {
-                                              // TextEditingController passwordController = TextEditingController();
-                                              TextEditingController newpasswordController = TextEditingController();
-                                              TextEditingController confirmpasswordController = TextEditingController();
-                                              // String notimessage = "";
-                                              String notinewmessage = "";
-                                              String noticomessage = "";
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return StatefulBuilder(
-                                                    builder: (contextpass, setStatePasswordDialog) {
-                                                      return AlertDialog(
-                                                        title: Text("แก้ไขรหัสผ่าน"),
-                                                        content: Container(
-                                                          height: 300,
-                                                          child: SingleChildScrollView(
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                // SizedBox(child: Text("รหัสผ่านปัจจุบัน")),
-                                                                // Container(
-                                                                //   height: 50,
-                                                                //   decoration: BoxDecoration(
-                                                                //     border: Border.all(width: 0.25),
-                                                                //     borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                                //   ),
-                                                                //   child: TextField(
-                                                                //     decoration: InputDecoration(
-                                                                //       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                                                //       border: InputBorder.none,
-                                                                //     ),
-                                                                //     obscureText: true,
-                                                                //     controller: passwordController,
-                                                                //   ),
-                                                                // ),
-                                                                // Text(notimessage, style: TextStyle(color: Colors.red)),
-                                                                SizedBox(child: Text("รหัสผ่านใหม่")),
-                                                                Container(
-                                                                  height: 50,
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border.all(width: 0.25),
-                                                                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                                  ),
-                                                                  child: TextField(
-                                                                    decoration: InputDecoration(
-                                                                      contentPadding: EdgeInsets.symmetric(
-                                                                        horizontal: 8,
-                                                                        vertical: 0,
-                                                                      ),
-                                                                      border: InputBorder.none,
-                                                                    ),
-                                                                    obscureText: true,
-                                                                    controller: newpasswordController,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  notinewmessage,
-                                                                  style: TextStyle(color: Colors.red),
-                                                                ),
-                                                                SizedBox(child: Text("ยืนยันรหัสผ่านใหม่")),
-                                                                Container(
-                                                                  height: 50,
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border.all(width: 0.25),
-                                                                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                                                                  ),
-                                                                  child: TextField(
-                                                                    decoration: InputDecoration(
-                                                                      contentPadding: EdgeInsets.symmetric(
-                                                                        horizontal: 8,
-                                                                        vertical: 0,
-                                                                      ),
-                                                                      border: InputBorder.none,
-                                                                    ),
-                                                                    obscureText: true,
-                                                                    controller: confirmpasswordController,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  noticomessage,
-                                                                  style: TextStyle(color: Colors.red),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(contextpass).pop();
-                                                              // passwordController.text = "";
-                                                              newpasswordController.text = "";
-                                                              confirmpasswordController.text = "";
-                                                            },
-                                                            child: Text("ยกเลิก"),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: () async {
-                                                              setStatePasswordDialog(() {
-                                                                // notimessage = "";
-                                                                notinewmessage = "";
-                                                                noticomessage = "";
-                                                              });
-                                                              // var password = passwordController.text.trim();
-                                                              var newpassword = newpasswordController.text.trim();
-                                                              var confirmpassword = confirmpasswordController.text
-                                                                  .trim();
-
-                                                              // if (password == '') {
-                                                              //   setStatePasswordDialog(() {
-                                                              //     notimessage = "โปรดระบุรหัสผ่านปัจจุบัน";
-                                                              //   });
-                                                              // }
-                                                              if (newpassword != confirmpassword ||
-                                                                  newpassword == "" ||
-                                                                  confirmpassword == "") {
-                                                                setStatePasswordDialog(() {
-                                                                  notinewmessage = "รหัสผ่านไม่ตรงกัน";
-                                                                  noticomessage = "รหัสผ่านไม่ตรงกัน";
-                                                                });
-                                                              } else {
-                                                                item['new_password'] = newpassword;
-                                                                final rescheckpass =
-                                                                    await ApiService.updateHardResetPasswordById(item);
-                                                                if (rescheckpass['status'] == 'success') {
-                                                                  Navigator.of(contextpass).pop();
-                                                                  _fetchData();
-                                                                  ScaffoldMessenger.of(contextpass).showSnackBar(
-                                                                    SnackBar(
-                                                                      content: Text("บันทึกรหัสผ่านเรียบร้อยแล้ว"),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                              }
-                                                            },
-                                                            child: Text("บันทึก"),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Text("เปลี่ยนรหัสผ่าน", style: TextStyle(color: Colors.deepOrange)),
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        SizedBox(height: 20, child: Text('Email', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 0.25),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          ),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              border: InputBorder.none,
-                                            ),
-                                            controller: emailControllers[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                temp[index]['email'] = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        SizedBox(height: 20, child: Text('phone', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 0.25),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          ),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                              border: InputBorder.none,
-                                            ),
-                                            controller: phoneControllers[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                temp[index]['phone_number'] = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        SizedBox(height: 20, child: Text('Address', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(width: 0.25),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          ),
-                                          child: TextField(
-                                            minLines: 3,
-                                            maxLines: 4,
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                              border: InputBorder.none,
-                                            ),
-                                            controller: addressControllers[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                temp[index]['address'] = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 20, child: Text('Role', style: TextStyle(fontSize: 12))),
-                                        Container(
-                                          width: maxwidth,
-                                          height: 60,
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Checkbox(
-                                                        value: temp[index]['role_id'] == '1',
-                                                        onChanged: (value) {
-                                                          setStateDialog(() {
-                                                            temp[index]['role_id'] = '1';
-                                                          });
-                                                        },
-                                                      ),
-                                                      Text("User"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Checkbox(
-                                                        value: temp[index]['role_id'] == '55',
-                                                        onChanged: (value) {
-                                                          setStateDialog(() {
-                                                            temp[index]['role_id'] = '55';
-                                                          });
-                                                        },
-                                                      ),
-                                                      Text("Admin"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Checkbox(
-                                                        value: temp[index]['role_id'] == '88',
-                                                        onChanged: (value) {
-                                                          setStateDialog(() {
-                                                            temp[index]['role_id'] = '88';
-                                                          });
-                                                        },
-                                                      ),
-                                                      Text("Super Admin"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                        Icon(Icons.chevron_right, color: Colors.grey[400]),
                                       ],
                                     ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          nameControllers[index].text = item['name'];
-                                          emailControllers[index].text = item['email'];
-                                          phoneControllers[index].text = item['phone_number'];
-                                          addressControllers[index].text = item['address'];
-                                          temp = filterUsers.map((e) => Map<String, dynamic>.from(e)).toList();
-                                        });
-                                      },
-                                      child: Text("ยกเลิก"),
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Email Address Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'EMAIL ADDRESS',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                child: TextField(
+                                  controller: emailControllers[index],
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[400]),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      temp[index]['email'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Phone Number Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'PHONE NUMBER',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                child: TextField(
+                                  controller: phoneControllers[index],
+                                  keyboardType: TextInputType.phone,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.phone_outlined, color: Colors.grey[400]),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      temp[index]['phone_number'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Address Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ADDRESS',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                child: TextField(
+                                  controller: addressControllers[index],
+                                  minLines: 3,
+                                  maxLines: 4,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.only(bottom: 50),
+                                      child: Icon(Icons.location_on_outlined, color: Colors.grey[400]),
                                     ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          filterUsers = temp.map((e) => Map<String, dynamic>.from(e)).toList();
-                                        });
-                                        var response = await ApiService.updateAccountById(filterUsers[index]);
-                                        if (response['status'] == 'success') {
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(SnackBar(content: Text("บันทึกสำเร็จ")));
-                                          _fetchData();
-                                        }
-                                      },
-                                      child: Text("บันทึก"),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      temp[index]['address'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Role Selection
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ROLE',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFB0B8C1),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey[300]!),
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          setStateDialog(() {
+                                            temp[index]['role_id'] = '1';
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Radio<String>(
+                                              value: '1',
+                                              groupValue: temp[index]['role_id'],
+                                              onChanged: (value) {
+                                                setStateDialog(() {
+                                                  temp[index]['role_id'] = value;
+                                                });
+                                              },
+                                              activeColor: Color(0xFFFF8300),
+                                            ),
+                                            Text(
+                                              "User",
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          setStateDialog(() {
+                                            temp[index]['role_id'] = '55';
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Radio<String>(
+                                              value: '55',
+                                              groupValue: temp[index]['role_id'],
+                                              onChanged: (value) {
+                                                setStateDialog(() {
+                                                  temp[index]['role_id'] = value;
+                                                });
+                                              },
+                                              activeColor: Color(0xFFFF8300),
+                                            ),
+                                            Text(
+                                              "Admin",
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          setStateDialog(() {
+                                            temp[index]['role_id'] = '88';
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Radio<String>(
+                                              value: '88',
+                                              groupValue: temp[index]['role_id'],
+                                              onChanged: (value) {
+                                                setStateDialog(() {
+                                                  temp[index]['role_id'] = value;
+                                                });
+                                              },
+                                              activeColor: Color(0xFFFF8300),
+                                            ),
+                                            Text(
+                                              "Super Admin",
+                                              style: TextStyle(fontSize: 11),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ],
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 32),
+                        ],
+                      ),
                     ),
-                  );
-                }),
-              ],
+                  ),
+                  
+                  // Action Buttons
+                  Container(
+                    padding: EdgeInsets.all(24),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                nameControllers[index].text = item['name'] ?? '';
+                                emailControllers[index].text = item['email'] ?? '';
+                                phoneControllers[index].text = item['phone_number'] ?? '';
+                                addressControllers[index].text = item['address'] ?? '';
+                                temp = filterUsers.map((e) => Map<String, dynamic>.from(e)).toList();
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(
+                              'ยกเลิก',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                filterUsers = temp.map((e) => Map<String, dynamic>.from(e)).toList();
+                              });
+                              var response = await ApiService.updateAccountById(filterUsers[index]);
+                              if (response['status'] == 'success') {
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("บันทึกสำเร็จ"),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                                _fetchData();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 255, 131, 0),
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'บันทึกการเปลี่ยนแปลง',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
+          );
+        },
+      );
+    },
+  );
+}
+
+  void _showPasswordDialog(BuildContext context, dynamic item) {
+    TextEditingController newpasswordController = TextEditingController();
+    TextEditingController confirmpasswordController = TextEditingController();
+    String notinewmessage = "";
+    String noticomessage = "";
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (contextpass, setStatePasswordDialog) {
+            return AlertDialog(
+              title: Text("แก้ไขรหัสผ่าน"),
+              content: Container(
+                height: 300,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(child: Text("รหัสผ่านใหม่")),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.25),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                            border: InputBorder.none,
+                          ),
+                          obscureText: true,
+                          controller: newpasswordController,
+                        ),
+                      ),
+                      Text(notinewmessage, style: TextStyle(color: Colors.red)),
+                      SizedBox(child: Text("ยืนยันรหัสผ่านใหม่")),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 0.25),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                            border: InputBorder.none,
+                          ),
+                          obscureText: true,
+                          controller: confirmpasswordController,
+                        ),
+                      ),
+                      Text(noticomessage, style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(contextpass).pop();
+                    newpasswordController.text = "";
+                    confirmpasswordController.text = "";
+                  },
+                  child: Text("ยกเลิก"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    setStatePasswordDialog(() {
+                      notinewmessage = "";
+                      noticomessage = "";
+                    });
+                    var newpassword = newpasswordController.text.trim();
+                    var confirmpassword = confirmpasswordController.text.trim();
+
+                    if (newpassword != confirmpassword || newpassword == "" || confirmpassword == "") {
+                      setStatePasswordDialog(() {
+                        notinewmessage = "รหัสผ่านไม่ตรงกัน";
+                        noticomessage = "รหัสผ่านไม่ตรงกัน";
+                      });
+                    } else {
+                      item['new_password'] = newpassword;
+                      final rescheckpass = await ApiService.updateHardResetPasswordById(item);
+                      if (rescheckpass['status'] == 'success') {
+                        Navigator.of(contextpass).pop();
+                        _fetchData();
+                        ScaffoldMessenger.of(contextpass).showSnackBar(
+                          SnackBar(content: Text("บันทึกรหัสผ่านเรียบร้อยแล้ว")),
+                        );
+                      }
+                    }
+                  },
+                  child: Text("บันทึก"),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
