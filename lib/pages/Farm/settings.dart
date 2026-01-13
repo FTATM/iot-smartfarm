@@ -21,218 +21,180 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isLoading = true;
+  bool isLoading = false;
   bool _isOpen = false;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.white,
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    final maxwidth = MediaQuery.of(context).size.width;
-    // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Container(
-          color: Colors.white,
-          width: maxwidth,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: maxwidth,
-                  // color: Colors.amber,
-                  height: 300,
-                  child: Column(
-                    spacing: 8,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(width: 125, height: 150, child: Image.asset('assets/images/Logo.png')),
-                      Container(
-                        child: Text(CurrentUser['name']??"NULL", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                      Container(child: Text("@${CurrentUser['username']??"NULL"}")),
-                    ],
-                  ),
-                ),
-                Container(
-                  // color: Colors.pink,
-                  width: maxwidth,
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    spacing: 4,
-                    children: [
-                      const Divider(),
-                      GestureDetector(
-                        child: _menuItem("Configuration", Icons.electric_meter_outlined, Colors.black),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => ConfigPage()));
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isOpen = !_isOpen;
-                          });
-                        },
-                        child: SizedBox(
-                          height: 40,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(child: Row(spacing: 4, children: [Icon(Icons.shape_line), Text("Management")])),
-                              Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child: Text(">")),
-                            ],
-                          ),
-                        ),
-                      ),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        child: _isOpen
-                            ? Container(
-                                margin: const EdgeInsets.only(top: 8),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      child: _menuItem("Branchs", Icons.account_tree, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const BranchPage()),
-                                        );
-                                      },
-                                    ),
-                                    GestureDetector(
-                                      child: _menuItem("Groups", Icons.group, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const GroupPage()),
-                                        );
-                                      },
-                                    ),
-                                    GestureDetector(
-                                      child: _menuItem("Devices", Icons.devices_other, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const DevicePage()),
-                                        );
-                                      },
-                                    ),
-                                    GestureDetector(
-                                      child: _menuItem("Dataxs", Icons.dataset, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const DataxPage()),
-                                        );
-                                      },
-                                    ),
-                                    GestureDetector(
-                                      child: _menuItem("Icons", Icons.widgets, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const IconsPage()),
-                                        );
-                                      },
-                                    ),
-                                    GestureDetector(
-                                      child: _menuItem("Users", Icons.manage_accounts, Colors.black),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const UserAdminPage()),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : const SizedBox(),
-                      ),
-                      GestureDetector(
-                        child: _menuItem("Schedule", Icons.schedule, Colors.black),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const SchedulePage()));
-                        },
-                      ),
-                      GestureDetector(
-                        child: _menuItem("Knowledge", Icons.menu_book, Colors.black),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GuidebookPage()));
-                        },
-                      ),
-                      const Divider(),
-                      GestureDetector(
-                        child: _menuItem("Account", Icons.account_box, Colors.black),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountPage()));
-                        },
-                      ),
-                      GestureDetector(
-                        child: _menuItem("Logout", Icons.logout, Colors.red),
-                        onTap: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.remove('user');
 
-                          // กลับไปหน้า LoginPage
-                          if (context.mounted) {
-                            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const LoginPage()),
-                              (route) => false,
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFE5E5E5),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // ================= PROFILE =================
+              const SizedBox(height: 32),
+              Container(
+                width: 120,
+                height: 120,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            ),
+                child: Image.asset('assets/images/Logo.png'),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                CurrentUser['name'] ?? "Administrator",
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "@${CurrentUser['username'] ?? 'admin'}",
+                style: const TextStyle(color: Colors.grey),
+              ),
+
+              const SizedBox(height: 32),
+
+              // ================= SETTINGS =================
+              _sectionTitle("Setting"),
+              _card([
+                _menuItem("Configuration", Icons.tune, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ConfigPage()));
+                }),
+                _menuItem("Management", Icons.group, () {
+                  setState(() => _isOpen = !_isOpen);
+                }),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  child: _isOpen
+                      ? Column(
+                          children: [
+                            _subMenu("Branchs", Icons.account_tree_sharp, () => _go(const BranchPage())),
+                            _subMenu("Groups", Icons.group, () => _go(const GroupPage())),
+                            _subMenu("Devices", Icons.devices, () => _go(const DevicePage())),
+                            _subMenu("Dataxs", Icons.data_usage, () => _go(const DataxPage())),
+                            _subMenu("Icons", Icons.image, () => _go(const IconsPage())),
+                            _subMenu("Users", Icons.person, () => _go(const UserAdminPage())),
+                          ],
+                        )
+                      : const SizedBox(),
+                ),
+                _menuItem("Schedule", Icons.schedule, () {
+                  _go(const SchedulePage());
+                }),
+                _menuItem("Knowledge", Icons.menu_book, () {
+                  _go(const GuidebookPage());
+                }),
+              ]),
+
+              const SizedBox(height: 24),
+
+              // ================= ACCOUNTS =================
+              _sectionTitle("Accounts"),
+              _card([
+                _menuItem("Accounts", Icons.person, () {
+                  _go(const AccountPage());
+                }),
+                _menuItem(
+                  "Logout",
+                  Icons.logout,
+                  () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove('user');
+                    if (context.mounted) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    }
+                  },
+                  color: Colors.red,
+                ),
+              ]),
+              const SizedBox(height: 40),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _menuItem(String text, IconData icon, Color color) {
-    return Container(
-      height: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            child: Row(
-              spacing: 6,
-              children: [
-                Icon(icon),
-                Text(text, style: TextStyle(color: color)),
-              ],
-            ),
-          ),
-          Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child: Text(">")),
-        ],
+  // ================= COMPONENTS =================
+
+  Widget _sectionTitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+        ),
       ),
     );
+  }
+
+  Widget _card(List<Widget> children) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _menuItem(
+    String text,
+    IconData icon,
+    VoidCallback onTap, {
+    Color color = Colors.black,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: Colors.orange),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(text, style: TextStyle(color: color, fontSize: 16)),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _subMenu(String text, IconData icon, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 60),
+      child: _menuItem(text, icon, onTap),
+    );
+  }
+
+  void _go(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
 }
