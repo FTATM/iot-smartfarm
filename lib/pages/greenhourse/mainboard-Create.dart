@@ -18,7 +18,8 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
   Map<String, dynamic> user = {};
   List<dynamic> data = [];
   List<dynamic> icons = [];
-  Map<String, dynamic> typeofValues = {"1": "Manaul", "2": "Time", "3": "Time custom"};
+  List<dynamic> sensors = [];
+  Map<String, dynamic> typeofValues = {"1": "Manual Value", "2": "Time Now", "3": "Time manual", "4": "Sensor"};
 
   List<TextEditingController> labelControllers = [];
   List<TextEditingController> manualController = [];
@@ -32,6 +33,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
   Future<void> _prepareData() async {
     await _fetchicons();
     await _fetchmainBoard();
+    await _fetchconfiguration();
     setState(() {
       user = CurrentUser;
       isLoading = false;
@@ -39,6 +41,8 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
       labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
       manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
+
+    print(sensors.toString());
   }
 
   Future<void> _fetchicons() async {
@@ -52,6 +56,13 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
     final response = await ApiService.fetchMainboard();
     setState(() {
       data = response['data'] as List;
+    });
+  }
+
+  Future<void> _fetchconfiguration() async {
+    final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
+    setState(() {
+      sensors = response['data'] as List;
     });
   }
 
@@ -113,7 +124,27 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
             ),
           ],
         );
-
+      case "4":
+        return DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            hintText: "เลือก",
+            filled: true,
+            fillColor: const Color(0xFFF9FAFB),
+            // contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: brandOrange),
+            ),
+          ),
+          items: sensors.map<DropdownMenuItem<String>>((b) {
+            return DropdownMenuItem(value: b['monitor_id'], child: Text(b['monitor_name']));
+          }).toList(),
+          onChanged: (value) {},
+        );
       default:
         return Text("โปรดเลือกประเภท", style: TextStyle(color: Colors.grey));
     }
@@ -122,10 +153,14 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height - kToolbarHeight;
+
     return Scaffold(
       appBar: AppbarWidget(txtt: 'Edit mainboard'),
       // drawer: const SideBarWidget(),
@@ -135,6 +170,8 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
             children: data.asMap().entries.map((entry) {
               int index = entry.key;
               var item = entry.value;
+
+              bool foundIcon = icons.where((i) => i['id'] == item['icon_id']).length > 0;
               return Container(
                 width: maxwidth,
                 // height: maxheight * 0.35,
@@ -215,7 +252,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
                                   width: maxwidth * 0.4,
                                   child: DropdownButton<String>(
                                     hint: Text("เลือก icon"),
-                                    value: item['icon_id'] == '0' ? '1' : item['icon_id'],
+                                    value: item['icon_id'] == '0' && foundIcon ? '1' : item['icon_id'],
                                     items: icons.map<DropdownMenuItem<String>>((icon) {
                                       return DropdownMenuItem(value: icon['id'], child: Text(icon['name']));
                                     }).toList(),

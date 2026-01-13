@@ -27,9 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -44,10 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 width: 120,
                 height: 120,
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                 child: Image.asset('assets/images/Logo.png'),
               ),
               const SizedBox(height: 16),
@@ -56,10 +51,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
-              Text(
-                "@${CurrentUser['username'] ?? 'admin'}",
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text("@${CurrentUser['username'] ?? 'admin'}", style: const TextStyle(color: Colors.grey)),
 
               const SizedBox(height: 32),
 
@@ -103,22 +95,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 _menuItem("Accounts", Icons.person, () {
                   _go(const AccountPage());
                 }),
-                _menuItem(
-                  "Logout",
-                  Icons.logout,
-                  () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.remove('user');
-                    if (context.mounted) {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                        (route) => false,
-                      );
-                    }
-                  },
-                  color: Colors.red,
-                ),
+                _menuItem("Logout", Icons.logout, () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('user');
+                  // กลับไปหน้า LoginPage
+                  if (context.mounted) {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (route) => false);
+                  }
+                  
+                }, color: Colors.red),
               ]),
               const SizedBox(height: 40),
             ],
@@ -147,20 +135,12 @@ class _SettingsPageState extends State<SettingsPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
       child: Column(children: children),
     );
   }
 
-  Widget _menuItem(
-    String text,
-    IconData icon,
-    VoidCallback onTap, {
-    Color color = Colors.black,
-  }) {
+  Widget _menuItem(String text, IconData icon, VoidCallback onTap, {Color color = Colors.black}) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -170,10 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              decoration: BoxDecoration(color: Colors.orange.shade50, borderRadius: BorderRadius.circular(10)),
               child: Icon(icon, color: Colors.orange),
             ),
             const SizedBox(width: 12),
@@ -188,10 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _subMenu(String text, IconData icon, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 60),
-      child: _menuItem(text, icon, onTap),
-    );
+    return Padding(padding: const EdgeInsets.only(left: 60), child: _menuItem(text, icon, onTap));
   }
 
   void _go(Widget page) {

@@ -39,7 +39,6 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       user = CurrentUser;
     });
-    print(user);
     await _fetchicons();
     await _fetchmainBoard();
     setState(() {
@@ -82,13 +81,14 @@ class _HomeOldPageState extends State<HomeOldPage> {
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(
+           backgroundColor: primaryColor,
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => MainboardCreatePage())).then((_) {
               _prepareData();
             });
           },
-          backgroundColor: Colors.white,
-          child: Icon(Icons.edit),
+          shape: const CircleBorder(), 
+          child: const Icon(Icons.edit, color: Colors.white, size: 20),
         ),
       ),
       body: Container(

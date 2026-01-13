@@ -48,12 +48,6 @@ class _LoginPageState extends State<LoginPage> {
     var username = _usernameController.text.trim();
     var password = _passwordController.text.trim();
 
-    // if (username.isEmpty || password.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน')));
-    //   setState(() => _isLoading = false);
-    //   return;
-    // }
-
     username = username == "" ? "superadmin" : username;
     password = password == "" ? "abc+123" : password;
     // baseURL = "49.0.69.152/iotsf/api-app";

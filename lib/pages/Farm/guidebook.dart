@@ -48,7 +48,7 @@ class _GuidebookPageState extends State<GuidebookPage> {
       );
     }
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
+    // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
     return Scaffold(
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
