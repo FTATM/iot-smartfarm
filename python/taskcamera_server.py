@@ -17,7 +17,7 @@ client = InferenceHTTPClient(
 WS_URI = "ws://localhost:8765"
 
 cam_list = {
-    "Camera1": "rtsp://192.168.1.168:554/",
+    "Camera1": "rtsp://192.168.1.168:554/",  #เปลี่ยน IP เป็น IP camera ของคุณ ที่นี่
 }
 
 FRAME_INTERVAL = 0.3  # ~3 FPS

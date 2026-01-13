@@ -1163,10 +1163,7 @@ class ApiService {
   static Future<Map<String, dynamic>> updateScheduleAll(List<dynamic> list) async {
     try {
       // print(jsonEncode(list));
-      final response = await http.post(
-        Uri.parse("${baseUrl}update-schedule.php"),
-        body: {'json': jsonEncode(list)},
-      );
+      final response = await http.post(Uri.parse("${baseUrl}update-schedule.php"), body: {'json': jsonEncode(list)});
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
@@ -1194,7 +1191,7 @@ class ApiService {
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
@@ -1209,7 +1206,7 @@ class ApiService {
     }
   }
 
-    // update Column
+  // update Column
   static Future<Map<String, dynamic>> deleteRowById(Map<String, dynamic> list) async {
     try {
       // print(jsonEncode(list));

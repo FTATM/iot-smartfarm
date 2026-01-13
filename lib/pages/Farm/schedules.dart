@@ -424,7 +424,7 @@ class _SchedulePageState extends State<SchedulePage> {
               ...rows.map<TableRow>((row) {
                 final start = row['d_start_day'];
                 final end = row['d_end_day'];
-                final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                // final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
 
                 return TableRow(
                   children: [
@@ -526,14 +526,15 @@ class _SchedulePageState extends State<SchedulePage> {
                       visible: isEdit,
                       child: IconButton(
                         onPressed: () async {
-                          var res = await ApiService.deleteRowById(row);
-                          if (res['status'] == 'success') {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบแถวสำเร็จ.")));
-                          } else {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text("ลบแถวไม่สำเร็จ กรุณาลองอีกครั้ง.")));
-                          }
+                          // var res = await ApiService.deleteRowById(row);
+                          // if (res['status'] == 'success') {
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบแถวสำเร็จ.")));
+                          // } else {
+                          //   ScaffoldMessenger.of(
+                          //     context,
+                          //   ).showSnackBar(SnackBar(content: Text("ลบแถวไม่สำเร็จ กรุณาลองอีกครั้ง.")));
+                          // }
+                          debugPrint(row.toString());
                         },
                         icon: Icon(Icons.delete, color: Colors.red),
                       ),
@@ -560,6 +561,7 @@ class _SchedulePageState extends State<SchedulePage> {
                               context,
                             ).showSnackBar(SnackBar(content: Text("ลบคอลัมไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                           }
+                          await prepare();
                         },
                         icon: Icon(Icons.delete, color: Colors.red),
                       ),
@@ -577,6 +579,7 @@ class _SchedulePageState extends State<SchedulePage> {
                               context,
                             ).showSnackBar(SnackBar(content: Text("ลบคอลัมไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                           }
+                          await prepare();
                         },
                         icon: Icon(Icons.delete, color: Colors.red),
                       ),
@@ -632,7 +635,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 onPressed: () {
                   Map<String, dynamic> newTable = {
                     'id': "Table_${parent['id']}_1",
-                    'name': "new column",
+                    'name': "${parent['name']}_$lengthColumn",
                     'label': "new Column",
                     'branch_id': parent['branch_id'],
                     'child_of_table_id': parent['id'],
@@ -663,11 +666,5 @@ class _SchedulePageState extends State<SchedulePage> {
         const SizedBox(height: 20),
       ],
     );
-  }
-
-  // ───────────────── Map child row by day range ─────────────────
-  String _matchChildValue(List rows, String s, String e) {
-    final match = rows.firstWhere((r) => r['d_start_day'] == s && r['d_end_day'] == e, orElse: () => null);
-    return match != null ? (match['d_value'] ?? "") : "-";
   }
 }
