@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
-// import 'package:iot_app/components/sidebar.dart';
 
 class ConfigCreatePage extends StatefulWidget {
   const ConfigCreatePage({super.key});
@@ -51,20 +50,16 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // ยกเลิก timer เมื่อออกจากหน้า
-    // for (var c in minControllers) {
-    //   c.dispose();
-    // }
-    // for (var c in maxControllers) {
-    //   c.dispose();
-    // }
+    _timer?.cancel();
+    nameController.dispose();
+    minValueController.dispose();
+    maxValueController.dispose();
+    lineValueController.dispose();
+    emailValueController.dispose();
     super.dispose();
   }
 
   void _fetchData() async {
-    // final response = await ApiService.fetchConfigBybranchId(
-    // CurrentUser['branch_id'],
-    // );
     final gres = await ApiService.fetchGroupsBybranchId(CurrentUser['branch_id']);
     final dres = await ApiService.fetchDevicesBybranchId(CurrentUser['branch_id']);
     final tres = await ApiService.fetchTypesBybranchId();
@@ -72,65 +67,13 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
 
     if (!mounted) return;
 
-    // ✅ อัปเดต state เพื่อให้ UI render ใหม่
     setState(() {
-      // data = response['data'] as List;
       groups = gres['data'] as List;
       devices = dres['data'] as List;
       types = tres['data'] as List;
       dataxs = xres['data'] as List;
 
       item['branch_id'] = CurrentUser['branch_id'];
-
-      // ✅ สร้าง controller สำหรับแต่ละ item
-      // minControllers = data
-      //     .map(
-      //       (item) => TextEditingController(
-      //         text: item['min_value']?.toString() ?? '',
-      //       ),
-      //     )
-      //     .toList();
-
-      // maxControllers = data
-      //     .map(
-      //       (item) => TextEditingController(
-      //         text: item['max_value']?.toString() ?? '',
-      //       ),
-      //     )
-      //     .toList();
-
-      // linesControllers = data
-      //     .map(
-      //       (item) => TextEditingController(
-      //         text: item['input_line']?.toString() ?? '',
-      //       ),
-      //     )
-      //     .toList();
-
-      // emailsControllers = data
-      //     .map(
-      //       (item) => TextEditingController(
-      //         text: item['input_email']?.toString() ?? '',
-      //       ),
-      //     )
-      //     .toList();
-
-      // selectedGroups = List.generate(
-      //   data.length,
-      //   (index) => data[index]['group_id']?.toString(),
-      // );
-      // selectedDevices = List.generate(
-      //   data.length,
-      //   (index) => data[index]['device_id']?.toString(),
-      // );
-      // selectedTypes = List.generate(
-      //   data.length,
-      //   (index) => data[index]['type_id']?.toString() ?? '',
-      // );
-      // selectedDataxs = List.generate(
-      //   data.length,
-      //   (index) => data[index]['datax_id']?.toString(),
-      // );
 
       isLoading = false;
     });
@@ -139,298 +82,463 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
-    final maxwidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppbarWidget(txtt: 'Create Configuration'),
-      // drawer: const SideBarWidget(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Create Configuration',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(12),
           child: Center(
-            child: SizedBox(
-              width: 480,
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 600),
+              margin: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Column(
                 children: [
+                  // Header with image
                   Container(
-                    width: double.infinity,
-                    height: 80,
+                    height: 120,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
-                      image: const DecorationImage(image: AssetImage('assets/images/default.jpg'), fit: BoxFit.cover),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/default.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.3),
+                            Colors.black.withOpacity(0.5),
+                          ],
+                        ),
+                      ),
+                      padding: EdgeInsets.all(20),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'New Configuration',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    width: 480,
+
+                  // Content
+                  Padding(
+                    padding: EdgeInsets.all(20),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          spacing: 20,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: maxwidth * 0.1, child: Text('Name :')),
-                            Expanded(
-                              child: TextField(
-                                controller: nameController,
-                                onChanged: (value) {
-                                  setState(() {
-                                    item['monitor_name'] = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
+                        // Name Field
+                        _buildTextField(
+                          label: 'Name',
+                          controller: nameController,
+                          onChanged: (value) {
+                            setState(() {
+                              item['monitor_name'] = value;
+                            });
+                          },
                         ),
-                        Divider(thickness: 2), // เส้นคั่นใต้หัวข้อ
-                        // Configuration
-                        Text('Configuration', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Row(
-                          spacing: 20,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: maxwidth * 0.1, child: Text('Group :')),
-                            DropdownButton<String>(
-                              value: item['group_id'],
-                              items: groups.map<DropdownMenuItem<String>>((group) {
-                                return DropdownMenuItem<String>(
-                                  value: group['group_id']?.toString(),
-                                  child: Text(group['group_name'] ?? ''),
-                                );
-                              }).toList(),
-                              onChanged: (valueg) {
-                                setState(() {
-                                  item['group_id'] = valueg;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          spacing: 20,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: maxwidth * 0.1, child: Text('Device :')),
-                            DropdownButton<String>(
-                              value: item['device_id'],
-                              items: devices.map<DropdownMenuItem<String>>((device) {
-                                return DropdownMenuItem<String>(
-                                  value: device['device_id']?.toString(),
-                                  child: Text(device['divice_name'] ?? ''),
-                                );
-                              }).toList(),
-                              onChanged: (valued) {
-                                setState(() {
-                                  item['device_id'] = valued;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          spacing: 20,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: maxwidth * 0.1, child: Text('Type :')),
-                            DropdownButton<String>(
-                              value: item['type_id'],
-                              items: types.map<DropdownMenuItem<String>>((type) {
-                                return DropdownMenuItem<String>(
-                                  value: type['type_id'],
-                                  child: Text('[${type['type_id']}] ${type['type_name']}'),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  item['type_id'] = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Row(
-                          spacing: 20,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: maxwidth * 0.1, child: Text('Data :')),
-                            DropdownButton<String>(
-                              value: item['datax_id'],
-                              items: dataxs.map<DropdownMenuItem<String>>((datax) {
-                                return DropdownMenuItem<String>(
-                                  value: datax['datax_id']?.toString(),
-                                  child: Text(datax['datax_name'] ?? ''),
-                                );
-                              }).toList(),
-                              onChanged: (valuex) {
-                                setState(() {
-                                  item['datax_id'] = valuex;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Divider(thickness: 2), // เส้นคั่นใต้หัวข้อ
-                        // Notify
-                        Text('Notify and Time', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Switch(
-                                  padding: EdgeInsets.only(right: 18),
-                                  value: item['is_min'] == '1',
-                                  onChanged: (value) {
-                                    setState(() {
-                                      item['is_min'] = value ? '1' : '0';
-                                    });
-                                  },
-                                  activeThumbColor: Colors.green,
-                                  inactiveThumbColor: Colors.grey,
-                                ),
-                                SizedBox(width: 50, child: Text("min :")),
-                                Expanded(
-                                  child: TextField(
-                                    controller: minValueController,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        item['min_value'] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Switch(
-                                  padding: EdgeInsets.only(right: 18),
-                                  value: item['is_max'] == '1',
-                                  onChanged: (value) {
-                                    setState(() {
-                                      item['is_max'] = value ? '1' : '0';
-                                    });
-                                  },
-                                  activeThumbColor: Colors.green,
-                                  inactiveThumbColor: Colors.grey,
-                                ),
-                                SizedBox(width: 50, child: Text("max :")),
-                                Expanded(
-                                  child: TextField(
-                                    controller: maxValueController,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        item['max_value'] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(width: 50, child: Text("Line :")),
-                                Expanded(
-                                  child: TextField(
-                                    controller: lineValueController,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        item['input_line'] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(width: 50, child: Text("Email :")),
-                                Expanded(
-                                  child: TextField(
-                                    controller: emailValueController,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        item['input_email'] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 380,
-                              child: ListView(
-                                children: daysList.asMap().entries.map((entry) {
-                                  final index = entry.key; // 0,1,2,3,...
-                                  final day = entry.value; // 'Mon', 'Tue', ...
+                        SizedBox(height: 24),
+                        Divider(thickness: 1, color: Colors.grey[300]),
+                        SizedBox(height: 20),
 
-                                  return CheckboxListTile(
-                                    title: Text(day),
-                                    value: listTime.contains(index),
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        if (value == true) {
-                                          listTime.add(index);
-                                        } else {
-                                          listTime.remove(index);
-                                        }
-                                        item['list_time_of_work'] = listTime.join(',');
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        Divider(thickness: 2), // เส้นคั่นใต้หัวข้อ
-                        SizedBox(
-                          height: 50,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              TextButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop(); // ปิด popup
-                                },
-                                child: const Text('ยกเลิก', style: TextStyle(color: Colors.white)),
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(Colors.red),
-                                  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 50, vertical: 16)),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  var res = await ApiService.createMonitorById(item);
-                                  if (res['status'] == 'success') {
-                                    Navigator.of(context).pop(); // ปิด popup
-                                  }
-                                },
-                                child: Text('บันทึก', style: TextStyle(color: Colors.white)),
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(Colors.green),
-                                  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 50, vertical: 16)),
-                                ),
-                                // style: TextButton.styleFrom(
-                                //   backgroundColor: Colors.green,
-                                //   padding: EdgeInsets.symmetric(),
-                                // ),
-                              ),
-                            ],
+                        // Configuration Section
+                        Text(
+                          'Configuration',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 16),
+
+                        // Group Dropdown
+                        _buildDropdownField(
+                          label: 'Group',
+                          value: item['group_id'],
+                          items: groups.map<DropdownMenuItem<String>>((group) {
+                            return DropdownMenuItem<String>(
+                              value: group['group_id']?.toString(),
+                              child: Text(group['group_name'] ?? ''),
+                            );
+                          }).toList(),
+                          onChanged: (valueg) {
+                            setState(() {
+                              item['group_id'] = valueg;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        // Device Dropdown
+                        _buildDropdownField(
+                          label: 'Device',
+                          value: item['device_id'],
+                          items: devices.map<DropdownMenuItem<String>>((device) {
+                            return DropdownMenuItem<String>(
+                              value: device['device_id']?.toString(),
+                              child: Text(
+                                device['divice_name'] ?? '',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (valued) {
+                            setState(() {
+                              item['device_id'] = valued;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        // Type Dropdown
+                        _buildDropdownField(
+                          label: 'Type',
+                          value: item['type_id'],
+                          items: types.map<DropdownMenuItem<String>>((type) {
+                            return DropdownMenuItem<String>(
+                              value: type['type_id'],
+                              child: Text('[${type['type_id']}] ${type['type_name']}'),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              item['type_id'] = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        // Data Dropdown
+                        _buildDropdownField(
+                          label: 'Data',
+                          value: item['datax_id'],
+                          items: dataxs.map<DropdownMenuItem<String>>((datax) {
+                            return DropdownMenuItem<String>(
+                              value: datax['datax_id']?.toString(),
+                              child: Text(datax['datax_name'] ?? ''),
+                            );
+                          }).toList(),
+                          onChanged: (valuex) {
+                            setState(() {
+                              item['datax_id'] = valuex;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        Divider(thickness: 1, color: Colors.grey[300]),
+                        SizedBox(height: 20),
+
+                        // Notify and Time Section
+                        Text(
+                          'Notify and Time',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+
+                        // Min Switch and Input
+                        Row(
+                          children: [
+                            Switch(
+                              value: item['is_min'] == '1',
+                              onChanged: (value) {
+                                setState(() {
+                                  item['is_min'] = value ? '1' : '0';
+                                });
+                              },
+                              activeColor: Color(0xFFFF9F43),
+                              inactiveThumbColor: Colors.grey,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'min',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFF5F5F5),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: TextField(
+                                  controller: minValueController,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      item['min_value'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),
+
+                        // Max Switch and Input
+                        Row(
+                          children: [
+                            Switch(
+                              value: item['is_max'] == '1',
+                              onChanged: (value) {
+                                setState(() {
+                                  item['is_max'] = value ? '1' : '0';
+                                });
+                              },
+                              activeColor: Color(0xFFFF9F43),
+                              inactiveThumbColor: Colors.grey,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'max',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFF5F5F5),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: TextField(
+                                  controller: maxValueController,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      item['max_value'] = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+
+                        // Line Input
+                        _buildTextField(
+                          label: 'Line',
+                          controller: lineValueController,
+                          onChanged: (value) {
+                            setState(() {
+                              item['input_line'] = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        // Email Input
+                        _buildTextField(
+                          label: 'Email',
+                          controller: emailValueController,
+                          onChanged: (value) {
+                            setState(() {
+                              item['input_email'] = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 24),
+
+                        // Days of Week Checkboxes
+                        ...daysList.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final day = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  day,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (listTime.contains(index)) {
+                                        listTime.remove(index);
+                                      } else {
+                                        listTime.add(index);
+                                      }
+                                      item['list_time_of_work'] = listTime.join(',');
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      color: listTime.contains(index)
+                                          ? Color(0xFFFF9F43)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: listTime.contains(index)
+                                            ? Color(0xFFFF9F43)
+                                            : Colors.grey[400]!,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: listTime.contains(index)
+                                        ? Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                            size: 18,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        SizedBox(height: 12),
+                      ],
+                    ),
+                  ),
+
+                  // Action Buttons
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey[300]!),
+                              ),
+                            ),
+                            child: Text(
+                              'ยกเลิก',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () async {
+                              var res = await ApiService.createMonitorById(item);
+                              if (res['status'] == 'success') {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              backgroundColor: Color(0xFFFF9F43),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              'บันทึก',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -440,6 +548,89 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownField({
+    required String label,
+    required String? value,
+    required List<DropdownMenuItem<String>> items,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 6),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButton<String>(
+            value: value,
+            items: items,
+            isExpanded: true,
+            underline: SizedBox(),
+            icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required Function(String) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 6),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: TextField(
+            controller: controller,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+            ),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
     );
   }
 }

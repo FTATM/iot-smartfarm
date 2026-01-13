@@ -36,13 +36,6 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     _prepareData();
-    // _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-    // final response = await ApiService.fetchDashboardBybranchId(CurrentUser['branch_id'].toString());
-    // if (!mounted) return;
-    // setState(() {
-    // data = response['data'] as List;
-    // });
-    // });
   }
 
   @override
@@ -87,7 +80,6 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _fetchDashboard(String branchId) async {
     final response = await ApiService.fetchDashboardBybranchId(branchId);
 
-    // ✅ อัปเดต state เพื่อให้ UI render ใหม่
     setState(() {
       data = response['data'] as List;
       clone = data.map((e) => Map<String, dynamic>.from(e)).toList();
@@ -107,14 +99,16 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Color(0xFFF5F5F5),
+        body: Center(child: CircularProgressIndicator(color: Color(0xFFFF9800))),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
     final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 250, 250, 250),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppbarWidget(txtt: user['b_name'] ?? "Loading..."),
-      // drawer: const SideBarWidget(),
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(
@@ -123,24 +117,15 @@ class _DashboardPageState extends State<DashboardPage> {
               isEdit = !isEdit;
             });
           },
-          backgroundColor: Colors.white,
-          child: Icon(Icons.edit),
+          backgroundColor: const Color(0xFFFF9800),
+          child: const Icon(Icons.edit, color: Colors.white),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 233, 233, 233),
-                  Color.fromARGB(255, 105, 105, 105),
-                  Color.fromARGB(255, 255, 255, 255),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+            color: const Color(0xFFF5F5F5),
+            padding: const EdgeInsets.all(12),
             child: Column(
               children: [
                 Visibility(
@@ -148,47 +133,79 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Container(
                     width: maxwidth,
                     height: 100,
-                    padding: EdgeInsets.all(4),
+                    margin: const EdgeInsets.only(bottom: 12),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        borderRadius: BorderRadius.circular(16),
                         color: Colors.white,
+                        border: Border.all(color: const Color(0xFFFF9800), width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: GestureDetector(
-                        child: Center(child: Icon(Icons.add)),
+                        child: const Center(
+                          child: Icon(Icons.add, color: Color(0xFFFF9800), size: 36),
+                        ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardCreatePage()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => DashboardCreatePage()),
+                          );
                         },
                       ),
                     ),
                   ),
                 ),
                 Wrap(
-                  direction: Axis.horizontal,
+                  spacing: 12,
+                  runSpacing: 12,
                   children: data.asMap().entries.map((entry) {
                     int index = entry.key;
                     var item = entry.value;
                     final bg = hexToColor(item['sub_bg_color_code'] ?? '#999999');
                     return Stack(
                       children: [
-                        DashboardBlogByIdWidget(
-                          type: item['item_type_id'],
-                          size: item['size'],
-                          title: item['item_name'],
-                          value: item['m_value'] ?? "0",
-                          isDialog: false,
-                          pathImage: item['i_path'] ?? "img/icons/default.png",
-                          color: bg,
-                          labelJson: jsonEncode(item['labels']),
-                          valueJson: jsonEncode(item['values']),
-                          onValueChanged: (keyVal, newVal) {
-                            setState(() {
-                              item[keyVal] = newVal; // อัปเดตค่าจริงใน parent !!
-                            });
-                          },
+                        Container(
+                          width: (maxwidth - 36) / double.parse(item['size']),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFFF9800), width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(13),
+                            child: DashboardBlogByIdWidget(
+                              type: item['item_type_id'],
+                              size: item['size'],
+                              title: item['item_name'],
+                              value: item['m_value'] ?? "0",
+                              isDialog: false,
+                              pathImage: item['i_path'] ?? "img/icons/default.png",
+                              color: bg,
+                              labelJson: jsonEncode(item['labels']),
+                              valueJson: jsonEncode(item['values']),
+                              onValueChanged: (keyVal, newVal) {
+                                setState(() {
+                                  item[keyVal] = newVal;
+                                });
+                              },
+                            ),
+                          ),
                         ),
                         SizedBox(
-                          width: maxwidth / double.parse(item['size']),
+                          width: (maxwidth - 36) / double.parse(item['size']),
                           child: Visibility(
                             visible: isEdit,
                             child: GestureDetector(
@@ -202,10 +219,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                           return element['dashboard_item_id'].toString() == item['id'];
                                         }).toList();
                                         return AlertDialog(
-                                          title: SizedBox(height: 20),
+                                          title: const SizedBox(height: 20),
                                           backgroundColor: Colors.white,
-                                          titlePadding: EdgeInsets.all(0),
-                                          contentPadding: EdgeInsets.all(0),
+                                          titlePadding: const EdgeInsets.all(0),
+                                          contentPadding: const EdgeInsets.all(0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
                                           content: SizedBox(
                                             width: maxwidth,
                                             height: maxheight > 500 ? 500 : maxheight,
@@ -215,29 +235,45 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Center(
-                                                    child: DashboardBlogByIdWidget(
-                                                      type: item['item_type_id'],
-                                                      size: item['size'],
-                                                      title: item['item_name'],
-                                                      value: item['m_value'] ?? "0",
-                                                      isDialog: false,
-                                                      pathImage: item['i_path'] ?? "img/icons/default.png",
-                                                      color: bg,
-                                                      labelJson: jsonEncode(item['labels']),
-                                                      valueJson: jsonEncode(item['values']),
-                                                      onValueChanged: (keyVal, newVal) {
-                                                        setState(() {});
-                                                      },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(12),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(16),
+                                                          border: Border.all(
+                                                            color: const Color(0xFFFF9800),
+                                                            width: 3,
+                                                          ),
+                                                        ),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(13),
+                                                          child: DashboardBlogByIdWidget(
+                                                            type: item['item_type_id'],
+                                                            size: item['size'],
+                                                            title: item['item_name'],
+                                                            value: item['m_value'] ?? "0",
+                                                            isDialog: false,
+                                                            pathImage: item['i_path'] ?? "img/icons/default.png",
+                                                            color: bg,
+                                                            labelJson: jsonEncode(item['labels']),
+                                                            valueJson: jsonEncode(item['values']),
+                                                            onValueChanged: (keyVal, newVal) {
+                                                              setState(() {});
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                   const Divider(),
                                                   Container(
-                                                    padding: EdgeInsets.all(12),
+                                                    padding: const EdgeInsets.all(12),
                                                     child: Column(
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            SizedBox(width: maxwidth * 0.15, child: Text("Name :")),
+                                                            SizedBox(width: maxwidth * 0.15, child: const Text("Name :")),
                                                             Expanded(
                                                               child: TextField(
                                                                 controller: nameControllers[index],
@@ -249,10 +285,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ),
                                                           ],
                                                         ),
-                                                        SizedBox(height: 10),
+                                                        const SizedBox(height: 10),
                                                         Row(
                                                           children: [
-                                                            SizedBox(width: maxwidth * 0.15, child: Text("Size :")),
+                                                            SizedBox(width: maxwidth * 0.15, child: const Text("Size :")),
                                                             Expanded(
                                                               child: Row(
                                                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -262,10 +298,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                       Checkbox(
                                                                         value: sizeControllers[index].text == "1",
                                                                         onChanged: (v) {
-                                                                          // setState(() {
-                                                                          //   data[index]['size'] =
-                                                                          //       "1";
-                                                                          // });
                                                                           setStateDialog(() {
                                                                             sizeControllers[index].text = '1';
                                                                             clone[index]['size'] = '1';
@@ -273,7 +305,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                           });
                                                                         },
                                                                       ),
-                                                                      Text("Large"),
+                                                                      const Text("Large"),
                                                                     ],
                                                                   ),
                                                                   Column(
@@ -281,10 +313,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                       Checkbox(
                                                                         value: sizeControllers[index].text == "2",
                                                                         onChanged: (v) {
-                                                                          // setState(() {
-                                                                          //   data[index]['size'] =
-                                                                          //       "2";
-                                                                          // });
                                                                           setStateDialog(() {
                                                                             sizeControllers[index].text = '2';
                                                                             clone[index]['size'] = '2';
@@ -292,7 +320,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                           });
                                                                         },
                                                                       ),
-                                                                      Text("Medium"),
+                                                                      const Text("Medium"),
                                                                     ],
                                                                   ),
                                                                   Column(
@@ -300,10 +328,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                       Checkbox(
                                                                         value: sizeControllers[index].text == "3",
                                                                         onChanged: (v) {
-                                                                          // setState(() {
-                                                                          //   data[index]['size'] =
-                                                                          //       "3";
-                                                                          // });
                                                                           setStateDialog(() {
                                                                             sizeControllers[index].text = '3';
                                                                             clone[index]['size'] = '3';
@@ -311,7 +335,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                           });
                                                                         },
                                                                       ),
-                                                                      Text("Small"),
+                                                                      const Text("Small"),
                                                                     ],
                                                                   ),
                                                                 ],
@@ -319,12 +343,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ),
                                                           ],
                                                         ),
-                                                        Container(
+                                                        SizedBox(
                                                           width: maxwidth * 0.8,
                                                           height: 60,
                                                           child: Row(
                                                             children: [
-                                                              SizedBox(width: maxwidth * 0.15, child: Text("Icon :")),
+                                                              SizedBox(width: maxwidth * 0.15, child: const Text("Icon :")),
                                                               SizedBox(
                                                                 width: maxwidth * 0.5,
                                                                 child: DropdownButton<String>(
@@ -340,27 +364,23 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                     setStateDialog(() {
                                                                       item['icon_id'] = valuex;
                                                                     });
-                                                                    // setState(() {
-                                                                    //   item['icon_id'] =
-                                                                    //       valuex;
-                                                                    // });
                                                                   },
                                                                 ),
                                                               ),
                                                             ],
                                                           ),
                                                         ),
-                                                        Container(
+                                                        SizedBox(
                                                           width: maxwidth,
                                                           height: 30,
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
-                                                              Text("Data :", textAlign: TextAlign.left),
+                                                              const Text("Data :", textAlign: TextAlign.left),
                                                               Container(
-                                                                padding: EdgeInsets.only(right: 10),
+                                                                padding: const EdgeInsets.only(right: 10),
                                                                 child: GestureDetector(
-                                                                  child: Icon(Icons.add),
+                                                                  child: const Icon(Icons.add),
                                                                   onTap: () async {
                                                                     Map<String, dynamic> data = {};
                                                                     final result = await showDialog(
@@ -382,12 +402,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                           await ApiService.createSubDashboard(data);
                                                                       if (response['status'] == 'success') {
                                                                         ScaffoldMessenger.of(context).showSnackBar(
-                                                                          SnackBar(content: Text("เพิ่มข้อมูลสำเร็จ")),
+                                                                          const SnackBar(content: Text("เพิ่มข้อมูลสำเร็จ")),
                                                                         );
                                                                         _prepareData();
                                                                       } else {
                                                                         ScaffoldMessenger.of(context).showSnackBar(
-                                                                          SnackBar(
+                                                                          const SnackBar(
                                                                             content: Text(
                                                                               "การบันทึกข้อมูล เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง.",
                                                                             ),
@@ -401,115 +421,112 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Container(
-                                                          child: Column(
-                                                            children: filtered.asMap().entries.map((entry2) {
-                                                              // int index2 = entry2.key;
-                                                              var item2 = entry2.value;
-                                                              return Container(
-                                                                margin: const EdgeInsets.only(bottom: 8),
-                                                                padding: const EdgeInsets.all(12),
-                                                                decoration: BoxDecoration(
-                                                                  color: const Color.fromARGB(255, 231, 231, 231),
-                                                                  borderRadius: BorderRadius.circular(8),
-                                                                ),
-                                                                child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                  children: [
-                                                                    Row(
-                                                                      children: [
-                                                                        Text("ID : "),
-                                                                        Text(
-                                                                          "${item2["monitor_id"]}",
-                                                                          style: TextStyle(fontSize: 16),
-                                                                        ),
-                                                                      ],
+                                                        Column(
+                                                          children: filtered.asMap().entries.map((entry2) {
+                                                            var item2 = entry2.value;
+                                                            return Container(
+                                                              margin: const EdgeInsets.only(bottom: 8),
+                                                              padding: const EdgeInsets.all(12),
+                                                              decoration: BoxDecoration(
+                                                                color: const Color.fromARGB(255, 231, 231, 231),
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      const Text("ID : "),
+                                                                      Text(
+                                                                        "${item2["monitor_id"]}",
+                                                                        style: const TextStyle(fontSize: 16),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Text(
+                                                                    item2["label_name"],
+                                                                    style: const TextStyle(
+                                                                      fontSize: 16,
+                                                                      fontWeight: FontWeight.bold,
                                                                     ),
-                                                                    Text(
-                                                                      item2["label_name"],
-                                                                      style: TextStyle(
-                                                                        fontSize: 16,
-                                                                        fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                  Container(
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                    decoration: BoxDecoration(
+                                                                      border: Border.all(),
+                                                                      color: hexToColor(
+                                                                        item2['label_color_code'] ?? "",
                                                                       ),
                                                                     ),
-                                                                    Container(
-                                                                      width: 30,
-                                                                      height: 30,
-                                                                      decoration: BoxDecoration(
-                                                                        border: Border.all(),
-                                                                        color: hexToColor(
-                                                                          item2['label_color_code'] ?? "",
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () async {
+                                                                      final result = await showDialog(
+                                                                        context: context,
+                                                                        builder: (context) => EditDashboardItemDialog(
+                                                                          subItem: item2,
+                                                                          monitors: monitors,
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                    GestureDetector(
-                                                                      onTap: () async {
-                                                                        final result = await showDialog(
-                                                                          context: context,
-                                                                          builder: (context) => EditDashboardItemDialog(
-                                                                            subItem: item2,
-                                                                            monitors: monitors,
-                                                                          ),
-                                                                        );
+                                                                      );
 
-                                                                        if (result != null) {
-                                                                          if (result['delete']) {
-                                                                            var response =
-                                                                                await ApiService.deleteSubDashboardById(
-                                                                                  item2,
-                                                                                );
-                                                                            if (response['status'] == 'success') {
-                                                                              ScaffoldMessenger.of(
-                                                                                context,
-                                                                              ).showSnackBar(
-                                                                                SnackBar(
-                                                                                  content: Text("ลบข้อมูลสำเร็จ"),
-                                                                                ),
+                                                                      if (result != null) {
+                                                                        if (result['delete']) {
+                                                                          var response =
+                                                                              await ApiService.deleteSubDashboardById(
+                                                                                item2,
                                                                               );
-                                                                            }
-                                                                          } else {
-                                                                            setStateDialog(() {
-                                                                              item2['monitor_id'] =
-                                                                                  result['monitor_id'];
-                                                                              item2['label_color_code'] =
-                                                                                  result['label_color_code'];
-                                                                            });
-
-                                                                            var response =
-                                                                                await ApiService.updateSubDashboardById(
-                                                                                  item2,
-                                                                                );
-                                                                            if (response['status'] == 'success') {
-                                                                              ScaffoldMessenger.of(
-                                                                                context,
-                                                                              ).showSnackBar(
-                                                                                SnackBar(
-                                                                                  content: Text("แก้ไขข้อมูลสำเร็จ"),
-                                                                                ),
-                                                                              );
-                                                                            } else {
-                                                                              ScaffoldMessenger.of(
-                                                                                context,
-                                                                              ).showSnackBar(
-                                                                                SnackBar(
-                                                                                  content: Text(
-                                                                                    "บันทึกข้อมูล เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง.",
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            }
+                                                                          if (response['status'] == 'success') {
+                                                                            ScaffoldMessenger.of(
+                                                                              context,
+                                                                            ).showSnackBar(
+                                                                              const SnackBar(
+                                                                                content: Text("ลบข้อมูลสำเร็จ"),
+                                                                              ),
+                                                                            );
                                                                           }
-                                                                          Navigator.of(context).pop();
-                                                                          _prepareData();
+                                                                        } else {
+                                                                          setStateDialog(() {
+                                                                            item2['monitor_id'] =
+                                                                                result['monitor_id'];
+                                                                            item2['label_color_code'] =
+                                                                                result['label_color_code'];
+                                                                          });
+
+                                                                          var response =
+                                                                              await ApiService.updateSubDashboardById(
+                                                                                item2,
+                                                                              );
+                                                                          if (response['status'] == 'success') {
+                                                                            ScaffoldMessenger.of(
+                                                                              context,
+                                                                            ).showSnackBar(
+                                                                              const SnackBar(
+                                                                                content: Text("แก้ไขข้อมูลสำเร็จ"),
+                                                                              ),
+                                                                            );
+                                                                          } else {
+                                                                            ScaffoldMessenger.of(
+                                                                              context,
+                                                                            ).showSnackBar(
+                                                                              const SnackBar(
+                                                                                content: Text(
+                                                                                  "บันทึกข้อมูล เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง.",
+                                                                                ),
+                                                                              ),
+                                                                            );
+                                                                          }
                                                                         }
-                                                                      },
-                                                                      child: Icon(Icons.edit),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            }).toList(),
-                                                          ),
+                                                                        Navigator.of(context).pop();
+                                                                        _prepareData();
+                                                                      }
+                                                                    },
+                                                                    child: const Icon(Icons.edit),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          }).toList(),
                                                         ),
                                                       ],
                                                     ),
@@ -523,7 +540,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 TextButton(
-                                                  style: ButtonStyle(
+                                                  style: const ButtonStyle(
                                                     backgroundColor: WidgetStatePropertyAll(Colors.red),
                                                   ),
                                                   onPressed: () async {
@@ -532,7 +549,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       _fetchDashboard(CurrentUser['branch_id']);
                                                       ScaffoldMessenger.of(
                                                         context,
-                                                      ).showSnackBar(SnackBar(content: Text("ลบสำเร็จ")));
+                                                      ).showSnackBar(const SnackBar(content: Text("ลบสำเร็จ")));
                                                       Navigator.of(context).pop();
                                                     }
                                                   },
@@ -542,7 +559,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                   children: [
                                                     TextButton(
                                                       onPressed: () async {
-                                                        Navigator.of(context).pop(); // ปิด popup
+                                                        Navigator.of(context).pop();
                                                         setState(() {
                                                           clone[index] = Map<String, dynamic>.from(data[index]);
                                                         });
@@ -551,13 +568,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     ),
                                                     TextButton(
                                                       onPressed: () async {
-                                                        Navigator.of(context).pop(); // ปิด popup
+                                                        Navigator.of(context).pop();
 
                                                         setState(() {
                                                           data[index] = clone[index];
-                                                          // Map<String, dynamic>.from(
-                                                          //   clone[index],
-                                                          // );
                                                         });
 
                                                         await ApiService.updateDashboardById(item);
@@ -582,9 +596,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                   },
                                 );
                               },
-                              child: Align(
-                                alignment: AlignmentGeometry.centerRight,
-                                child: Padding(padding: EdgeInsets.all(6), child: Icon(Icons.edit, size: 16)),
+                              child: const Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: EdgeInsets.all(6),
+                                  child: Icon(Icons.edit, size: 16),
+                                ),
                               ),
                             ),
                           ),

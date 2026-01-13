@@ -70,135 +70,146 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white,body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Color(0xFFF5F5F5),
+        body: Center(
+          child: CircularProgressIndicator(color: Color(0xFFFF9800)),
+        ),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 250, 250),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppbarWidget(txtt: 'Create Dashboard'),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(12),
-          child: Center(
+          padding: const EdgeInsets.all(16),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFFF9800), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
             child: Column(
-              spacing: 4,
               children: [
-                Container(
-                  width: maxwidth,
-                  child: Row(
-                    children: [
-                      Container(width: maxwidth * 0.15, child: Text("Name : ")),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "ใส่ชื่อ Dashboard",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              data['name'] = value;
-                            });
-                          },
-                        ),
+                // Name Field
+                _buildFormField(
+                  label: "Name :",
+                  maxwidth: maxwidth,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "ใส่ชื่อ Dashboard",
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
-                    ],
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        data['name'] = value;
+                      });
+                    },
                   ),
                 ),
-                Container(
-                  width: maxwidth,
+                const SizedBox(height: 16),
+
+                // Type Field
+                _buildFormField(
+                  label: "Type :",
+                  maxwidth: maxwidth,
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    value: data['type_dashboard_id'],
+                    isExpanded: true,
+                    hint: Text("เลือกประเภท Dashboard", style: TextStyle(color: Colors.grey[400])),
+                    items: typeDashboards.map<DropdownMenuItem<String>>((type) {
+                      return DropdownMenuItem(value: type['id'], child: Text(type['type_name']));
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        data['type_dashboard_id'] = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Size Field
+                _buildFormField(
+                  label: "Size :",
+                  maxwidth: maxwidth,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildSizeOption("Large", "1"),
+                        _buildSizeOption("Medium", "2"),
+                        _buildSizeOption("Small", "3"),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Icon Field
+                _buildFormField(
+                  label: "Icon :",
+                  maxwidth: maxwidth,
                   child: Row(
                     children: [
-                      Container(width: maxwidth * 0.15, child: Text("Type : ")),
                       Expanded(
                         child: DropdownButtonFormField(
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
-                          initialValue: data['type_dashboard_id'],
+                          value: data['icon_id'],
                           isExpanded: true,
-                          hint: Text("เลือกประเภท Dashboard"),
-                          items: typeDashboards.map<DropdownMenuItem<String>>((type) {
-                            return DropdownMenuItem(value: type['id'], child: Text(type['type_name']));
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              data['type_dashboard_id'] = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: maxwidth,
-                  child: Row(
-                    children: [
-                      SizedBox(width: maxwidth * 0.15, child: Text("size :")),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Checkbox(
-                                  value: data['size'] == "1",
-                                  onChanged: (v) {
-                                    setState(() {
-                                      data['size'] = '1';
-                                    });
-                                  },
-                                ),
-                                Text("Large"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Checkbox(
-                                  value: data['size'] == "2",
-                                  onChanged: (v) {
-                                    setState(() {
-                                      data['size'] = '2';
-                                    });
-                                  },
-                                ),
-                                Text("Medium"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Checkbox(
-                                  value: data['size'] == "3",
-                                  onChanged: (v) {
-                                    setState(() {
-                                      data['size'] = '3';
-                                    });
-                                  },
-                                ),
-                                Text("Small"),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: maxwidth,
-                  child: Row(
-                    children: [
-                      SizedBox(width: maxwidth * 0.15, child: Text("Icon :")),
-                      Expanded(
-                        child: DropdownButtonFormField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          ),
-                          initialValue: data['icon_id'],
-                          isExpanded: true,
-                          hint: Text("เลือกไอคอน"),
+                          hint: Text("เลือกไอคอน", style: TextStyle(color: Colors.grey[400])),
                           items: icons.map<DropdownMenuItem<String>>((icons) {
                             return DropdownMenuItem<String>(
                               value: icons['id']?.toString(),
@@ -212,35 +223,98 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                           },
                         ),
                       ),
-                      SizedBox(
-                        width: maxwidth * 0.15,
+                      const SizedBox(width: 12),
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF3E0),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFFF9800), width: 2),
+                        ),
                         child: data['icon_id'] != null
-                            ? Image.network(
-                                // ignore: prefer_interpolation_to_compose_strings
-                                "${CurrentUser['baseURL']}../" +
-                                    icons.firstWhere(
-                                      (i) => i['id'] == data['icon_id'],
-                                      orElse: () => {"path": "img/icons/default.png"},
-                                    )['path'],
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Image.network(
+                                  "${CurrentUser['baseURL']}../" +
+                                      icons.firstWhere(
+                                        (i) => i['id'] == data['icon_id'],
+                                        orElse: () => {"path": "img/icons/default.png"},
+                                      )['path'],
+                                  fit: BoxFit.contain,
+                                ),
                               )
-                            : Text("  "),
+                            : const Icon(Icons.image_outlined, color: Color(0xFFFF9800)),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  width: maxwidth,
-                  child: Row(
+                const SizedBox(height: 16),
+
+                // Data Field
+                _buildFormField(
+                  label: "Data :",
+                  maxwidth: maxwidth,
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    isExpanded: true,
+                    hint: Text("เลือกข้อมูล", style: TextStyle(color: Colors.grey[400])),
+                    items: monitors.map<DropdownMenuItem<String>>((monitor) {
+                      return DropdownMenuItem<String>(
+                        value: monitor['monitor_id'],
+                        child: Text('[${monitor['monitor_id']}] ${monitor['monitor_name'] ?? ""}'),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        listvalues[0] = value;
+                        data['data'] = listvalues;
+                      });
+                    },
+                  ),
+                ),
+
+                // Monitor Field (Conditional)
+                Visibility(
+                  visible: ['2', '5', '6', '12'].contains(data['type_dashboard_id']),
+                  child: Column(
                     children: [
-                      SizedBox(width: maxwidth * 0.15, child: Text("data :")),
-                      Expanded(
+                      const SizedBox(height: 16),
+                      _buildFormField(
+                        label: "Monitor :",
+                        maxwidth: maxwidth,
                         child: DropdownButtonFormField(
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
                           isExpanded: true,
-                          hint: Text("เลือกข้อมูล"),
+                          hint: Text("เลือกข้อมูล", style: TextStyle(color: Colors.grey[400])),
                           items: monitors.map<DropdownMenuItem<String>>((monitor) {
                             return DropdownMenuItem<String>(
                               value: monitor['monitor_id'],
@@ -249,7 +323,7 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                           }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              listvalues[0] = value;
+                              listvalues[1] = value;
                               data['data'] = listvalues;
                             });
                           },
@@ -258,62 +332,43 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                     ],
                   ),
                 ),
-                Container(
-                  width: maxwidth,
-                  child: Visibility(
-                    visible: ['2', '5', '6', '12'].contains(data['type_dashboard_id']),
-                    child: Row(
-                      children: [
-                        SizedBox(width: maxwidth * 0.15, child: Text("Monitor :")),
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            ),
-                            isExpanded: true,
-                            hint: Text("เลือกข้อมูล"),
-                            items: monitors.map<DropdownMenuItem<String>>((monitor) {
-                              return DropdownMenuItem<String>(
-                                value: monitor['monitor_id'],
-                                child: Text('[${monitor['monitor_id']}] ${monitor['monitor_name'] ?? ""}'),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                listvalues[1] = value;
-                                data['data'] = listvalues;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  width: maxwidth,
-                  child: Visibility(
-                    visible:
-                        !listEquals(listvalues, [0, 0]) &&
-                        data['icon_id'] != null &&
-                        data['type_dashboard_id'] != null &&
-                        data['name'] != null,
 
-                    child: SizedBox(
-                      child: TextButton(
-                        style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.green)),
-                        onPressed: () async {
-                          var response = await ApiService.createDashboard(data);
-                          if (response['status'] == 'success') {
-                            data['dashboard_id'] = response['id'];
-                            var res = await ApiService.createSubDashboard(data);
-                            if (res['status'] == 'success') {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => DashboardPage()));
-                            }
+                const SizedBox(height: 24),
+
+                // Save Button
+                Visibility(
+                  visible: !listEquals(listvalues, [0, 0]) &&
+                      data['icon_id'] != null &&
+                      data['type_dashboard_id'] != null &&
+                      data['name'] != null,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF9800),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      onPressed: () async {
+                        var response = await ApiService.createDashboard(data);
+                        if (response['status'] == 'success') {
+                          data['dashboard_id'] = response['id'];
+                          var res = await ApiService.createSubDashboard(data);
+                          if (res['status'] == 'success') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const DashboardPage()),
+                            );
                           }
-                        },
-                        child: Text("Save", style: TextStyle(color: Colors.white)),
+                        }
+                      },
+                      child: const Text(
+                        "บันทึก",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -321,6 +376,80 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormField({
+    required String label,
+    required double maxwidth,
+    required Widget child,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: maxwidth * 0.2,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF333333),
+            ),
+          ),
+        ),
+        Expanded(child: child),
+      ],
+    );
+  }
+
+  Widget _buildSizeOption(String label, String value) {
+    final isSelected = data['size'] == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          data['size'] = value;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFFF3E0) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFFF9800) : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFFF9800) : Colors.grey[400]!,
+                  width: 2,
+                ),
+                color: isSelected ? const Color(0xFFFF9800) : Colors.transparent,
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 16, color: Colors.white)
+                  : null,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? const Color(0xFFFF9800) : Colors.grey[600],
+              ),
+            ),
+          ],
         ),
       ),
     );

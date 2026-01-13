@@ -34,29 +34,60 @@ class _KnowledgePageState extends State<KnowledgePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: Colors.grey.shade50,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                strokeWidth: 3,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'กำลังโหลดข้อมูล...',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
-    // แยก parent / child
     final parentTables = tables.where((e) => e['child_of_table_id'] == null).toList();
     final childTables = tables.where((e) => e['child_of_table_id'] != null).toList();
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white, title: const Text("Farm Standards")),
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppBar(
+        backgroundColor: whiteColor,
+        elevation: 0,
+        title: Text(
+          "ข้อมูลพื้นฐานฟาร์ม",
+          style: TextStyle(
+            color: blackColor,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            color: Colors.grey.shade200,
+          ),
+        ),
+      ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
-          // ───────── Single Tables ─────────
+          // Single Tables
           for (var item in parentTables.where((e) => !childTables.any((c) => c['child_of_table_id'] == e['id'])))
             _buildSingleTable(item),
 
-          const SizedBox(height: 24),
-
-          // ───────── Parent + Child Tables ─────────
+          // Parent + Child Tables
           for (var parent in parentTables.where((e) => childTables.any((c) => c['child_of_table_id'] == e['id'])))
             _buildParentChildTable(parent, childTables),
         ],
@@ -64,148 +95,329 @@ class _KnowledgePageState extends State<KnowledgePage> {
     );
   }
 
-  // ───────────────── Single Table ─────────────────
   Widget _buildSingleTable(dynamic item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.only(top: 10),
-          color: primaryColor,
-          child: Text("${item['label']}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with icon
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: whiteColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    _getIconForTable(item['label']),
+                    color: whiteColor,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    "${item['label']}",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Table(
-            border: TableBorder.all(color: Colors.grey.shade300),
-            columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(1)},
-            children: [
-              TableRow(
-                decoration: BoxDecoration(color: Colors.grey.shade100),
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Center(child: Text("Day")),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Center(child: Text("Value")),
-                  ),
-                ],
+          // Table content
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Table(
+              border: TableBorder(
+                horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
               ),
-              ...item['rows'].map<TableRow>((row) {
-                final start = row['d_start_day'];
-                final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
-                return TableRow(
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(1.2),
+              },
+              children: [
+                TableRow(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Center(child: Text("$start - $endView")),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      child: Text(
+                        "ช่วงวัน",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Center(child: Text(row['d_value'] ?? "")),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      child: Text(
+                        "ค่ามาตรฐาน",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
-                );
-              }).toList(),
-            ],
+                ),
+                ...item['rows'].map<TableRow>((row) {
+                  final start = row['d_start_day'];
+                  final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                  return TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        child: Text(
+                          "$start - $endView",
+                          style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        child: Text(
+                          row['d_value'] ?? "-",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: blackColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
           ),
-        ),
-
-        const SizedBox(height: 24),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildParentChildTable(dynamic parent, List<dynamic> children) {
     final childList = children.where((c) => c['child_of_table_id']?.toString() == parent['id'].toString()).toList();
-
     final List rows = parent['rows'] ?? [];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 500,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
-          child: Text(parent['label'], style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Table(
-            border: TableBorder.all(color: Colors.grey.shade300),
-
-            columnWidths: {
-              0: const FlexColumnWidth(0.75),
-              for (int i = 0; i < childList.length + 1; i++) i + 1: const FlexColumnWidth(1),
-            },
-            children: [
-              // ───── Header ─────
-              TableRow(
-                decoration: BoxDecoration(color: Colors.grey.shade100),
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Center(child: Text("Day")),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: whiteColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Center(child: Text(parent['label'] ?? "")),
+                  child: Icon(
+                    _getIconForTable(parent['label']),
+                    color: whiteColor,
+                    size: 20,
                   ),
-                  for (var c in childList)
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Center(child: Text(c['label'] ?? "")),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    parent['label'],
+                    style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
                     ),
-                ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Table content
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(16),
+            child: Table(
+              border: TableBorder(
+                horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
               ),
-
-              // ───── Data Rows ─────
-              ...rows.map<TableRow>((row) {
-                final start = row['d_start_day'];
-                final end = row['d_end_day'];
-                final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
-
-                return TableRow(
+              columnWidths: {
+                0: const FixedColumnWidth(100),
+                for (int i = 0; i < childList.length + 1; i++) 
+                  i + 1: const FixedColumnWidth(140),
+              },
+              defaultColumnWidth: const FixedColumnWidth(140),
+              children: [
+                // Header row
+                TableRow(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Center(child: Text("$start - $endView")),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      child: Text(
+                        "ช่วงวัน",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-
-                    // ค่า parent
                     Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Center(child: Text(row['d_value'] ?? "")),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      child: Text(
+                        parent['label'] ?? "",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-
-                    // ค่า child
                     for (var c in childList)
                       Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Center(child: Text(_matchChildValue(c['rows'] ?? [], start, end))),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        child: Text(
+                          c['label'] ?? "",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.grey.shade700,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                   ],
-                );
-              }).toList(),
-            ],
-          ),
-        ),
+                ),
 
-        const SizedBox(height: 20),
-      ],
+                // Data rows
+                ...rows.map<TableRow>((row) {
+                  final start = row['d_start_day'];
+                  final end = row['d_end_day'];
+                  final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+
+                  return TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                        child: Text(
+                          "$start - $endView",
+                          style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                        child: Text(
+                          row['d_value'] ?? "-",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: blackColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      for (var c in childList)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                          child: Text(
+                            _matchChildValue(c['rows'] ?? [], start, end),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: blackColor,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  // ───────────────── Map child row by day range ─────────────────
+  IconData _getIconForTable(String? label) {
+    if (label == null) return Icons.table_chart;
+    
+    if (label.contains('แสง')) return Icons.wb_sunny;
+    if (label.contains('ความชื้น')) return Icons.water_drop;
+    if (label.contains('อุณหภูมิ')) return Icons.thermostat;
+    if (label.contains('อาหาร')) return Icons.restaurant;
+    
+    return Icons.table_chart;
+  }
+
   String _matchChildValue(List rows, String s, String e) {
-    final match = rows.firstWhere((r) => r['d_start_day'] == s && r['d_end_day'] == e, orElse: () => null);
-    return match != null ? (match['d_value'] ?? "") : "-";
+    final match = rows.firstWhere(
+      (r) => r['d_start_day'] == s && r['d_end_day'] == e,
+      orElse: () => null,
+    );
+    return match != null ? (match['d_value'] ?? "-") : "-";
   }
 }
