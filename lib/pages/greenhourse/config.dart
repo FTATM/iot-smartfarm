@@ -75,7 +75,9 @@ class _ConfigPageState extends State<ConfigPage> {
       minControllers = data.map((item) => TextEditingController(text: item['min_value']?.toString() ?? '')).toList();
       maxControllers = data.map((item) => TextEditingController(text: item['max_value']?.toString() ?? '')).toList();
       linesControllers = data.map((item) => TextEditingController(text: item['input_line']?.toString() ?? '')).toList();
-      emailsControllers = data.map((item) => TextEditingController(text: item['input_email']?.toString() ?? '')).toList();
+      emailsControllers = data
+          .map((item) => TextEditingController(text: item['input_email']?.toString() ?? ''))
+          .toList();
 
       isLoading = false;
     });
@@ -96,10 +98,7 @@ class _ConfigPageState extends State<ConfigPage> {
               backgroundColor: Colors.transparent,
               insetPadding: EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -107,28 +106,16 @@ class _ConfigPageState extends State<ConfigPage> {
                     Container(
                       height: 120,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/default.jpg'),
-                          fit: BoxFit.cover,
-                        ),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        image: DecorationImage(image: AssetImage('assets/images/default.jpg'), fit: BoxFit.cover),
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.3),
-                              Colors.black.withOpacity(0.5),
-                            ],
+                            colors: [Colors.black.withOpacity(0.3), Colors.black.withOpacity(0.5)],
                           ),
                         ),
                         padding: EdgeInsets.all(20),
@@ -139,33 +126,22 @@ class _ConfigPageState extends State<ConfigPage> {
                             Expanded(
                               child: Text(
                                 nameshort,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                               child: Text(
                                 'ID : ${item["monitor_id"] ?? "0"}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     // Content
                     Flexible(
                       child: SingleChildScrollView(
@@ -176,35 +152,23 @@ class _ConfigPageState extends State<ConfigPage> {
                             // Value Section
                             Text(
                               'Value',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
                             ),
                             SizedBox(height: 8),
                             Text(
                               item['datax_value'] ?? '0',
-                              style: TextStyle(
-                                fontSize: 72,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFFF9F43),
-                              ),
+                              style: TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Color(0xFFFF9F43)),
                             ),
                             SizedBox(height: 24),
                             Divider(thickness: 1, color: Colors.grey[300]),
                             SizedBox(height: 20),
-                            
+
                             // Configuration Section
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Configuration',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                               ),
                             ),
                             SizedBox(height: 16),
@@ -248,7 +212,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             SizedBox(height: 12),
-                            
+
                             // Type Dropdown
                             _buildDropdownField(
                               label: 'Type',
@@ -269,7 +233,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             SizedBox(height: 12),
-                            
+
                             // Data Dropdown
                             _buildDropdownField(
                               label: 'Data',
@@ -297,15 +261,11 @@ class _ConfigPageState extends State<ConfigPage> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Notify and Time',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                               ),
                             ),
                             SizedBox(height: 16),
-                            
+
                             // Min Switch and Input
                             Row(
                               children: [
@@ -325,11 +285,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 SizedBox(width: 8),
                                 Text(
                                   'min',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
-                                  ),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
@@ -347,10 +303,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87,
                                       ),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                      ),
+                                      decoration: InputDecoration(border: InputBorder.none, isDense: true),
                                       onChanged: (value) {
                                         setState(() {
                                           data[index]['min_value'] = value;
@@ -365,7 +318,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               ],
                             ),
                             SizedBox(height: 12),
-                            
+
                             // Max Switch and Input
                             Row(
                               children: [
@@ -385,11 +338,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 SizedBox(width: 8),
                                 Text(
                                   'max',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
-                                  ),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
@@ -407,10 +356,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87,
                                       ),
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                      ),
+                                      decoration: InputDecoration(border: InputBorder.none, isDense: true),
                                       onChanged: (value) {
                                         setState(() {
                                           data[index]['max_value'] = value;
@@ -425,7 +371,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               ],
                             ),
                             SizedBox(height: 16),
-                            
+
                             // Line Input
                             _buildTextField(
                               label: 'Line',
@@ -440,7 +386,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             SizedBox(height: 12),
-                            
+
                             // Email Input
                             _buildTextField(
                               label: 'Email',
@@ -455,7 +401,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             SizedBox(height: 24),
-                            
+
                             // Days of Week Checkboxes
                             ...daysList.asMap().entries.map((entry) {
                               final dayIndex = entry.key;
@@ -490,23 +436,15 @@ class _ConfigPageState extends State<ConfigPage> {
                                         width: 28,
                                         height: 28,
                                         decoration: BoxDecoration(
-                                          color: listTime.contains(dayIndex)
-                                              ? Color(0xFFFF9F43)
-                                              : Colors.white,
+                                          color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.white,
                                           borderRadius: BorderRadius.circular(6),
                                           border: Border.all(
-                                            color: listTime.contains(dayIndex)
-                                                ? Color(0xFFFF9F43)
-                                                : Colors.grey[400]!,
+                                            color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.grey[400]!,
                                             width: 2,
                                           ),
                                         ),
                                         child: listTime.contains(dayIndex)
-                                            ? Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 18,
-                                              )
+                                            ? Icon(Icons.check, color: Colors.white, size: 18)
                                             : null,
                                       ),
                                     ),
@@ -514,12 +452,12 @@ class _ConfigPageState extends State<ConfigPage> {
                                 ),
                               );
                             }).toList(),
-                            SizedBox(height: 12)
+                            SizedBox(height: 12),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     // Action Buttons
                     Container(
                       padding: EdgeInsets.all(20),
@@ -547,11 +485,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               ),
                               child: Text(
                                 'ยกเลิก',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey[700],
-                                ),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey[700]),
                               ),
                             ),
                           ),
@@ -569,17 +503,11 @@ class _ConfigPageState extends State<ConfigPage> {
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(vertical: 14),
                                 backgroundColor: Color(0xFFFF9F43),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
                               child: Text(
                                 'บันทึก',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                               ),
                             ),
                           ),
@@ -607,30 +535,19 @@ class _ConfigPageState extends State<ConfigPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         SizedBox(height: 6),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
           child: DropdownButton<String>(
             value: value,
             items: items,
             isExpanded: true,
             underline: SizedBox(),
             icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
             onChanged: onChanged,
           ),
         ),
@@ -648,30 +565,16 @@ class _ConfigPageState extends State<ConfigPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         SizedBox(height: 6),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
           child: TextField(
             controller: controller,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              isDense: true,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+            decoration: InputDecoration(border: InputBorder.none, isDense: true),
             onChanged: onChanged,
           ),
         ),
@@ -682,43 +585,16 @@ class _ConfigPageState extends State<ConfigPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(backgroundColor: Colors.white, body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       backgroundColor: Color(0xFFE8E8E8),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'การกำหนดค่า',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Color(0xFFFFF5EC),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.account_circle, color: Color(0xFFFF9F43), size: 24),
-                  SizedBox(width: 8),
-                  Text('แอดมิน', style: TextStyle(color: Color(0xFFFF9F43), fontSize: 16, fontWeight: FontWeight.w600)),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: AppbarWidget(txtt: 'Configuration'),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => ConfigCreatePage()));
@@ -745,8 +621,12 @@ class _ConfigPageState extends State<ConfigPage> {
                       }
 
                       txtPath = "";
-                      txtPath += groups.where((g) => g['group_id'] == item['group_id']).map((g) => g['group_name']).first + "/";
-                      txtPath += devices.where((g) => g['device_id'] == item['device_id']).map((g) => g['divice_name']).first + "/";
+                      txtPath +=
+                          groups.where((g) => g['group_id'] == item['group_id']).map((g) => g['group_name']).first +
+                          "/";
+                      txtPath +=
+                          devices.where((g) => g['device_id'] == item['device_id']).map((g) => g['divice_name']).first +
+                          "/";
 
                       String name = item["monitor_name"] ?? "-";
                       if (name.length > 20) {
@@ -776,10 +656,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.black.withOpacity(0.3),
-                                      Colors.black.withOpacity(0.5),
-                                    ],
+                                    colors: [Colors.black.withOpacity(0.3), Colors.black.withOpacity(0.5)],
                                   ),
                                 ),
                                 padding: EdgeInsets.all(16),
@@ -833,7 +710,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 ),
                               ),
                             ),
-                            
+
                             // Footer
                             Container(
                               padding: EdgeInsets.all(16),
@@ -844,10 +721,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                   Expanded(
                                     child: Text(
                                       txtPath,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.black87,
-                                      ),
+                                      style: TextStyle(fontSize: 13, color: Colors.black87),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -882,18 +756,12 @@ class _ConfigPageState extends State<ConfigPage> {
                 ),
               ),
             ),
-            
+
             // Bottom Navigation Bar
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: Offset(0, -2),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: Offset(0, -2))],
               ),
             ),
           ],
@@ -906,11 +774,7 @@ class _ConfigPageState extends State<ConfigPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          color: isActive ? Color(0xFFFF9F43) : Colors.grey,
-          size: 26,
-        ),
+        Icon(icon, color: isActive ? Color(0xFFFF9F43) : Colors.grey, size: 26),
         SizedBox(height: 4),
         Text(
           label,

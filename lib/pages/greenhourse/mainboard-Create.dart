@@ -42,7 +42,9 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
       manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
 
-    print(sensors.toString());
+    // print(sensors.toString());
+
+    print(icons.toString());
   }
 
   Future<void> _fetchicons() async {
@@ -170,8 +172,11 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
             children: data.asMap().entries.map((entry) {
               int index = entry.key;
               var item = entry.value;
+              var foundIcon = icons.where((i) {
+                return item['icon_id'] == i['id'];
+              },
+              );
 
-              bool foundIcon = icons.where((i) => i['id'] == item['icon_id']).length > 0;
               return Container(
                 width: maxwidth,
                 // height: maxheight * 0.35,
@@ -252,7 +257,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
                                   width: maxwidth * 0.4,
                                   child: DropdownButton<String>(
                                     hint: Text("เลือก icon"),
-                                    value: item['icon_id'] == '0' && foundIcon ? '1' : item['icon_id'],
+                                    value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
                                     items: icons.map<DropdownMenuItem<String>>((icon) {
                                       return DropdownMenuItem(value: icon['id'], child: Text(icon['name']));
                                     }).toList(),
@@ -271,7 +276,7 @@ class _MainboardCreatePageState extends State<MainboardCreatePage> {
                                     "${user['baseURL']}../" +
                                         icons.firstWhere(
                                           (i) => i['id'] == item['icon_id'],
-                                          orElse: () => {"path": "img/icons/ph.png"},
+                                          orElse: () => {"path": "img/icons/dafault.png"},
                                         )['path'],
                                   ),
                                 ),

@@ -25,6 +25,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
     Color.fromARGB(255, 189, 189, 189),
   ];
 
+  List<Color> gradientColorsSet = [Colors.white, Color.fromRGBO(255, 242, 230, 1)];
+
   Color primaryColor = Color.fromARGB(255, 255, 131, 0);
   Color blackColor = Colors.black;
   Color whiteColor = Colors.white;
@@ -81,13 +83,13 @@ class _HomeOldPageState extends State<HomeOldPage> {
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(
-           backgroundColor: primaryColor,
+          backgroundColor: primaryColor,
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => MainboardCreatePage())).then((_) {
               _prepareData();
             });
           },
-          shape: const CircleBorder(), 
+          shape: const CircleBorder(),
           child: const Icon(Icons.edit, color: Colors.white, size: 20),
         ),
       ),
@@ -177,9 +179,21 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                     // width: ((maxwidth * 0.5) - 12) * 0.45 - 8,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: const Color.fromARGB(31, 255, 255, 255),
+                                        gradient: LinearGradient(
+                                          colors: gradientColorsSet,
+                                          begin: AlignmentGeometry.topCenter,
+                                          end: AlignmentGeometry.bottomCenter,
+                                        ),
                                         border: Border.all(width: 1, color: primaryColor),
                                         borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            offset: Offset(0, 2),
+                                            color: Colors.black12,
+                                            spreadRadius: 1,
+                                            blurRadius: 3,
+                                          ),
+                                        ],
                                       ),
                                       child: Center(
                                         child: Text(
@@ -199,9 +213,21 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                     child: Container(
                                       // width: ((maxwidth * 0.5) - 12) * 0.45 - 8,
                                       decoration: BoxDecoration(
-                                        color: const Color.fromARGB(31, 255, 255, 255),
+                                        gradient: LinearGradient(
+                                          colors: gradientColorsSet,
+                                          begin: AlignmentGeometry.topCenter,
+                                          end: AlignmentGeometry.bottomCenter,
+                                        ),
                                         border: Border.all(width: 1, color: primaryColor),
                                         borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            offset: Offset(0, 2),
+                                            color: Colors.black12,
+                                            spreadRadius: 1,
+                                            blurRadius: 3,
+                                          ),
+                                        ],
                                       ),
                                       child: Center(
                                         child: Text(
@@ -247,14 +273,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                           child: Container(
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Color.fromARGB(255, 255, 131, 0)),
+                              // color: Colors.white
+                              gradient: LinearGradient(
+                                begin: AlignmentGeometry.topCenter,
+                                end: AlignmentGeometry.bottomCenter,
+                                colors: gradientColorsSet,
+                              ),
+                              border: Border.all(color: primaryColor),
                               borderRadius: BorderRadius.all(Radius.circular(12)),
                               boxShadow: [BoxShadow(offset: Offset(0, 5), color: Colors.black12, blurRadius: 2)],
                             ),
                             child: Column(
                               children: [
                                 Container(
+                                  height: 30,
                                   width: maxwidth / 9,
                                   child: Image.network(
                                     // ignore: prefer_interpolation_to_compose_strings
@@ -267,15 +299,14 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                 ),
                                 Container(
                                   width: (maxwidth / 3),
+                                  height: 40,
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        item['label_text'],
-                                        style: TextStyle(color: Colors.black, fontSize: fs_small),
-                                      ),
+                                      Text(item['label_text'], style: TextStyle(color: Colors.black, fontSize: 12)),
                                       Text(
                                         "${item['value']} ${item['unitofvalue'] == '' ? "x" : item['unitofvalue']}",
-                                        style: TextStyle(fontSize: fs_small),
+                                        style: TextStyle(fontSize: 14),
                                       ),
                                     ],
                                   ),
@@ -313,9 +344,15 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
+                                  width: ((maxwidth / 3) - 18) * 2,
                                   height: maxheight * 0.075,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
+                                    gradient: LinearGradient(
+                                      colors: gradientColorsSet,
+                                      begin: AlignmentGeometry.topCenter,
+                                      end: AlignmentGeometry.bottomCenter,
+                                    ),
                                     border: Border.all(color: primaryColor),
                                     borderRadius: BorderRadius.all(Radius.circular(12)),
                                     boxShadow: [
@@ -342,14 +379,19 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                               )['path'],
                                         ),
                                       ),
-                                      SizedBox(width: maxwidth * 0.4, child: Text(item['label_text'])),
+                                      SizedBox(child: Text(item['label_text'])),
                                     ],
                                   ),
                                 ),
                                 Container(
-                                  width: maxwidth * 0.25,
+                                  width: (maxwidth / 3) - 24,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
+                                    gradient: LinearGradient(
+                                      colors: gradientColorsSet,
+                                      begin: AlignmentGeometry.topCenter,
+                                      end: AlignmentGeometry.bottomCenter,
+                                    ),
                                     border: Border.all(color: primaryColor),
                                     borderRadius: BorderRadius.all(Radius.circular(12)),
                                     boxShadow: [

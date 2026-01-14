@@ -1217,7 +1217,7 @@ class ApiService {
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
