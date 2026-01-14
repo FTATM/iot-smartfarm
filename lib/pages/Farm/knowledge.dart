@@ -12,6 +12,8 @@ class KnowledgePage extends StatefulWidget {
 class _KnowledgePageState extends State<KnowledgePage> {
   bool isLoading = true;
   List<dynamic> tables = [];
+  List<dynamic> mainboard = [];
+  List<dynamic> filterDates = [];
 
   Color primaryColor = Color.fromARGB(255, 255, 131, 0);
   Color blackColor = Colors.black;
@@ -25,10 +27,19 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
   Future<void> prepare() async {
     final responsetable = await ApiService.fetchTablesknowledgeById(CurrentUser['branch_id']);
+
+    final resBoardMain = await ApiService.fetchMainboard();
+
     setState(() {
       tables = responsetable['data'];
+      mainboard = resBoardMain['data'];
       isLoading = false;
     });
+
+    filterDates = mainboard.where((element) {
+      return element['name'].toString().startsWith('date');
+    }).toList();
+    debugPrint(filterDates.toString());
   }
 
   @override
@@ -40,15 +51,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                strokeWidth: 3,
-              ),
+              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(primaryColor), strokeWidth: 3),
               SizedBox(height: 16),
-              Text(
-                'กำลังโหลดข้อมูล...',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-              ),
+              Text('กำลังโหลดข้อมูล...', style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
             ],
           ),
         ),
@@ -65,19 +70,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
         elevation: 0,
         title: Text(
           "ข้อมูลพื้นฐานฟาร์ม",
-          style: TextStyle(
-            color: blackColor,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: blackColor, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            color: Colors.grey.shade200,
-          ),
+          child: Container(height: 1, color: Colors.grey.shade200),
         ),
       ),
       body: ListView(
@@ -101,13 +99,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
       decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,25 +115,14 @@ class _KnowledgePageState extends State<KnowledgePage> {
               children: [
                 Container(
                   padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: whiteColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    _getIconForTable(item['label']),
-                    color: whiteColor,
-                    size: 20,
-                  ),
+                  decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                  child: Icon(_getIconForTable(item['label']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     "${item['label']}",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: whiteColor,
-                    ),
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: whiteColor),
                   ),
                 ),
               ],
@@ -258,13 +239,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
       decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 12, offset: Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,25 +255,14 @@ class _KnowledgePageState extends State<KnowledgePage> {
               children: [
                 Container(
                   padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: whiteColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    _getIconForTable(parent['label']),
-                    color: whiteColor,
-                    size: 20,
-                  ),
+                  decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                  child: Icon(_getIconForTable(parent['label']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     parent['label'],
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(color: whiteColor, fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -447,20 +411,17 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
   IconData _getIconForTable(String? label) {
     if (label == null) return Icons.table_chart;
-    
+
     if (label.contains('แสง')) return Icons.wb_sunny;
     if (label.contains('ความชื้น')) return Icons.water_drop;
     if (label.contains('อุณหภูมิ')) return Icons.thermostat;
     if (label.contains('อาหาร')) return Icons.restaurant;
-    
+
     return Icons.table_chart;
   }
 
   String _matchChildValue(List rows, String s, String e) {
-    final match = rows.firstWhere(
-      (r) => r['d_start_day'] == s && r['d_end_day'] == e,
-      orElse: () => null,
-    );
+    final match = rows.firstWhere((r) => r['d_start_day'] == s && r['d_end_day'] == e, orElse: () => null);
     return match != null ? (match['d_value'] ?? "-") : "-";
   }
 }

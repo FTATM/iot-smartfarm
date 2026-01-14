@@ -38,7 +38,6 @@ class _LoginPageState extends State<LoginPage> {
       _IpServerController.text = config['ip'] ?? "";
       _PathtoAPIController.text = config['path'] ?? "";
       baseURL = "${_IpServerController.text}/${_PathtoAPIController.text}";
-
     });
   }
 
@@ -50,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
     username = username == "" ? "superadmin" : username;
     password = password == "" ? "abc+123" : password;
-    // baseURL = "49.0.69.152/iotsf/api-app";
+    baseURL = "49.0.69.152/iotsf/api-app";
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
 
@@ -244,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                                       _IpServerController.text.trim(),
                                       _PathtoAPIController.text.trim(),
                                     );
-                                  await loadConfig();
+                                    await loadConfig();
                                     Navigator.pop(context);
                                   },
                                   child: Text("บันทึก"),

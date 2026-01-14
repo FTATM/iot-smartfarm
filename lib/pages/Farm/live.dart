@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:flutter/material.dart';
 
 class ConnectedIcon extends StatelessWidget {
   final double size;
@@ -177,7 +176,7 @@ class _LivePageState extends State<LivePage> {
   bool isConnected = false;
 
   /// กล้องทั้งหมด (room ต้องตรงกับ Python)
-  final List<String> cameraRooms = ['Camera1', 'Camera2', 'Camera3'];
+  final List<String> cameraRooms = ['Camera1'];
 
   /// room -> image bytes
   final Map<String, Uint8List> _frames = {};
@@ -187,7 +186,7 @@ class _LivePageState extends State<LivePage> {
   /// room ที่กำลังดู
   String? selectedRoom;
 
-  final String wsUrl = 'ws://192.168.1.179:8765'; // 🔥 เปลี่ยนเป็น IP server
+  final String wsUrl = 'ws://192.168.1.124:8765'; // 🔥 เปลี่ยนเป็น IP server
 
   // =========================
   // SOCKET CONNECT
@@ -198,7 +197,9 @@ class _LivePageState extends State<LivePage> {
 
     _socketSub = _socket!.stream.listen(
       _onMessage,
-      // onDone: _onDisconnected,
+      onDone: () {
+            debugPrint('🔌 Connected WebSocket');
+      },
       onError: (e) {
         debugPrint('❌ WS error: $e');
         _onDisconnected();
@@ -289,6 +290,7 @@ class _LivePageState extends State<LivePage> {
     for (final room in cameraRooms) {
       _joinRoom(room);
     }
+        debugPrint('🔌 Connecting WebSocket...');
   }
 
   // =========================
