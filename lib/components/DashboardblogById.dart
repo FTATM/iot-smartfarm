@@ -28,7 +28,7 @@ class DashboardBlogByIdWidget extends StatefulWidget {
     required this.color,
     required this.labelJson,
     required this.valueJson,
-    required this.onValueChanged, // <-- required
+    required this.onValueChanged,
   });
 
   @override
@@ -61,107 +61,101 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
     final double sizeheight = (250 / size_);
 
     Color base = widget.color;
-    Color light = lighten(base, 0.25); // อ่อนลง 25%
-    // Color lighter = lighten(light, 0.25); // อ่อนลง 25%
-    // Color dark = darken(base, 0.25); // เข้มขึ้น 25%
-
+    Color light = lighten(base, 0.25);
     Color textColor = isColorLight(base) ? Colors.black : Colors.white;
-
     List<Color> colorlist = [base, light];
 
     if (type == '1') {
-      // Tempurature pie circle
-      // Nothing
+      // Type 1: Simple value display (Humidity style layout)
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: (sizeheight * 0.8) - 8,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: sizewidth * 0.5 - 4,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          padding: EdgeInsets.all(6),
-                          value: (value / 100).clamp(0, 1),
-                          strokeWidth: 20 / size_,
-                          backgroundColor: Colors.grey[200],
-                          color: color,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. หัวข้อ (ด้านบนซ้าย) - ดึงจาก item_name
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // 2. ไอคอนและค่าข้อมูล (ตรงกลาง)
+                Expanded(
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // ไอคอน - ดึงจาก i_path
+                        Flexible(
+                          flex: 1,
+                          child: Image.network(
+                            path,
+                            width: size_ == 1 ? 64 : (size_ == 2 ? 48 : 40),
+                            height: size_ == 1 ? 64 : (size_ == 2 ? 48 : 40),
+                            color: color,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.thermostat,
+                                size: size_ == 1 ? 64 : (size_ == 2 ? 48 : 40),
+                                color: color,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      width: sizewidth * 0.5 - 4,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: Container(
-                                  width: (sizewidth * 0.5 - 4) * 0.5,
-                                  child: Image.network(path, width: sizewidth * 0.45, height: sizeheight * 0.45),
-                                ),
+                        
+                        SizedBox(width: size_ == 1 ? 20 : (size_ == 2 ? 16 : 12)),
+                        
+                        // ค่าข้อมูล - ดึงจาก m_value
+                        Flexible(
+                          flex: 2,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${value.toStringAsFixed(1)}',
+                              style: TextStyle(
+                                fontSize: size_ == 1 ? 56 : (size_ == 2 ? 44 : 36),
+                                fontWeight: FontWeight.bold,
+                                color: color,
                               ),
                             ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  "${value.toStringAsFixed(1)}°C",
-                                  style: TextStyle(
-                                    fontSize: 30 / size_,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
-                  gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
-                ),
-                width: sizewidth,
-                height: sizeheight * 0.2,
-                child: Center(
-                  child: Text(
-                    title,
-                    style: TextStyle(color: textColor, fontSize: 24 / size_, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
-
-
     } else if (type == '2') {
-      // Pie Chart
-      // final labels = jsonDecode(labelJson) ?? [];
+      // Type 2: Pie Chart
       final values = jsonDecode(valueJson) ?? [];
 
       if (values.isEmpty) {
@@ -172,18 +166,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
-          // padding: EdgeInsets.all(2),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -203,23 +196,14 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             centerSpaceRadius: (sizewidth * 0.1),
                             sections: List.generate(values.length, (index) {
                               final double val = (double.tryParse(values[index].toString()) ?? 0.0);
-                              // ถ้า value เป็น 0 ให้ใส่ 1 เพื่อให้แท่งแสดง
                               final displayValue = val > 0 ? val : 1.0;
                               return PieChartSectionData(
-                                // value: (double.tryParse(values[index].toString()) ?? 1.0),
                                 value: displayValue,
                                 color: chartColors[index],
-                                // title: labels[index],
                                 showTitle: false,
                                 radius: 25 / size_,
-                                // titleStyle: TextStyle(
-                                //   fontSize: 14,
-                                //   fontWeight: FontWeight.bold,
-                                //   color: Colors.white,
-                                // ),
                               );
                             }),
-                            // borderData: FlBorderData(show: true),
                           ),
                         ),
                       ),
@@ -246,7 +230,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -263,22 +247,21 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '3') {
-      // Thermometer bar
-      //
+      // Type 3: Thermometer bar
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -340,7 +323,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -357,8 +340,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '4') {
-      // CLOCK
-      // CLOCK
+      // Type 4: CLOCK
       final clockService = ClockService();
       clockService.start();
 
@@ -368,17 +350,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
           return Container(
             width: maxwidth,
             height: 150,
-            padding: EdgeInsets.all(4),
+            padding: const EdgeInsets.all(4),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(25, 0, 0, 0),
-                    blurRadius: 1, // ความฟุ้งของเงา
-                    spreadRadius: 1, // การกระจายของเงา
-                    offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                    blurRadius: 1,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -387,12 +369,12 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    clockService.formattedTime(now), // ✅ ใช้ now ที่ส่งมา
+                    clockService.formattedTime(now),
                     style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    clockService.formattedDate(now), // ✅ ใช้ now ที่ส่งมา
+                    clockService.formattedDate(now),
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 ],
@@ -402,8 +384,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         },
       );
     } else if (type == '5') {
-      // linear Chart
-      // final labels = jsonDecode(labelJson);
+      // Type 5: Linear Chart
       final rawValue = jsonDecode(valueJson);
 
       if (rawValue.length != 2) {
@@ -426,17 +407,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       return Container(
         width: maxwidth,
         height: 250,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -447,7 +428,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                       gradient: LinearGradient(
                         colors: colorlist,
                         begin: Alignment.topCenter,
@@ -468,7 +449,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     height: 250 * 0.8 - 4,
                     child: Container(
                       width: maxwidth * 0.8 - 4,
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       child: LineChart(
                         LineChartData(
                           minY: 0,
@@ -540,13 +521,12 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '6') {
-      // Scatter Chart
+      // Type 6: Scatter Chart
       final rawValue = jsonDecode(valueJson);
 
       if (rawValue.length != 2) {
         rawValue.add([0, 0, 0, 0, 0]);
       }
-      ;
 
       List<Map<String, dynamic>> chartData = [];
 
@@ -556,33 +536,23 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       final values = [
         {
           "name": "Oxygen",
-          // "color": "#FF0000",
           "data": chartData,
         },
-        // {
-        //   "name": "Wind Speed",
-        //   "color": "#00BFFF",
-        //   "data": [
-        //     {"dx": 2.0, "dy": 7.0},
-        //     {"dx": 6.0, "dy": 12.0},
-        //     {"dx": 11.0, "dy": 4.0},
-        //   ],
-        // },
       ];
       return Container(
         width: maxwidth,
         height: 250,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -593,7 +563,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                       gradient: LinearGradient(
                         colors: colorlist,
                         begin: Alignment.topCenter,
@@ -610,7 +580,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     width: maxwidth,
                     height: 250 * 0.8,
                     child: SizedBox(
@@ -663,23 +633,22 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '7') {
-      // Button
-      //
+      // Type 7: Button
       bool isOn = value == 1 ? true : false;
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -696,7 +665,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                       child: Center(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isOn ? color : Colors.grey[300], // เปลี่ยนสีตามสถานะ
+                            backgroundColor: isOn ? color : Colors.grey[300],
                             foregroundColor: isOn ? Colors.white : Colors.black87,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24 / size_)),
                             padding: EdgeInsets.symmetric(horizontal: 36 / size_, vertical: 24 / size_),
@@ -725,7 +694,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -742,23 +711,21 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '8') {
-      // Slide Bar value
-      //
-
+      // Type 8: Slide Bar value
       return Container(
         width: maxwidth,
         height: 250,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -767,7 +734,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: maxwidth,
@@ -780,7 +747,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: 12),
                 width: maxwidth,
                 height: 250 * 0.8,
                 child: Column(
@@ -821,9 +788,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 250 * 0.1,
-                      child: const Text(
+                      child: Text(
                         'Range 0 to 9,999',
                         style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
@@ -837,22 +804,21 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '9') {
-      // Lamp
-      //
+      // Type 9: Lamp
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -883,8 +849,6 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                               child: Image.network(path, width: sizewidth * 0.25, height: sizeheight * 0.25),
                             ),
                           ),
-                          // รูปภาพ Lamp
-                          // สถานะ
                           SizedBox(
                             width: sizewidth * 0.5 - 4,
                             height: (sizeheight * 0.8 - 8) * 0.5,
@@ -907,7 +871,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -924,23 +888,22 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '10') {
-      // Switch
-      //
+      // Type 10: Switch
       bool isOn = value == 1 ? true : false;
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
                 blurRadius: 1,
                 spreadRadius: 1,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -986,7 +949,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                 value == 1 ? 'ON' : 'OFF',
                                 style: TextStyle(
                                   fontSize: 36 / size_,
-                                  color: Color(0xFF555555),
+                                  color: const Color(0xFF555555),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1000,7 +963,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -1017,22 +980,21 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '11') {
-      // Blink blink
-      //
+      // Type 11: Blink blink
       return Container(
         width: sizewidth,
         height: sizeheight,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1046,7 +1008,6 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                   children: [
                     Container(
                       width: (sizewidth * 0.5) - 4,
-
                       child: Center(
                         child: ColorFiltered(
                           colorFilter: value == 0
@@ -1077,7 +1038,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                               child: Text(
                                 value == 1 ? 'ON' : 'OFF',
                                 style: TextStyle(
-                                  color: Color(0xFF555555),
+                                  color: const Color(0xFF555555),
                                   fontSize: 36 / size_,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1092,7 +1053,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
                   gradient: LinearGradient(colors: colorlist, begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 ),
                 width: sizewidth,
@@ -1109,7 +1070,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         ),
       );
     } else if (type == '12') {
-      //bar Chart
+      // Type 12: Bar Chart
       final rawLabel = jsonDecode(labelJson);
       final rawValue = jsonDecode(valueJson);
       final values = List.generate(rawValue.length, (index) {
@@ -1117,7 +1078,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
           x: index,
           barRods: [
             BarChartRodData(
-              toY: double.parse(rawValue[index][0]), // ใช้ค่าจาก rawValue
+              toY: double.parse(rawValue[index][0]),
               color: color,
               width: 25,
               borderRadius: BorderRadius.circular(4),
@@ -1128,17 +1089,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       return Container(
         width: maxwidth,
         height: 250,
-        padding: EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(25, 0, 0, 0),
-                blurRadius: 1, // ความฟุ้งของเงา
-                spreadRadius: 1, // การกระจายของเงา
-                offset: Offset(0, 4), // เงาแนวตั้ง (x,y)
+                blurRadius: 1,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1149,7 +1110,7 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                       gradient: LinearGradient(
                         colors: colorlist,
                         begin: Alignment.topCenter,
@@ -1166,10 +1127,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 12),
                     width: maxwidth,
                     height: (250 * 0.8),
-                    // Bar Chart
                     child: BarChart(
                       BarChartData(
                         alignment: BarChartAlignment.spaceAround,

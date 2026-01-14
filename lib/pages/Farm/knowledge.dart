@@ -148,80 +148,101 @@ class _KnowledgePageState extends State<KnowledgePage> {
             ),
           ),
 
-          // Table content
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Table(
-              border: TableBorder(
-                horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
-              ),
-              columnWidths: const {
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(1.2),
-              },
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
+          // Table content - responsive
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 400;
+              
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Table(
+                  border: TableBorder(
+                    horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
                   ),
+                  columnWidths: {
+                    0: FlexColumnWidth(isNarrow ? 0.8 : 1),
+                    1: FlexColumnWidth(isNarrow ? 1 : 1.2),
+                  },
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      child: Text(
-                        "ช่วงวัน",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.grey.shade700,
-                        ),
-                        textAlign: TextAlign.center,
+                    TableRow(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      child: Text(
-                        "ค่ามาตรฐาน",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.grey.shade700,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isNarrow ? 8 : 12, 
+                            vertical: 12
+                          ),
+                          child: Text(
+                            "ช่วงวัน",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isNarrow ? 13 : 14,
+                              color: Colors.grey.shade700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isNarrow ? 8 : 12, 
+                            vertical: 12
+                          ),
+                          child: Text(
+                            "ค่ามาตรฐาน",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isNarrow ? 13 : 14,
+                              color: Colors.grey.shade700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
+                    ...item['rows'].map<TableRow>((row) {
+                      final start = row['d_start_day'];
+                      final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isNarrow ? 8 : 12, 
+                              vertical: 14
+                            ),
+                            child: Text(
+                              "$start - $endView",
+                              style: TextStyle(
+                                fontSize: isNarrow ? 13 : 14, 
+                                color: Colors.grey.shade800
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isNarrow ? 8 : 12, 
+                              vertical: 14
+                            ),
+                            child: Text(
+                              row['d_value'] ?? "-",
+                              style: TextStyle(
+                                fontSize: isNarrow ? 13 : 14,
+                                fontWeight: FontWeight.w600,
+                                color: blackColor,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ],
                 ),
-                ...item['rows'].map<TableRow>((row) {
-                  final start = row['d_start_day'];
-                  final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
-                  return TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                        child: Text(
-                          "$start - $endView",
-                          style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                        child: Text(
-                          row['d_value'] ?? "-",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: blackColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ],
-            ),
+              );
+            },
           ),
         ],
       ),
@@ -284,118 +305,140 @@ class _KnowledgePageState extends State<KnowledgePage> {
             ),
           ),
 
-          // Table content
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(16),
-            child: Table(
-              border: TableBorder(
-                horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
-              ),
-              columnWidths: {
-                0: const FixedColumnWidth(100),
-                for (int i = 0; i < childList.length + 1; i++) 
-                  i + 1: const FixedColumnWidth(140),
-              },
-              defaultColumnWidth: const FixedColumnWidth(140),
-              children: [
-                // Header row
-                TableRow(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
+          // Table content with horizontal scroll - responsive
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = MediaQuery.of(context).size.width;
+              final totalColumns = childList.length + 2;
+              
+              // Dynamic column width based on screen size and number of columns
+              final baseColWidth = screenWidth < 400 ? 100.0 : 140.0;
+              final dayColWidth = screenWidth < 400 ? 90.0 : 110.0;
+              final minWidth = (totalColumns - 1) * baseColWidth + dayColWidth;
+              
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(16),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: minWidth > constraints.maxWidth 
+                        ? minWidth 
+                        : constraints.maxWidth - 32,
                   ),
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      child: Text(
-                        "ช่วงวัน",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: Colors.grey.shade700,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                  child: Table(
+                    border: TableBorder(
+                      horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      child: Text(
-                        parent['label'] ?? "",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: Colors.grey.shade700,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    for (var c in childList)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                        child: Text(
-                          c['label'] ?? "",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            color: Colors.grey.shade700,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
-                ),
-
-                // Data rows
-                ...rows.map<TableRow>((row) {
-                  final start = row['d_start_day'];
-                  final end = row['d_end_day'];
-                  final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
-
-                  return TableRow(
+                    columnWidths: {
+                      0: FixedColumnWidth(dayColWidth),
+                      for (int i = 0; i < childList.length + 1; i++) 
+                        i + 1: FixedColumnWidth(baseColWidth),
+                    },
+                    defaultColumnWidth: FixedColumnWidth(baseColWidth),
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-                        child: Text(
-                          "$start - $endView",
-                          style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
-                          textAlign: TextAlign.center,
+                      // Header row
+                      TableRow(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-                        child: Text(
-                          row['d_value'] ?? "-",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: blackColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      for (var c in childList)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
-                          child: Text(
-                            _matchChildValue(c['rows'] ?? [], start, end),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: blackColor,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                            child: Text(
+                              "ช่วงวัน",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth < 400 ? 12 : 13,
+                                color: Colors.grey.shade700,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                            child: Text(
+                              parent['label'] ?? "",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth < 400 ? 12 : 13,
+                                color: Colors.grey.shade700,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          for (var c in childList)
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                              child: Text(
+                                c['label'] ?? "",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: screenWidth < 400 ? 12 : 13,
+                                  color: Colors.grey.shade700,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      // Data rows
+                      ...rows.map<TableRow>((row) {
+                        final start = row['d_start_day'];
+                        final end = row['d_end_day'];
+                        final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+
+                        return TableRow(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 14),
+                              child: Text(
+                                "$start - $endView",
+                                style: TextStyle(
+                                  fontSize: screenWidth < 400 ? 12 : 13, 
+                                  color: Colors.grey.shade800
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 14),
+                              child: Text(
+                                row['d_value'] ?? "-",
+                                style: TextStyle(
+                                  fontSize: screenWidth < 400 ? 12 : 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: blackColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            for (var c in childList)
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 14),
+                                child: Text(
+                                  _matchChildValue(c['rows'] ?? [], start, end),
+                                  style: TextStyle(
+                                    fontSize: screenWidth < 400 ? 12 : 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: blackColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                          ],
+                        );
+                      }).toList(),
                     ],
-                  );
-                }).toList(),
-              ],
-            ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
