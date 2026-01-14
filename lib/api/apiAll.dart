@@ -1231,4 +1231,30 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
+
+    // update Column
+  static Future<Map<String, dynamic>> deleteTableById(Map<String, dynamic> list) async {
+    try {
+      // print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}delete-table.php"),
+        //  headers: {'Content-Type': 'application/json'},
+        body: {'json': jsonEncode(list)},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      print(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
 }
