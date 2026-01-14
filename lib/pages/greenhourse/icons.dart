@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:file_picker/file_picker.dart';
@@ -69,7 +70,7 @@ class _IconsPageState extends State<IconsPage> {
                   width: (maxwidth - 24) / 2,
                   child: Card(
                     elevation: 3,
-                    shadowColor: Colors.black26,
+                    shadowColor: const Color.fromARGB(66, 0, 0, 0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -103,6 +104,13 @@ class _IconsPageState extends State<IconsPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                              color: Colors.white, // กำหนดสีพื้นหลังเป็นสีขาว
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(12), // โค้งมุมด้านล่างซ้าย
+                                bottomRight: Radius.circular(12), // โค้งมุมด้านล่างขวา
+                              ),
+                            ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
