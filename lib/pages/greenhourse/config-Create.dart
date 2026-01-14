@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
-import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
 
 class ConfigCreatePage extends StatefulWidget {
