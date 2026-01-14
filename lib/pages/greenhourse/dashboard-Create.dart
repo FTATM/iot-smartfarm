@@ -16,7 +16,7 @@ class DashboardCreatePage extends StatefulWidget {
 class _DashboardCreatePageState extends State<DashboardCreatePage> {
   bool isLoading = true;
 
-  Map<String, dynamic> data = {'branch_id': CurrentUser['branch_id']};
+  Map<String, dynamic> data = {'branch_id': CurrentUser['branch_id'],'label_color_code': '#FFF2E6'};
   List<dynamic> listvalues = [0, 0];
   List<dynamic> monitors = [];
   List<dynamic> icons = [];

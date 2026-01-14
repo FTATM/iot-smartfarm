@@ -19,7 +19,7 @@ class _AddDashboardItemDialogState extends State<AddDashboardItemDialog> {
   @override
   void initState() {
     super.initState();
-    chooseColor = hexToColor('#FF5500');
+    chooseColor = hexToColor('#FFF2E6');
   }
 
   String colorToHex(Color color) {
