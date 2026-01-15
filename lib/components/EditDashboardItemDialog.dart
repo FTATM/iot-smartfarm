@@ -34,6 +34,7 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("แก้ไขข้อมูล Dashboard"),
+      backgroundColor: Colors.white,
       content: SizedBox(
         width: 350,
         child: Column(
