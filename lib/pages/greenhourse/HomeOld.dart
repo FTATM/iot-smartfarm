@@ -288,6 +288,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                 child: Container(
                                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                   decoration: BoxDecoration(
+                                    color: Colors.white,
                                     gradient: LinearGradient(
                                       colors: gradientColorsSet,
                                       begin: Alignment.topCenter,
@@ -341,8 +342,10 @@ class _HomeOldPageState extends State<HomeOldPage> {
                 // Section 2: Grid of items
                 Container(
                   width: maxwidth,
+                  padding: EdgeInsets.all(padding),
                   margin: EdgeInsets.fromLTRB(padding, padding / 2, padding, padding / 2),
                   decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
                     boxShadow: [BoxShadow(offset: Offset(0, 5), color: Colors.black12, blurRadius: 2)],
                   ),
@@ -437,8 +440,10 @@ class _HomeOldPageState extends State<HomeOldPage> {
                 // Section 3: List items
                 Container(
                   width: maxwidth,
+                  padding: EdgeInsets.all(padding),
                   margin: EdgeInsets.fromLTRB(padding, padding / 2, padding, padding),
                   decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
                     boxShadow: [BoxShadow(offset: Offset(0, 1), color: const Color.fromARGB(31, 136, 136, 136), blurRadius: 0.2)],
                   ),
