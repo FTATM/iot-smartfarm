@@ -10,6 +10,73 @@ class HomeOldPage extends StatefulWidget {
   State<HomeOldPage> createState() => _HomeOldPageState();
 }
 
+class ChickenFarmHeader extends StatelessWidget {
+  final String title;
+  
+  const ChickenFarmHeader({
+    Key? key,
+    this.title = 'CHICKEN FARM #1',
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    
+    // กำหนดค่า horizontal padding ที่ต้องการให้เท่ากันทั้งหมด
+    final horizontalPadding = isSmallScreen ? 16.0 : 24.0;
+    
+    return Container(
+      margin: EdgeInsets.only(
+        left: isSmallScreen ? 16 : 24,
+        right: isSmallScreen ? 16 : 24,
+        top: 1, // เพิ่มตรงนี้ - ลดค่านี้เพื่อลดระยะห่างด้านล่าง
+      ),// เพิ่ม margin แทน padding
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 20 : 32,  // padding ภายใน
+        vertical: isSmallScreen ? 12 : 16
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.white, Color.fromRGBO(255, 242, 230, 1)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(50),
+        border: Border(
+          bottom: BorderSide(
+            width: 2.5, 
+            color: Color.fromARGB(255, 255, 131, 0)
+          )
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: isSmallScreen ? 18 : screenWidth < 600 ? 24 : 32,
+          fontWeight: FontWeight.bold,
+          color: Color.fromARGB(255, 255, 131, 0),
+          letterSpacing: 2,
+          shadows: [
+            Shadow(
+              color: const Color.fromARGB(30, 0, 0, 0).withOpacity(0.5),
+              offset: const Offset(2, 2),
+              blurRadius: 2,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _HomeOldPageState extends State<HomeOldPage> {
   bool isLoading = true;
   bool isEdit = false;
@@ -71,6 +138,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
       );
     }
     
+    
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final orientation = MediaQuery.of(context).orientation;
@@ -113,10 +181,17 @@ class _HomeOldPageState extends State<HomeOldPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                // Header Section
+                Padding(
+                padding: EdgeInsets.all(padding),
+                child: ChickenFarmHeader(
+                  title: 'CHICKEN FARM #1', // เปลี่ยนชื่อได้ตามต้องการ
+                ),
+              ),
                 // Section 1: Top card with image and data
                 Container(
                   padding: EdgeInsets.all(padding),
-                  margin: EdgeInsets.fromLTRB(padding, padding, padding, padding / 2),
+                  margin: EdgeInsets.fromLTRB(padding, padding  / 10, padding, padding / 2),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
@@ -204,93 +279,59 @@ class _HomeOldPageState extends State<HomeOldPage> {
                           SizedBox(width: spacing),
                           // Right section with data rows
                           SizedBox(
-                            width: rightWidth,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: selected1_6.map((item) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: spacing),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: gradientColorsSet,
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                            ),
-                                            border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                offset: Offset(0, 2),
-                                                color: Colors.black12,
-                                                spreadRadius: 1,
-                                                blurRadius: 3,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              item['label_text'].length > 15
-                                                  ? item['label_text'].substring(0, 12) + '...'
-                                                  : item['label_text'],
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: fs_small,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: spacing),
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: gradientColorsSet,
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                            ),
-                                            border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
-                                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                offset: Offset(0, 2),
-                                                color: Colors.black12,
-                                                spreadRadius: 1,
-                                                blurRadius: 3,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              item['value'].length > 15
-                                                  ? item['value'].substring(0, 12) + '...'
-                                                  : item['value'],
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: fs_small,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
+                          width: rightWidth,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: selected1_6.map((item) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: spacing),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: gradientColorsSet,
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
+                                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        offset: Offset(0, 2),
+                                        color: Colors.black12,
+                                        spreadRadius: 1,
+                                        blurRadius: 3,
                                       ),
                                     ],
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        item['label_text'],
+                                        style: TextStyle(
+                                          color: Colors.orange,
+                                          fontSize: fs_small,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      Text(
+                                        item['value'],
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: fs_small,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ),
+                        ),
                         ],
                       );
                     },
@@ -307,7 +348,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
                   ),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final itemWidth = (constraints.maxWidth - (spacing * 2)) / 3;
+                      final containerWidth = constraints.maxWidth;
+                      final itemWidth = (containerWidth - (spacing * 2)) / 3;
                       // ปรับขนาดไอคอนในแนวนอนให้ใหญ่ขึ้น
                       final iconSize = isLandscape 
                           ? 60.0 
@@ -403,8 +445,9 @@ class _HomeOldPageState extends State<HomeOldPage> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final containerWidth = constraints.maxWidth;
-                      final leftWidth = (containerWidth * 2 / 3) - (spacing / 2);
-                      final rightWidth = (containerWidth / 3) - (spacing / 2);
+                      final itemWidth = (containerWidth - (spacing * 2)) / 3;
+                      final leftWidth = (itemWidth * 2) + spacing;
+                      final rightWidth = itemWidth;
                       // ปรับขนาดไอคอนในลิสต์แนวนอน
                       final listIconSize = isLandscape 
                           ? 48.0 
