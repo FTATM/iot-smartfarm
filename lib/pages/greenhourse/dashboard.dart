@@ -312,11 +312,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               onTap: () {
                                 _showEditDialog(context, item, index, maxwidth, maxheight, bg);
                               },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(13),
-                                ),
+                              child: SizedBox(
                                 child: const Align(
                                   alignment: Alignment.topRight,
                                   child: Padding(
