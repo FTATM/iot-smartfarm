@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/pages/Farm/schedule-create.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
@@ -74,48 +75,66 @@ class _SchedulePageState extends State<SchedulePage> {
           "แก้ไขตารางข้อมูล",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
+        actions: [],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 16,
+        children: [
+          Visibility(
+            visible: !deepEq.equals(tables, temps),
+            child: FloatingActionButton(
+              backgroundColor: Colors.orange[700],
+              onPressed: () async {
+                BuildContext? dialogContext;
+
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) {
+                    dialogContext = ctx;
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                );
+
+                final res = await ApiService.updateScheduleAll(temps);
+
+                if (res['status'] == 'success') {}
+
+                if (dialogContext != null) {
+                  Navigator.pop(dialogContext!);
+                }
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Icon(Icons.save, color: Colors.white),
+            ),
+          ),
+          FloatingActionButton(
+            backgroundColor: Colors.orange[700],
+            onPressed: () async {
               setState(() {
                 isEdit = !isEdit;
               });
             },
-            icon: Icon(isEdit ? Icons.close : Icons.edit, color: Colors.black),
+            child: Icon(isEdit ? Icons.close : Icons.delete, color: Colors.white),
+          ),
+          Visibility(
+            visible: !isEdit,
+            child: FloatingActionButton(
+              backgroundColor: Colors.orange[700],
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ScheduleCreatePage()),
+                ).then((_) async => {await prepare()});
+              },
+              child: Icon(Icons.add, color: Colors.white),
+            ),
           ),
         ],
-      ),
-      floatingActionButton: Visibility(
-        visible: !deepEq.equals(tables, temps),
-        child: FloatingActionButton(
-          backgroundColor: Colors.orange[700],
-          onPressed: () async {
-            BuildContext? dialogContext;
-
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) {
-                dialogContext = ctx;
-                return const Center(child: CircularProgressIndicator());
-              },
-            );
-
-            final res = await ApiService.updateScheduleAll(temps);
-
-            if (res['status'] == 'success') {}
-
-            if (dialogContext != null) {
-              Navigator.pop(dialogContext!);
-            }
-
-            if (context.mounted) {
-              Navigator.pop(context);
-              //   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeOldPage()));
-            }
-          },
-          child: const Icon(Icons.save, color: Colors.white),
-        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -151,34 +170,58 @@ class _SchedulePageState extends State<SchedulePage> {
             const SizedBox(height: 8),
 
             /// ===== Table Label =====
-            TextFormField(
-              initialValue: item['label'],
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: item['label'],
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    ),
+                    onChanged: (v) => item['label'] = v,
+                    onTapOutside: (_) => setState(() {}),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              ),
-              onChanged: (v) => item['label'] = v,
-              onTapOutside: (_) => setState(() {}),
-            ),
 
+                Visibility(
+                  visible: isEdit,
+                  child: IconButton(
+                    onPressed: () async {
+                      // debugPrint(item.toString());
+                      var res = await ApiService.deleteColumnById(item);
+                      if (res['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบตารางสำเร็จ.")));
+                      } else {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text("ลบตารางไม่สำเร็จ กรุณาลองอีกครั้ง.")));
+                      }
+                      await prepare();
+                    },
+                    icon: Icon(Icons.delete, color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
 
             /// ===== Table =====
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Table(
-                border: TableBorder.all(color: Colors.grey.shade300),
-                columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(1), 2: FixedColumnWidth(isEdit ? 40 : 0)},
+                border: TableBorder(horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1)),
+                columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(1)},
                 children: [
                   /// Header
                   TableRow(
@@ -198,26 +241,9 @@ class _SchedulePageState extends State<SchedulePage> {
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           ),
+                          textAlign: TextAlign.center,
                           onChanged: (v) => item['label'] = v,
                           onTapOutside: (_) => setState(() {}),
-                        ),
-                      ),
-                      Visibility(
-                        visible: isEdit,
-                        child: IconButton(
-                          onPressed: () async {
-                            // debugPrint(item.toString());
-                            var res = await ApiService.deleteColumnById(item);
-                            if (res['status'] == 'success') {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบตารางสำเร็จ.")));
-                            } else {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text("ลบตารางไม่สำเร็จ กรุณาลองอีกครั้ง.")));
-                            }
-                            await prepare();
-                          },
-                          icon: Icon(Icons.delete, color: Colors.red),
                         ),
                       ),
                     ],
@@ -229,11 +255,13 @@ class _SchedulePageState extends State<SchedulePage> {
 
                     return TableRow(
                       children: [
+                        //start - end
                         Padding(
                           padding: const EdgeInsets.all(6),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
+                              //start_day
                               Container(
                                 width: maxwidth / 8,
                                 child: TextFormField(
@@ -244,10 +272,13 @@ class _SchedulePageState extends State<SchedulePage> {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                   ),
+                                  textAlign: TextAlign.center,
                                   onChanged: (v) => row['d_start_day'] = v,
                                   onTapOutside: (_) => setState(() {}),
                                 ),
                               ),
+
+                              //end_day
                               Container(
                                 width: maxwidth / 8,
                                 child: TextFormField(
@@ -258,6 +289,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                   ),
+                                  textAlign: TextAlign.center,
                                   onChanged: (v) => row['d_end_day'] = v,
                                   onTapOutside: (_) => setState(() {}),
                                 ),
@@ -266,6 +298,7 @@ class _SchedulePageState extends State<SchedulePage> {
                           ),
                         ),
 
+                        //value
                         Padding(
                           padding: const EdgeInsets.all(6),
                           child: TextFormField(
@@ -276,14 +309,10 @@ class _SchedulePageState extends State<SchedulePage> {
                               isDense: true,
                               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                             ),
+                            textAlign: TextAlign.center,
                             onChanged: (v) => row['d_value'] = v,
                             onTapOutside: (_) => setState(() {}),
                           ),
-                        ),
-
-                        Visibility(
-                          visible: isEdit,
-                          child: Container(child: Text("")),
                         ),
                       ],
                     );
@@ -383,7 +412,7 @@ class _SchedulePageState extends State<SchedulePage> {
       color: Colors.white,
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsetsGeometry.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -391,33 +420,57 @@ class _SchedulePageState extends State<SchedulePage> {
             const SizedBox(height: 8),
 
             /// ===== Table Label =====
-            TextFormField(
-              initialValue: parent['label'],
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: parent['label'],
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    ),
+                    onChanged: (v) => parent['label'] = v,
+                    onTapOutside: (_) => setState(() {}),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              ),
-              onChanged: (v) => parent['label'] = v,
-              onTapOutside: (_) => setState(() {}),
-            ),
 
+                Visibility(
+                  visible: isEdit,
+                  child: IconButton(
+                    onPressed: () async {
+                      var res = await ApiService.deleteTableById(parent);
+                      if (res['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบตารางสำเร็จ.")));
+                      } else {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text("ลบตารางไม่สำเร็จ กรุณาลองอีกครั้ง.")));
+                      }
+                      // debugPrint(parent.toString());
+                      await prepare();
+                    },
+                    icon: Icon(Icons.delete, color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
 
             /// ===== Table =====
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: isEdit ? 0.0 : 16.0, vertical: 16),
               child: Table(
-                border: TableBorder.all(color: Colors.grey.shade300),
+                border: TableBorder(horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1)),
                 columnWidths: {
                   0: FlexColumnWidth(1),
                   for (int i = 0; i < childList.length + 1; i++) i + 1: const FlexColumnWidth(1),
@@ -466,20 +519,9 @@ class _SchedulePageState extends State<SchedulePage> {
 
                       Visibility(
                         visible: isEdit,
-                        child: IconButton(
-                          onPressed: () async {
-                            var res = await ApiService.deleteTableById(parent);
-                            if (res['status'] == 'success') {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบตารางสำเร็จ.")));
-                            } else {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text("ลบตารางไม่สำเร็จ กรุณาลองอีกครั้ง.")));
-                            }
-                            // debugPrint(parent.toString());
-                            await prepare();
-                          },
-                          icon: Icon(Icons.delete, color: Colors.red),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Center(child: Text("")),
                         ),
                       ),
                     ],
@@ -607,6 +649,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                   context,
                                 ).showSnackBar(SnackBar(content: Text("ลบแถวไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                               }
+                              await prepare();
                             },
                             icon: Icon(Icons.delete, color: Colors.red),
                           ),
@@ -633,6 +676,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                 context,
                               ).showSnackBar(SnackBar(content: Text("ลบคอลัมไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                             }
+                            await prepare();
                           },
                           icon: Icon(Icons.delete, color: Colors.red),
                         ),
@@ -650,6 +694,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                   context,
                                 ).showSnackBar(SnackBar(content: Text("ลบคอลัมไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                               }
+                              await prepare();
                             },
                             icon: Icon(Icons.delete, color: Colors.red),
                           ),
@@ -687,6 +732,16 @@ class _SchedulePageState extends State<SchedulePage> {
                       'd_value': '',
                       'd_second_label': null,
                     });
+                    for (var c in childList) {
+                      c['rows'].add({
+                        'd_id': 'new',
+                        'd_name_table_id': c['id'],
+                        'd_start_day': '0',
+                        'd_end_day': '0',
+                        'd_value': '',
+                        'd_second_label': null,
+                      });
+                    }
                     setState(() {});
                   },
                   icon: const Icon(Icons.add, color: Colors.orange),

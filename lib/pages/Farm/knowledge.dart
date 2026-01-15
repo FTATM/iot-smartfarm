@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
@@ -11,6 +13,7 @@ class KnowledgePage extends StatefulWidget {
 
 class _KnowledgePageState extends State<KnowledgePage> {
   bool isLoading = true;
+  int diffDay = 0;
   List<dynamic> tables = [];
   List<dynamic> mainboard = [];
   List<dynamic> filterDates = [];
@@ -40,6 +43,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
       return element['name'].toString().startsWith('date');
     }).toList();
     debugPrint(filterDates.toString());
+
+    calculateDay(filterDates[1]['value'], filterDates[2]['value']);
   }
 
   @override
@@ -133,29 +138,18 @@ class _KnowledgePageState extends State<KnowledgePage> {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 400;
-              
+
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Table(
-                  border: TableBorder(
-                    horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
-                  ),
-                  columnWidths: {
-                    0: FlexColumnWidth(isNarrow ? 0.8 : 1),
-                    1: FlexColumnWidth(isNarrow ? 1 : 1.2),
-                  },
+                  border: TableBorder(horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1)),
+                  columnWidths: {0: FlexColumnWidth(isNarrow ? 0.8 : 1), 1: FlexColumnWidth(isNarrow ? 1 : 1.2)},
                   children: [
                     TableRow(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(8)),
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isNarrow ? 8 : 12, 
-                            vertical: 12
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: isNarrow ? 8 : 12, vertical: 12),
                           child: Text(
                             "ช่วงวัน",
                             style: TextStyle(
@@ -167,10 +161,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isNarrow ? 8 : 12, 
-                            vertical: 12
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: isNarrow ? 8 : 12, vertical: 12),
                           child: Text(
                             "ค่ามาตรฐาน",
                             style: TextStyle(
@@ -184,29 +175,29 @@ class _KnowledgePageState extends State<KnowledgePage> {
                       ],
                     ),
                     ...item['rows'].map<TableRow>((row) {
-                      final start = row['d_start_day'];
+                      final startView = row['d_start_day'];
                       final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                      final start = int.parse(row['d_start_day'].toString());
+                      final end = row['d_end_day'].toString() == '99' ? 99999 : int.parse(row['d_end_day'].toString());
+
+                      final isThisDay = start <= diffDay && end >= diffDay;
+
                       return TableRow(
+                        decoration: BoxDecoration(
+                          color: isThisDay ? const Color.fromARGB(255, 255, 228, 203) : Colors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isNarrow ? 8 : 12, 
-                              vertical: 14
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: isNarrow ? 8 : 12, vertical: 14),
                             child: Text(
-                              "$start - $endView",
-                              style: TextStyle(
-                                fontSize: isNarrow ? 13 : 14, 
-                                color: Colors.grey.shade800
-                              ),
+                              "$startView - $endView",
+                              style: TextStyle(fontSize: isNarrow ? 13 : 14, color: Colors.grey.shade800),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isNarrow ? 8 : 12, 
-                              vertical: 14
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: isNarrow ? 8 : 12, vertical: 14),
                             child: Text(
                               row['d_value'] ?? "-",
                               style: TextStyle(
@@ -274,38 +265,30 @@ class _KnowledgePageState extends State<KnowledgePage> {
             builder: (context, constraints) {
               final screenWidth = MediaQuery.of(context).size.width;
               final totalColumns = childList.length + 2;
-              
+
               // Dynamic column width based on screen size and number of columns
               final baseColWidth = screenWidth < 400 ? 100.0 : 140.0;
               final dayColWidth = screenWidth < 400 ? 90.0 : 110.0;
               final minWidth = (totalColumns - 1) * baseColWidth + dayColWidth;
-              
+
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(16),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minWidth: minWidth > constraints.maxWidth 
-                        ? minWidth 
-                        : constraints.maxWidth - 32,
+                    minWidth: minWidth > constraints.maxWidth ? minWidth : constraints.maxWidth - 32,
                   ),
                   child: Table(
-                    border: TableBorder(
-                      horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
-                    ),
+                    border: TableBorder(horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1)),
                     columnWidths: {
                       0: FixedColumnWidth(dayColWidth),
-                      for (int i = 0; i < childList.length + 1; i++) 
-                        i + 1: FixedColumnWidth(baseColWidth),
+                      for (int i = 0; i < childList.length + 1; i++) i + 1: FixedColumnWidth(baseColWidth),
                     },
                     defaultColumnWidth: FixedColumnWidth(baseColWidth),
                     children: [
                       // Header row
                       TableRow(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(8)),
                         children: [
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
@@ -322,7 +305,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
                             child: Text(
-                              parent['label'] ?? "",
+                              "ค่ามาตรฐาน",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: screenWidth < 400 ? 12 : 13,
@@ -353,20 +336,27 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
                       // Data rows
                       ...rows.map<TableRow>((row) {
-                        final start = row['d_start_day'];
-                        final end = row['d_end_day'];
+                        final startStr = row['d_start_day'];
+                        final endStr = row['d_end_day'];
+                        final startView = row['d_start_day'];
                         final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                        final start = int.parse(row['d_start_day'].toString());
+                        final end = row['d_end_day'].toString() == '99'
+                            ? 99999
+                            : int.parse(row['d_end_day'].toString());
 
+                        final isThisDay = start <= diffDay && end >= diffDay;
                         return TableRow(
+                          decoration: BoxDecoration(
+                            color: isThisDay ? const Color.fromARGB(255, 255, 228, 203) : Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                           children: [
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 6, vertical: 14),
                               child: Text(
-                                "$start - $endView",
-                                style: TextStyle(
-                                  fontSize: screenWidth < 400 ? 12 : 13, 
-                                  color: Colors.grey.shade800
-                                ),
+                                "$startView - $endView",
+                                style: TextStyle(fontSize: screenWidth < 400 ? 12 : 13, color: Colors.grey.shade800),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -386,7 +376,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 6, vertical: 14),
                                 child: Text(
-                                  _matchChildValue(c['rows'] ?? [], start, end),
+                                  _matchChildValue(c['rows'] ?? [], startStr, endStr),
                                   style: TextStyle(
                                     fontSize: screenWidth < 400 ? 12 : 13,
                                     fontWeight: FontWeight.w600,
@@ -423,5 +413,14 @@ class _KnowledgePageState extends State<KnowledgePage> {
   String _matchChildValue(List rows, String s, String e) {
     final match = rows.firstWhere((r) => r['d_start_day'] == s && r['d_end_day'] == e, orElse: () => null);
     return match != null ? (match['d_value'] ?? "-") : "-";
+  }
+
+  void calculateDay(String start, String end) {
+    final startDate = DateTime.parse(start);
+    final endDate = DateTime.parse(end);
+
+    setState(() {
+      diffDay = endDate.difference(startDate).inDays;
+    });
   }
 }
