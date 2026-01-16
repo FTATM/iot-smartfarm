@@ -43,7 +43,7 @@ class _TutorialPageState extends State<TutorialPage> {
       );
     }
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
+    // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
     final fs_large = maxwidth > 500 ? 30.0 : 18.0;
     return Scaffold(
       backgroundColor: Colors.white,

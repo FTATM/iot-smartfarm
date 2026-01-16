@@ -16,6 +16,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   bool isEdit = false;
   String userString = "";
   Map<String, dynamic> user = {};
+  Map<String, dynamic> weathers= {};
   List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> sensors = [];
@@ -34,6 +35,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     await _fetchicons();
     await _fetchmainBoard();
     await _fetchconfiguration();
+    await _fetchWeathers();
     setState(() {
       user = CurrentUser;
       isLoading = false;
@@ -42,6 +44,13 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
       manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
 
+  }
+
+  Future<void> _fetchWeathers() async {
+    final response = await ApiService.fetchWeathers();
+    setState(() {
+      weathers = response['data'] as Map<String, dynamic>;
+    });
   }
 
   Future<void> _fetchicons() async {

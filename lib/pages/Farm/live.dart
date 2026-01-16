@@ -486,7 +486,7 @@ class _LivePageState extends State<LivePage> {
 
             // Camera list with icons
             ...cameraRooms.asMap().entries.map((entry) {
-              final index = entry.key;
+              // final index = entry.key;
               final room = entry.value;
               final isSelected = selectedRoom == room;
               
@@ -782,28 +782,6 @@ class _LivePageState extends State<LivePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isActive ? Color(0xFFFF9944) : Colors.grey,
-          size: 28,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isActive ? Color(0xFFFF9944) : Colors.grey,
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ],
     );
   }
 }
