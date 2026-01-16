@@ -103,7 +103,20 @@ class _DashboardPageState extends State<DashboardPage> {
     final response = await ApiService.fetchDashboardBybranchId(branchId);
 
     setState(() {
-      data = response['data'] as List;
+      // เรียงลำดับจากล่าสุดไปเก่าสุด (ใช้ id)
+      data = (response['data'] as List)
+        ..sort((a, b) {
+          // ถ้ามี created_at ให้ใช้อันนี้
+          // final aTime = DateTime.parse(a['created_at'] ?? '1970-01-01');
+          // final bTime = DateTime.parse(b['created_at'] ?? '1970-01-01');
+          // return bTime.compareTo(aTime);
+          
+          // หรือใช้ id (id ที่ใหญ่กว่าคือข้อมูลใหม่กว่า)
+          final aId = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
+          final bId = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
+          return bId.compareTo(aId); // เรียงจากมากไปน้อย (ใหม่ไปเก่า)
+        });
+      
       clone = data.map((e) => Map<String, dynamic>.from(e)).toList();
 
       nameControllers = data.map((item) => TextEditingController(text: item['item_name']?.toString() ?? '')).toList();
@@ -253,20 +266,29 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 
-                // Dashboard Items
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: data.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    var item = entry.value;
-                    final bg = hexToColor(item['sub_bg_color_code'] ?? '#999999');
-                    final itemWidth = (maxwidth - 36) / double.parse(item['size']);
-                    
-                    return Stack(
-                      children: [
-                        Container(
+                // Dashboard Items with proper layout
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // คำนวณจำนวนคอลัมน์ตามขนาด
+                    List<Widget> buildRow(List<dynamic> items) {
+                      return items.map((item) {
+                        final bg = hexToColor(item['sub_bg_color_code'] ?? '#999999');
+                        final size = double.parse(item['size']);
+                        final itemIndex = data.indexOf(item);
+                        
+                        // คำนวณความกว้างตามขนาด
+                        // size 1 = 1 อันต่อแถว (full width)
+                        // size 2 = 2 อันต่อแถว (half width)
+                        // size 3 = 3 อันต่อแถว (third width)
+                        final itemWidth = size == 1 
+                            ? maxwidth - 24  // Full width minus padding
+                            : size == 2 
+                                ? (maxwidth - 36) / 2  // Half width
+                                : (maxwidth - 48) / 3; // Third width
+                        
+                        return Container(
                           width: itemWidth,
+                          margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
@@ -281,165 +303,9 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             ],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(13),
-                            child: DashboardBlogByIdWidget(
-                              type: item['item_type_id'],
-                              size: item['size'],
-                              title: item['item_name'],
-                              value: item['m_value'] ?? "0",
-                              isDialog: false,
-                              pathImage: item['i_path'] ?? "img/icons/default.png",
-                              color: bg,
-                              labelJson: jsonEncode(item['labels']),
-                              valueJson: jsonEncode(item['values']),
-                              onValueChanged: (keyVal, newVal) {
-                                setState(() {
-                                  item[keyVal] = newVal;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        
-                        // Edit Button Overlay
-                        SizedBox(
-                          width: itemWidth,
-                          child: Visibility(
-                            visible: isEdit,
-                            child: InkWell(
-                              onTap: () {
-                                _showEditDialog(context, item, index, maxwidth, maxheight, bg);
-                              },
-                              child: SizedBox(
-                                child: const Align(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 20,
-                                      color: Color(0xFFFF9800),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-void _showEditDialog(BuildContext context, var item, int index, double maxwidth, double maxheight, Color bg) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setStateDialog) {
-          var filtered = subDashboard.where((element) {
-            return element['dashboard_item_id'].toString() == item['id'];
-          }).toList();
-          
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: Container(
-              width: maxwidth,
-              constraints: BoxConstraints(
-                maxHeight: maxheight > 600 ? 600 : maxheight * 0.85,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header with close button
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFF9800),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'แก้ไขรายการ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              clone[index] = Map<String, dynamic>.from(data[index]);
-                            });
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Content
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          // Preview Card
-                          Container(
-                            margin: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: const Color(0xFFFF9800).withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                border: const Border(
-                                  bottom: BorderSide(color: Color(0xFFFF9800), width: 3),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
+                          child: Stack(
+                            children: [
+                              ClipRRect(
                                 borderRadius: BorderRadius.circular(13),
                                 child: DashboardBlogByIdWidget(
                                   type: item['item_type_id'],
@@ -452,392 +318,606 @@ void _showEditDialog(BuildContext context, var item, int index, double maxwidth,
                                   labelJson: jsonEncode(item['labels']),
                                   valueJson: jsonEncode(item['values']),
                                   onValueChanged: (keyVal, newVal) {
-                                    setState(() {});
+                                    setState(() {
+                                      item[keyVal] = newVal;
+                                    });
                                   },
                                 ),
                               ),
+                              
+                              // Edit Button Overlay
+                              Visibility(
+                                visible: isEdit,
+                                child: Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _showEditDialog(context, item, itemIndex, maxwidth, maxheight, bg);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.1),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                        color: Color(0xFFFF9800),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList();
+                    }
+                    
+                    // จัดกลุ่ม items ตามขนาด
+                    List<Widget> rows = [];
+                    int i = 0;
+                    
+                    while (i < data.length) {
+                      final currentSize = double.parse(data[i]['size']);
+                      
+                      if (currentSize == 1) {
+                        // ขนาดใหญ่ - 1 อันต่อแถว
+                        rows.add(Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: buildRow([data[i]]),
+                        ));
+                        i++;
+                      } else if (currentSize == 2) {
+                        // ขนาดกลาง - 2 อันต่อแถว
+                        List<dynamic> rowItems = [data[i]];
+                        if (i + 1 < data.length && double.parse(data[i + 1]['size']) == 2) {
+                          rowItems.add(data[i + 1]);
+                          i += 2;
+                        } else {
+                          i++;
+                        }
+                        rows.add(Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: buildRow(rowItems),
+                        ));
+                      } else {
+                        // ขนาดเล็ก - 3 อันต่อแถว
+                        List<dynamic> rowItems = [data[i]];
+                        int count = 1;
+                        while (count < 3 && i + count < data.length && double.parse(data[i + count]['size']) == 3) {
+                          rowItems.add(data[i + count]);
+                          count++;
+                        }
+                        i += count;
+                        rows.add(Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: buildRow(rowItems),
+                        ));
+                      }
+                    }
+                    
+                    return Column(
+                      children: rows,
+                    );
+                  },
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, var item, int index, double maxwidth, double maxheight, Color bg) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            var filtered = subDashboard.where((element) {
+              return element['dashboard_item_id'].toString() == item['id'];
+            }).toList();
+            
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: Container(
+                width: maxwidth,
+                constraints: BoxConstraints(
+                  maxHeight: maxheight > 600 ? 600 : maxheight * 0.85,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header with close button
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFF9800),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'แก้ไขรายการ',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                          
-                          // Edit Form
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Name Field
-                                const Text(
-                                  'ชื่อรายการ',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF424242),
-                                  ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                clone[index] = Map<String, dynamic>.from(data[index]);
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Content
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Preview Card
+                            Container(
+                              margin: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFFF9800).withOpacity(0.3),
+                                  width: 1,
                                 ),
-                                const SizedBox(height: 8),
-                                TextField(
-                                  controller: nameControllers[index],
-                                  decoration: InputDecoration(
-                                    hintText: 'กรุณาใส่ชื่อรายการ',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    filled: true,
-                                    fillColor: const Color(0xFFFAFAFA),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: const Border(
+                                    bottom: BorderSide(color: Color(0xFFFF9800), width: 3),
                                   ),
-                                  onChanged: (value) {
-                                    clone[index]['item_name'] = value;
-                                    item['item_name'] = value;
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-                                
-                                // Size Selection
-                                const Text(
-                                  'ขนาด',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF424242),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    _buildEnhancedSizeOption(setStateDialog, index, "1", "Large", Icons.crop_square),
-                                    _buildEnhancedSizeOption(setStateDialog, index, "2", "Medium", Icons.crop_portrait),
-                                    _buildEnhancedSizeOption(setStateDialog, index, "3", "Small", Icons.crop_din),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
                                   ],
                                 ),
-                                const SizedBox(height: 20),
-                                
-                                // Icon Dropdown
-                                const Text(
-                                  'ไอคอน',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF424242),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFAFAFA),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: const Color(0xFFE0E0E0)),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: DropdownButton<String>(
-                                    value: item['icon_id'].toString(),
-                                    items: icons.map<DropdownMenuItem<String>>((icons) {
-                                      return DropdownMenuItem<String>(
-                                        value: icons['id']?.toString(),
-                                        child: Text(
-                                          icons['name'] ?? '',
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFFFF9800)),
-                                    onChanged: (valuex) {
-                                      setStateDialog(() {
-                                        item['icon_id'] = valuex;
-                                      });
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(13),
+                                  child: DashboardBlogByIdWidget(
+                                    type: item['item_type_id'],
+                                    size: item['size'],
+                                    title: item['item_name'],
+                                    value: item['m_value'] ?? "0",
+                                    isDialog: false,
+                                    pathImage: item['i_path'] ?? "img/icons/default.png",
+                                    color: bg,
+                                    labelJson: jsonEncode(item['labels']),
+                                    valueJson: jsonEncode(item['values']),
+                                    onValueChanged: (keyVal, newVal) {
+                                      setState(() {});
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 20),
-                                
-                                // Data Section
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'ข้อมูล',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF424242),
-                                      ),
+                              ),
+                            ),
+                            
+                            // Edit Form
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Name Field
+                                  const Text(
+                                    'ชื่อรายการ',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF424242),
                                     ),
-                                    InkWell(
-                                      onTap: () async {
-                                        await _handleAddData(context, item, setStateDialog);
+                                  ),
+                                  const SizedBox(height: 8),
+                                  TextField(
+                                    controller: nameControllers[index],
+                                    decoration: InputDecoration(
+                                      hintText: 'กรุณาใส่ชื่อรายการ',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFAFAFA),
+                                    ),
+                                    onChanged: (value) {
+                                      clone[index]['item_name'] = value;
+                                      item['item_name'] = value;
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+                                  
+                                  // Size Selection
+                                  const Text(
+                                    'ขนาด',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF424242),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildEnhancedSizeOption(setStateDialog, index, "1", "Large", Icons.crop_square),
+                                      _buildEnhancedSizeOption(setStateDialog, index, "2", "Medium", Icons.crop_portrait),
+                                      _buildEnhancedSizeOption(setStateDialog, index, "3", "Small", Icons.crop_din),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  
+                                  // Icon Dropdown
+                                  const Text(
+                                    'ไอคอน',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF424242),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFAFAFA),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: const Color(0xFFE0E0E0)),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    child: DropdownButton<String>(
+                                      value: item['icon_id'].toString(),
+                                      items: icons.map<DropdownMenuItem<String>>((icons) {
+                                        return DropdownMenuItem<String>(
+                                          value: icons['id']?.toString(),
+                                          child: Text(
+                                            icons['name'] ?? '',
+                                            style: const TextStyle(fontSize: 14),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      isExpanded: true,
+                                      underline: const SizedBox(),
+                                      icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFFFF9800)),
+                                      onChanged: (valuex) {
+                                        setStateDialog(() {
+                                          item['icon_id'] = valuex;
+                                        });
                                       },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFFF9800),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.add, color: Colors.white, size: 18),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              'เพิ่ม',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  
+                                  // Data Section
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'ข้อมูล',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF424242),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      InkWell(
+                                        onTap: () async {
+                                          await _handleAddData(context, item, setStateDialog);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFF9800),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.add, color: Colors.white, size: 18),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                'เพิ่ม',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  
+                                  // Data List
+                                  ...filtered.map((item2) => _buildEnhancedDataItem(context, item2, setStateDialog)).toList(),
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Action Buttons
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAFAFA),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                        border: Border(
+                          top: BorderSide(color: Colors.grey.shade200),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Delete Button
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                await _handleDelete(context, item);
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                side: const BorderSide(color: Colors.red, width: 2),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                const SizedBox(height: 12),
-                                
-                                // Data List
-                                ...filtered.map((item2) => _buildEnhancedDataItem(context, item2, setStateDialog)).toList(),
-                                const SizedBox(height: 16),
-                              ],
+                              ),
+                              icon: const Icon(Icons.delete_outline, size: 20),
+                              label: const Text(
+                                'ลบ',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Save Button
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                await _handleSave(context, item, index);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF9800),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              icon: const Icon(Icons.check, size: 20),
+                              label: const Text(
+                                'บันทึก',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  
-                  // Action Buttons
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFAFAFA),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                      ),
-                      border: Border(
-                        top: BorderSide(color: Colors.grey.shade200),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Delete Button
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              await _handleDelete(context, item);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              side: const BorderSide(color: Colors.red, width: 2),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            icon: const Icon(Icons.delete_outline, size: 20),
-                            label: const Text(
-                              'ลบ',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Save Button
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () async {
-                              await _handleSave(context, item, index);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFF9800),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            icon: const Icon(Icons.check, size: 20),
-                            label: const Text(
-                              'บันทึก',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
 
-Widget _buildEnhancedSizeOption(StateSetter setStateDialog, int index, String size, String label, IconData icon) {
-  final isSelected = sizeControllers[index].text == size;
-  
-  return InkWell(
-    onTap: () {
-      setStateDialog(() {
-        sizeControllers[index].text = size;
-        clone[index]['size'] = size;
-        data[index]['size'] = size;
-      });
-      setState(() {});
-    },
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isSelected ? const Color(0xFFFF9800) : const Color(0xFFE0E0E0),
-          width: 2,
+  Widget _buildEnhancedSizeOption(StateSetter setStateDialog, int index, String size, String label, IconData icon) {
+    final isSelected = sizeControllers[index].text == size;
+    
+    return InkWell(
+      onTap: () {
+        setStateDialog(() {
+          sizeControllers[index].text = size;
+          clone[index]['size'] = size;
+          data[index]['size'] = size;
+        });
+        setState(() {});
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFFF9800) : const Color(0xFFE0E0E0),
+            width: 2,
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFFFF9800) : Colors.transparent,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected ? const Color(0xFFFF9800) : const Color(0xFFD0D0D0),
-                width: 2,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFFF9800) : Colors.transparent,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFFF9800) : const Color(0xFFD0D0D0),
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child: isSelected
+                    ? const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 20,
+                      )
+                    : Icon(
+                        icon,
+                        color: const Color(0xFFBDBDBD),
+                        size: 20,
+                      ),
               ),
             ),
-            child: Center(
-              child: isSelected
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 20,
-                    )
-                  : Icon(
-                      icon,
-                      color: const Color(0xFFBDBDBD),
-                      size: 20,
-                    ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: isSelected ? const Color(0xFFFF9800) : const Color(0xFF9E9E9E),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildEnhancedDataItem(BuildContext context, var item2, StateSetter setStateDialog) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: const Color(0xFFE0E0E0)),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          // ID Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF9800).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              "ID: ${item2["monitor_id"]}",
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFFF9800),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          
-          // Label Name
-          Expanded(
-            child: Text(
-              item2["label_name"] ?? '',
-              style: const TextStyle(
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF424242),
+                color: isSelected ? const Color(0xFFFF9800) : const Color(0xFF9E9E9E),
               ),
             ),
-          ),
-          
-          // Color Indicator
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: hexToColor(item2['label_color_code'] ?? '#FF9800'),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
-            ),
-          ),
-          const SizedBox(width: 8),
-          
-          // Edit Button
-          InkWell(
-            onTap: () async {
-              await _handleEditData(context, item2, setStateDialog);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFF9800).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.edit_outlined,
-                color: Color(0xFFFF9800),
-                size: 18,
-              ),
-            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnhancedDataItem(BuildContext context, var item2, StateSetter setStateDialog) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-    ),
-  );
-}
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            // ID Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF9800).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                "ID: ${item2["monitor_id"]}",
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFFF9800),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            
+            // Label Name
+            Expanded(
+              child: Text(
+                item2["label_name"] ?? '',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF424242),
+                ),
+              ),
+            ),
+            
+            // Color Indicator
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: hexToColor(item2['label_color_code'] ?? '#FF9800'),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
+              ),
+            ),
+            const SizedBox(width: 8),
+            
+            // Edit Button
+            InkWell(
+              onTap: () async {
+                await _handleEditData(context, item2, setStateDialog);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF9800).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.edit_outlined,
+                  color: Color(0xFFFF9800),
+                  size: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildSizeOption(StateSetter setStateDialog, int index, String size, String label) {
     return Column(
@@ -1006,7 +1086,13 @@ Widget _buildEnhancedDataItem(BuildContext context, var item2, StateSetter setSt
     );
     
     setState(() {
-      data = responsedata['data'] as List;
+      // เรียงลำดับเหมือนกับ _fetchDashboard
+      data = (responsedata['data'] as List)
+        ..sort((a, b) {
+          final aId = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
+          final bId = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
+          return bId.compareTo(aId);
+        });
     });
     
     ScaffoldMessenger.of(context).showSnackBar(

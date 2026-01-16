@@ -13,25 +13,45 @@ class HomeOldPage extends StatefulWidget {
 class ChickenFarmHeader extends StatelessWidget {
   final String title;
 
-  const ChickenFarmHeader({Key? key, this.title = 'CHICKEN FARM #1'}) : super(key: key);
+  const ChickenFarmHeader({Key? key, required this.title}) : super(key: key);
 
-  @override
+@override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final isSmallScreen = screenWidth < 360;
+    final orientation = MediaQuery.of(context).orientation;
+    final isLandscape = orientation == Orientation.landscape;
 
-    // กำหนดค่า horizontal padding ที่ต้องการให้เท่ากันทั้งหมด
-    // final horizontalPadding = isSmallScreen ? 16.0 : 24.0;
+    // กำหนดความสูงแบบ responsive
+final headerHeight = isSmallScreen 
+    ? 40.0 
+    : isLandscape 
+        ? 50.0 
+        : screenWidth < 600 
+            ? 50.0 
+            : screenHeight * 0.065;  // ปรับความสูงเป็น 10% ของความสูงหน้าจอ
+
+
+      final Width = isSmallScreen
+          ? screenWidth * 0.50  // เปลี่ยนเป็น 50% สำหรับหน้าจอเล็ก
+          : isLandscape
+              ? screenWidth * 0.50  // แนวนอนให้แคบลง 50%
+              : screenWidth < 600
+                  ? screenWidth * 0.50  // หน้าจอกลาง 60%
+                  : screenWidth * 0.50;  // ความกว้างสูงสุด 80% ของหน้าจอ
+
 
     return Container(
+      height: headerHeight,
+      width: Width,
       margin: EdgeInsets.only(
         left: isSmallScreen ? 16 : 24,
         right: isSmallScreen ? 16 : 24,
-        top: 1, // เพิ่มตรงนี้ - ลดค่านี้เพื่อลดระยะห่างด้านล่าง
-      ), // เพิ่ม margin แทน padding
+        top: 1,
+      ),
       padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 20 : 32, // padding ภายใน
-        vertical: isSmallScreen ? 12 : 16,
+        horizontal: isSmallScreen ? 2 : 4,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -40,17 +60,18 @@ class ChickenFarmHeader extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(50),
-        border: Border(bottom: BorderSide(width: 2.5, color: Color.fromARGB(255, 255, 131, 0))),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
+        border: Border(bottom: BorderSide(width: 3.0, color: Color.fromARGB(255, 255, 131, 0))),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 2))],
       ),
+      alignment: Alignment.center,
       child: Text(
         title,
         style: TextStyle(
           fontSize: isSmallScreen
-              ? 18
+              ? 12
               : screenWidth < 600
-              ? 24
-              : 32,
+              ? 16
+              : 20,
           fontWeight: FontWeight.bold,
           color: Color.fromARGB(255, 255, 131, 0),
           letterSpacing: 2,
@@ -198,7 +219,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                 Padding(
                   padding: EdgeInsets.all(padding),
                   child: ChickenFarmHeader(
-                    title: 'CHICKEN FARM #1', // เปลี่ยนชื่อได้ตามต้องการ
+                    title: user['b_name']?.toString().toUpperCase() ?? 'CHICKEN FARM #1',
                   ),
                 ),
                 // Section 1: Top card with image and data

@@ -161,11 +161,13 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final largeIconSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final valueFontSize = 60.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -273,11 +275,13 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final chartSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final valueFontSize = 60.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -388,11 +392,13 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final largeIconSize = 100.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final valueFontSize = 48.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -588,10 +594,12 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
         final chartLabelFontSize = 10.0 * scaleFactor;
@@ -769,10 +777,12 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
         final chartLabelFontSize = 10.0 * scaleFactor;
@@ -910,11 +920,13 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final largeIconSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final buttonFontSize = 36.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -1036,7 +1048,7 @@ if (type == '1') {
   );
 
     } else if (type == '8') {
-  // Type 8: Slide Bar value - Humidity style layout
+  // Type 8: Slide Bar value - Humidity style layout (Centered)
   return Container(
     width: sizewidth,
     height: sizeheight,
@@ -1049,6 +1061,8 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
         final smallIconSize = 55.0 * scaleFactor;
@@ -1056,7 +1070,7 @@ if (type == '1') {
         final titleFontSize = 30.0 * scaleFactor;
         final valueFontSize = 60.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
-        final spacing = 40.0 * scaleFactor;
+        final spacing = 8.0 * scaleFactor;
         
         return Container(
           decoration: BoxDecoration(
@@ -1070,10 +1084,10 @@ if (type == '1') {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Header Row: Small Icon (left) + Title (next to icon)
+                // 1. Header Row: Small Icon + Title (ติดมุมซ้าย)
                 Row(
                   children: [
-                    // Small icon from database (left corner)
+                    // Small icon from database
                     Image.network(
                       path,
                       width: smallIconSize,
@@ -1104,32 +1118,20 @@ if (type == '1') {
                   ],
                 ),
                 
-                // 2. Center Content: Large Icon (centered)
+                // 2. Center Content: Slider (centered)
                 Expanded(
                   child: Center(
-                    child: Image.network(
-                      path,
-                      width: largeIconSize,
-                      height: largeIconSize,
-                      color: color,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.tune,
-                          size: largeIconSize,
-                          color: color,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                
-                // 3. Slider Section
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: spacing),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 8,
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: availableWidth * 0.85,
+                      ),
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                          trackHeight: 4 * scaleFactor,
+                          thumbShape: RoundSliderThumbShape(
+                            enabledThumbRadius: 10 * scaleFactor,
+                          ),
+                        ),
                         child: Slider(
                           value: value,
                           min: 0,
@@ -1140,29 +1142,28 @@ if (type == '1') {
                           onChanged: (value) {},
                         ),
                       ),
-                      SizedBox(width: spacing),
-                      Container(
-                        width: 80 * scaleFactor,
-                        alignment: Alignment.center,
-                        child: Text(
-                          value.toStringAsFixed(0),
-                          style: TextStyle(
-                            fontSize: valueFontSize * 0.7,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 
-                // 4. Range Label
+                // 3. Bottom: Value Display (centered)
+                Center(
+                  child: Text(
+                    value.toStringAsFixed(0),
+                    style: TextStyle(
+                      fontSize: 80 * scaleFactor,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                
+                // 4. Range Label (centered)
                 Center(
                   child: Text(
                     'Range 0 to 100',
                     style: TextStyle(
-                      fontSize: 12 * scaleFactor,
+                      fontSize: 30 * scaleFactor,
                       color: Colors.grey,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1192,11 +1193,13 @@ if (type == '1') {
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final lampSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final statusFontSize = 36.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -1304,17 +1307,24 @@ if (type == '1') {
         final availableHeight = constraints.maxHeight;
         final availableWidth = constraints.maxWidth;
         
-        // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
+        // ใช้ scale factor เหมือนกับ Type 8
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
-        
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
+
         // ขนาดพื้นฐาน (base size) ที่ออกแบบไว้สำหรับ 400px
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final largeIconSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final statusFontSize = 60.0 * scaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
-        final switchScale = 1.5 * scaleFactor;
+        
+        // Switch: แยกตามขนาดจริงของ height
+        final switchScale = availableHeight >= 200  // Large (250)
+            ? 1.5
+            : availableHeight >= 100  // Medium (125)
+                ? 0.9
+                : 0.6;  // Small (83.33)
         
         return Container(
           decoration: BoxDecoration(
@@ -1370,6 +1380,8 @@ if (type == '1') {
                         value: isOn,
                         activeThumbColor: color,
                         activeTrackColor: light,
+                        inactiveThumbColor: Colors.grey,        // เพิ่มบรรทัดนี้ - สีปุ่มตอนปิด
+                        inactiveTrackColor: Colors.grey[300], 
                         onChanged: (value) {
                           setState(() {
                             isOn = value;
@@ -1415,11 +1427,13 @@ if (type == '1') {
         
         // Use the same scale factor for consistency
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
         
         // Basic size values adjusted for scaling
-        final smallIconSize = 55.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
         final largeIconSize = 140.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final valueFontSize = 60.0 * scaleFactor; // Adjusted value font size
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
@@ -1528,10 +1542,12 @@ if (type == '1') {
 
         // Use scale factor for consistent sizing
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
+        // Scale factor พิเศษสำหรับไอคอนเล็กและชื่อ (มีขนาดขั้นต่ำสูงกว่า)
+        final headerScaleFactor = (availableHeight / 400).clamp(0.5, 1.5);
 
         // Basic size calculations
-        final smallIconSize = 55.0 * scaleFactor;
-        final titleFontSize = 30.0 * scaleFactor;
+        final smallIconSize = 55.0 * headerScaleFactor;
+        final titleFontSize = 30.0 * headerScaleFactor;
         final contentPadding = 12.0 * scaleFactor;
         final spacing = 8.0 * scaleFactor;
         final chartLabelFontSize = 10.0 * scaleFactor;
