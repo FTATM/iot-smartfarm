@@ -60,8 +60,8 @@ final headerHeight = isSmallScreen
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(50),
-        border: Border(bottom: BorderSide(width: 0.1, color: Color.fromARGB(255, 255, 131, 0))),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 10, offset: const Offset(0, 2))],
+        border: Border(bottom: BorderSide(width: 3.0, color: Color.fromARGB(255, 255, 131, 0))),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 2))],
       ),
       alignment: Alignment.center,
       child: Text(
