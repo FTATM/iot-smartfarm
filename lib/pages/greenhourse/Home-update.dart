@@ -16,7 +16,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   bool isEdit = false;
   String userString = "";
   Map<String, dynamic> user = {};
-  Map<String, dynamic> weathers= {};
+  Map<String, dynamic> weather = {};
+  // List<dynamic> weathers = [];
   List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> sensors = [];
@@ -43,14 +44,14 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
       labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
       manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
-
   }
 
   Future<void> _fetchWeathers() async {
     final response = await ApiService.fetchWeathers();
     setState(() {
-      weathers = response['data'] as Map<String, dynamic>;
+      weather = response['data'][0];
     });
+    print(weather);
   }
 
   Future<void> _fetchicons() async {
@@ -167,6 +168,25 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     }
   }
 
+  Widget buildFormRow({required String label, required Widget child}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -185,16 +205,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
         child: SingleChildScrollView(
           child: Column(
             spacing: 12,
-            children: data.asMap().entries.map((entry) {
-              int index = entry.key;
-              var item = entry.value;
-              var foundIcon = icons.where((i) {
-                return item['icon_id'] == i['id'];
-              });
-
-              return Container(
+            children: [
+              Container(
                 width: maxwidth,
-                // padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                 padding: EdgeInsets.all(12),
                 child: Column(
                   children: [
@@ -206,14 +219,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                         color: Colors.orange[700],
                         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${item['id']} ${item['name']}",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      child: Text(
+                        "Weather ${weather['name']}",
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
 
@@ -227,119 +235,47 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                       ),
                       child: Column(
                         children: [
+
                           SizedBox(
-                            width: (maxwidth - 24),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Expanded(child: Text("Label :",textAlign: TextAlign.center,)),
-                                SizedBox(
-                                  // color: Colors.cyan,
-                                  width: (maxwidth - 24) * 0.34,
-                                  child: TextField(
-                                    controller: labelControllers[index],
-                                    decoration: InputDecoration(labelText: "Label", border: OutlineInputBorder()),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        data[index]['label_text'] = value;
-                                      });
-                                    },
-                                  ),
+                            width: maxwidth,
+                            child: buildFormRow(
+                              label: "API URL :",
+                              child: TextFormField(
+                                initialValue: weather['url_api'] ?? "",
+                                onChanged: (value) => weather['url_api'] = value,
+                                style: const TextStyle(
+                                  fontSize: 12,
                                 ),
-                                Expanded(child: Text("Status :",textAlign: TextAlign.center,)),
-                                Container(
-                                  width: (maxwidth - 24) * 0.2,
-                                  child: Switch(
-                                    value: item['is_active'] == 't',
-                                    activeThumbColor: Colors.orange[700],
-                                    inactiveThumbColor: Colors.grey[600],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        item['is_active'] = value ? 't' : 'f';
-                                      });
-                                    },
-                                  ),
+                                decoration: InputDecoration(
+                                  hintText: "https://example.com/api",
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
-                              ],
-                            ),
-                          ),
-
-                          Visibility(
-                            visible: item['icon_id'] != '0',
-                            child: Container(
-                              padding: EdgeInsets.only(left: 8),
-                              // color: Colors.greenAccent,
-                              // width: (maxwidth - 16),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  SizedBox(width: maxwidth * 0.15, child: Text("Icon :")),
-                                  SizedBox(
-                                    width: maxwidth * 0.5,
-                                    child: SizedBox(
-                                      width: maxwidth * 0.4,
-                                      child: DropdownButton<String>(
-                                        hint: Text("เลือก icon"),
-                                        value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
-                                        items: icons.map<DropdownMenuItem<String>>((icon) {
-                                          return DropdownMenuItem(value: icon['id'], child: Text(icon['name']));
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() => item['icon_id'] = value);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: SizedBox(
-                                      width: maxwidth * 0.15,
-                                      height: maxwidth * 0.15,
-                                      child: Image.network(
-                                        // ignore: prefer_interpolation_to_compose_strings
-                                        "${user['baseURL']}../" +
-                                            icons.firstWhere(
-                                              (i) => i['id'] == item['icon_id'],
-                                              orElse: () => {"path": "img/icons/dafault.png"},
-                                            )['path'],
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ),
 
-                          Visibility(
-                            visible: item['type_values_id'] != '0',
-                            child: Container(
-                              width: maxwidth - 16,
-                              height: maxheight * 0.15,
-                              padding: EdgeInsets.only(left: 8),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: maxwidth * 0.15, child: Text("type :")),
-                                  SizedBox(
-                                    width: maxwidth * 0.34,
-                                    child: DropdownButton<String>(
-                                      value: item['type_values_id'] == "0" ? '1' : item['type_values_id'],
-                                      hint: Text("เลือกประเภท"),
-                                      items: typeofValues.entries.map((entry) {
-                                        return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          item['type_values_id'] = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(width: maxwidth * 0.15, child: Text("value :")),
-                                  Expanded(child: _buildChildByCase(index, item, maxwidth)),
-                                ],
+                          SizedBox(
+                            width: maxwidth,
+                            child: buildFormRow(
+                              label: "lat :",
+                              child: TextFormField(
+                                initialValue: weather['lat'] ?? "",
+                                onChanged: (value) => weather['lat'] = value,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: "7.232",
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
                               ),
                             ),
                           ),
-
+                          
                           Container(
                             width: maxwidth * 0.3,
                             height: 40,
@@ -350,14 +286,14 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                               ),
 
                               onPressed: () async {
-                                var response = await ApiService.updateMainboardById(item);
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(SnackBar(content: Text(response['message'])));
+                                // var response = await ApiService.updateWeather(weather);
+                                // ScaffoldMessenger.of(
+                                //   context,
+                                // ).showSnackBar(SnackBar(content: Text(response['message'])));
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: 12,
+                                spacing: 6,
                                 children: [
                                   Icon(Icons.save_outlined, color: Colors.white),
                                   Text("Save", style: TextStyle(color: Colors.white)),
@@ -372,8 +308,199 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                     ),
                   ],
                 ),
-              );
-            }).toList(),
+              ),
+
+              Divider(),
+              ...data.asMap().entries.map((entry) {
+                int index = entry.key;
+                var item = entry.value;
+                var foundIcon = icons.where((i) {
+                  return item['icon_id'] == i['id'];
+                });
+
+                return Container(
+                  width: maxwidth,
+                  // padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  padding: EdgeInsets.all(12),
+                  // child: Column(
+                  //   children: [
+                  //     /// header
+                  //     Container(
+                  //       width: maxwidth - 16,
+                  //       padding: EdgeInsets.all(8),
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.orange[700],
+                  //         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                  //       ),
+                  //       child: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           Text(
+                  //             "${item['id']} ${item['name']}",
+                  //             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+
+                  //     ///body
+                  //     Container(
+                  //       padding: EdgeInsets.all(12),
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 5), blurRadius: 2)],
+                  //         borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                  //       ),
+                  //       child: Column(
+                  //         children: [
+                  //           SizedBox(
+                  //             width: (maxwidth - 24),
+                  //             child: Row(
+                  //               mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //               children: [
+                  //                 Expanded(child: Text("Label :", textAlign: TextAlign.center)),
+                  //                 SizedBox(
+                  //                   // color: Colors.cyan,
+                  //                   width: (maxwidth - 24) * 0.34,
+                  //                   child: TextField(
+                  //                     controller: labelControllers[index],
+                  //                     decoration: InputDecoration(labelText: "Label", border: OutlineInputBorder()),
+                  //                     onChanged: (value) {
+                  //                       setState(() {
+                  //                         data[index]['label_text'] = value;
+                  //                       });
+                  //                     },
+                  //                   ),
+                  //                 ),
+                  //                 Expanded(child: Text("Status :", textAlign: TextAlign.center)),
+                  //                 Container(
+                  //                   width: (maxwidth - 24) * 0.2,
+                  //                   child: Switch(
+                  //                     value: item['is_active'] == 't',
+                  //                     activeThumbColor: Colors.orange[700],
+                  //                     inactiveThumbColor: Colors.grey[600],
+                  //                     onChanged: (value) {
+                  //                       setState(() {
+                  //                         item['is_active'] = value ? 't' : 'f';
+                  //                       });
+                  //                     },
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+
+                  //           Visibility(
+                  //             visible: item['icon_id'] != '0',
+                  //             child: Container(
+                  //               padding: EdgeInsets.only(left: 8),
+                  //               // color: Colors.greenAccent,
+                  //               // width: (maxwidth - 16),
+                  //               child: Row(
+                  //                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //                 children: [
+                  //                   SizedBox(width: maxwidth * 0.15, child: Text("Icon :")),
+                  //                   SizedBox(
+                  //                     width: maxwidth * 0.5,
+                  //                     child: SizedBox(
+                  //                       width: maxwidth * 0.4,
+                  //                       child: DropdownButton<String>(
+                  //                         hint: Text("เลือก icon"),
+                  //                         value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
+                  //                         items: icons.map<DropdownMenuItem<String>>((icon) {
+                  //                           return DropdownMenuItem(value: icon['id'], child: Text(icon['name']));
+                  //                         }).toList(),
+                  //                         onChanged: (value) {
+                  //                           setState(() => item['icon_id'] = value);
+                  //                         },
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   Expanded(
+                  //                     child: SizedBox(
+                  //                       width: maxwidth * 0.15,
+                  //                       height: maxwidth * 0.15,
+                  //                       child: Image.network(
+                  //                         // ignore: prefer_interpolation_to_compose_strings
+                  //                         "${user['baseURL']}../" +
+                  //                             icons.firstWhere(
+                  //                               (i) => i['id'] == item['icon_id'],
+                  //                               orElse: () => {"path": "img/icons/dafault.png"},
+                  //                             )['path'],
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+
+                  //           Visibility(
+                  //             visible: item['type_values_id'] != '0',
+                  //             child: Container(
+                  //               width: maxwidth - 16,
+                  //               height: maxheight * 0.15,
+                  //               padding: EdgeInsets.only(left: 8),
+                  //               child: Row(
+                  //                 children: [
+                  //                   SizedBox(width: maxwidth * 0.15, child: Text("type :")),
+                  //                   SizedBox(
+                  //                     width: maxwidth * 0.34,
+                  //                     child: DropdownButton<String>(
+                  //                       value: item['type_values_id'] == "0" ? '1' : item['type_values_id'],
+                  //                       hint: Text("เลือกประเภท"),
+                  //                       items: typeofValues.entries.map((entry) {
+                  //                         return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
+                  //                       }).toList(),
+                  //                       onChanged: (value) {
+                  //                         setState(() {
+                  //                           item['type_values_id'] = value;
+                  //                         });
+                  //                       },
+                  //                     ),
+                  //                   ),
+                  //                   SizedBox(width: maxwidth * 0.15, child: Text("value :")),
+                  //                   Expanded(child: _buildChildByCase(index, item, maxwidth)),
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+
+                  //           Container(
+                  //             width: maxwidth * 0.3,
+                  //             height: 40,
+                  //             child: TextButton(
+                  //               style: ButtonStyle(
+                  //                 backgroundColor: WidgetStatePropertyAll(Colors.orange[700]),
+                  //                 shadowColor: WidgetStatePropertyAll(Colors.black12),
+                  //               ),
+
+                  //               onPressed: () async {
+                  //                 var response = await ApiService.updateMainboardById(item);
+                  //                 ScaffoldMessenger.of(
+                  //                   context,
+                  //                 ).showSnackBar(SnackBar(content: Text(response['message'])));
+                  //               },
+                  //               child: Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 spacing: 6,
+                  //                 children: [
+                  //                   Icon(Icons.save_outlined, color: Colors.white),
+                  //                   Text("Save", style: TextStyle(color: Colors.white)),
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+
+                  //           SizedBox(height: 5),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                );
+              }),
+            ],
           ),
         ),
       ),
