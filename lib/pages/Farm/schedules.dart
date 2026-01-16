@@ -533,7 +533,7 @@ class _SchedulePageState extends State<SchedulePage> {
                     final row = e.value;
                     final start = row['d_start_day'];
                     final end = row['d_end_day'];
-                    final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                    // final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
 
                     return TableRow(
                       children: [

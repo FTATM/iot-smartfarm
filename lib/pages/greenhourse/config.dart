@@ -590,7 +590,7 @@ class _ConfigPageState extends State<ConfigPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    final maxwidth = MediaQuery.of(context).size.width;
+    // final maxwidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Color(0xFFE8E8E8),
@@ -770,21 +770,4 @@ class _ConfigPageState extends State<ConfigPage> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: isActive ? Color(0xFFFF9F43) : Colors.grey, size: 26),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isActive ? Color(0xFFFF9F43) : Colors.grey,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
 }

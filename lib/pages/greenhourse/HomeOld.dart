@@ -21,7 +21,7 @@ class ChickenFarmHeader extends StatelessWidget {
     final isSmallScreen = screenWidth < 360;
 
     // กำหนดค่า horizontal padding ที่ต้องการให้เท่ากันทั้งหมด
-    final horizontalPadding = isSmallScreen ? 16.0 : 24.0;
+    // final horizontalPadding = isSmallScreen ? 16.0 : 24.0;
 
     return Container(
       margin: EdgeInsets.only(
@@ -101,14 +101,14 @@ class _HomeOldPageState extends State<HomeOldPage> {
     });
     await _fetchicons();
     await _fetchmainBoard();
-    await _fetchWeathers();
+    await _fetchDataWeathers();
     setState(() {
       isLoading = false;
     });
   }
 
-  Future<void> _fetchWeathers() async {
-    final response = await ApiService.fetchWeathers();
+  Future<void> _fetchDataWeathers() async {
+    final response = await ApiService.fetchDataWeathers();
 
     setState(() {
       weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
@@ -153,13 +153,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
         : isLandscape
         ? 16.0
         : 14.0;
-    final fs_medium = screenWidth < 360
-        ? 11.0
-        : screenWidth < 400
-        ? 13.0
-        : isLandscape
-        ? 17.0
-        : 15.0;
+    // final fs_medium = screenWidth < 360 ? 11.0 : screenWidth < 400 ? 13.0 : isLandscape ? 17.0 : 15.0;
 
     // Responsive spacing
     final spacing = screenWidth < 360

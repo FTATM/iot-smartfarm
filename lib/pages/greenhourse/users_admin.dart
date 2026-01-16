@@ -58,7 +58,6 @@ class _UserAdminPageState extends State<UserAdminPage> {
       );
     }
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Color(0xFFE8E8E8),
       appBar: AppbarWidget(txtt: 'Users Management'),
