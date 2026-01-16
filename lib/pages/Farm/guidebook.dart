@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/ViewPDF.dart';
+import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
@@ -66,19 +67,7 @@ class _GuidebookPageState extends State<GuidebookPage> {
         ),
       ),
       backgroundColor: Color(0xFFF5F5F5),
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "คู่มือการใช้งานแอปพลิเคชัน",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: AppbarWidget(txtt: "คู่มือการใช้งานแอปพลิเคชั่น"),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),

@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:iot_app/api/apiAll.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_app/components/appbar.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ConnectedIcon extends StatelessWidget {
@@ -21,6 +22,84 @@ class ConnectedIcon extends StatelessWidget {
       size: Size(size, size),
       painter: _ConnectedIconPainter(color),
     );
+  }
+}
+
+// ขนาดตัวอักษรสำหรับ AppBar Title
+double _getAppBarTitleFontSize(BuildContext context) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  // ถ้าเป็นแนวนอน ลดขนาดลง 20%
+  double multiplier = isLandscape ? 0.8 : 1.0;
+  
+  // มือถือเล็ก (< 360px)
+  if (screenWidth < 360) {
+    return 14 * multiplier;
+  }
+  // มือถือปกติ (360px - 414px)
+  else if (screenWidth >= 360 && screenWidth < 414) {
+    return 15 * multiplier;
+  }
+  // มือถือใหญ่ (414px - 600px)
+  else if (screenWidth >= 414 && screenWidth < 600) {
+    return 17 * multiplier;
+  }
+  // แท็บเล็ต (600px - 900px)
+  else if (screenWidth >= 600 && screenWidth < 900) {
+    return 20 * multiplier;
+  }
+  // แท็บเล็ตใหญ่/Desktop เล็ก (900px - 1200px)
+  else if (screenWidth >= 900 && screenWidth < 1200) {
+    return 23 * multiplier;
+  }
+  // Desktop ใหญ่ (>= 1200px)
+  else {
+    return 25 * multiplier;
+  }
+}
+
+// ความสูงของ AppBar
+double _getAppBarHeight(BuildContext context) {
+  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  double screenHeight = MediaQuery.of(context).size.height;
+  
+  // แนวนอน: ใช้ความสูงน้อยกว่า
+  if (isLandscape) {
+    return screenHeight * 0.12; // 12% ของความสูงหน้าจอ
+  }
+  // แนวตั้ง: ใช้ความสูงปกติ
+  else {
+    return screenHeight * 0.08; // 8% ของความสูงหน้าจอ
+  }
+}
+
+// ความโค้งมุมของ AppBar
+double _getAppBarBorderRadius(BuildContext context) {
+  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  double screenWidth = MediaQuery.of(context).size.width;
+  
+  // แนวนอน: ลดความโค้งลง
+  if (isLandscape) {
+    return screenWidth * 0.03; // 3% ของความกว้างหน้าจอ
+  }
+  // แนวตั้ง: ความโค้งปกติ
+  else {
+    return screenWidth * 0.05; // 5% ของความกว้างหน้าจอ
+  }
+}
+
+// Padding ด้านบนของ Title
+double _getAppBarTitleTopPadding(BuildContext context) {
+  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  double screenHeight = MediaQuery.of(context).size.height;
+  
+  // แนวนอน: padding น้อยลง
+  if (isLandscape) {
+    return screenHeight * 0.02; // 2% ของความสูงหน้าจอ
+  }
+  // แนวตั้ง: padding ปกติ
+  else {
+    return screenHeight * 0.01; // 1% ของความสูงหน้าจอ
   }
 }
 
@@ -313,20 +392,8 @@ class _LivePageState extends State<LivePage> {
     final maxwidth = MediaQuery.of(context).size.width;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFE8E8E8),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text(
-          'ไลฟ์',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      backgroundColor: Colors.grey.shade50,
+      appBar: AppbarWidget(txtt: "ไลฟ์สดจากกล้อง"),
       body: Column(
         children: [
           Expanded(
