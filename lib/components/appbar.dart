@@ -20,6 +20,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(_getResponsiveBorderRadius(context)),
           ),
+          border: Border(bottom: BorderSide(width: 3.0, color: Color.fromARGB(255, 255, 131, 0))),
           boxShadow: [
             BoxShadow(
               color: const Color.fromARGB(255, 255, 131, 0).withOpacity(0.3),
