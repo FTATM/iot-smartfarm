@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
-import 'package:iot_app/pages/greenhourse/mainboard-Create.dart';
+import 'package:iot_app/pages/greenhourse/Home-update.dart';
 
 class HomeOldPage extends StatefulWidget {
   const HomeOldPage({super.key});
@@ -12,29 +12,26 @@ class HomeOldPage extends StatefulWidget {
 
 class ChickenFarmHeader extends StatelessWidget {
   final String title;
-  
-  const ChickenFarmHeader({
-    Key? key,
-    this.title = 'CHICKEN FARM #1',
-  }) : super(key: key);
+
+  const ChickenFarmHeader({Key? key, this.title = 'CHICKEN FARM #1'}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
-    
+
     // กำหนดค่า horizontal padding ที่ต้องการให้เท่ากันทั้งหมด
     final horizontalPadding = isSmallScreen ? 16.0 : 24.0;
-    
+
     return Container(
       margin: EdgeInsets.only(
         left: isSmallScreen ? 16 : 24,
         right: isSmallScreen ? 16 : 24,
         top: 1, // เพิ่มตรงนี้ - ลดค่านี้เพื่อลดระยะห่างด้านล่าง
-      ),// เพิ่ม margin แทน padding
+      ), // เพิ่ม margin แทน padding
       padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 20 : 32,  // padding ภายใน
-        vertical: isSmallScreen ? 12 : 16
+        horizontal: isSmallScreen ? 20 : 32, // padding ภายใน
+        vertical: isSmallScreen ? 12 : 16,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -43,24 +40,17 @@ class ChickenFarmHeader extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(50),
-        border: Border(
-          bottom: BorderSide(
-            width: 2.5, 
-            color: Color.fromARGB(255, 255, 131, 0)
-          )
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border(bottom: BorderSide(width: 2.5, color: Color.fromARGB(255, 255, 131, 0))),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: isSmallScreen ? 18 : screenWidth < 600 ? 24 : 32,
+          fontSize: isSmallScreen
+              ? 18
+              : screenWidth < 600
+              ? 24
+              : 32,
           fontWeight: FontWeight.bold,
           color: Color.fromARGB(255, 255, 131, 0),
           letterSpacing: 2,
@@ -82,6 +72,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
   bool isEdit = false;
   String userString = "";
   Map<String, dynamic> user = {};
+  Map<String, dynamic> weathers = {'tc': 0, 'rh': 50, 'rain': 4, 'ws10m': 1};
   List<dynamic> data = [];
   List<dynamic> icons = [];
 
@@ -110,8 +101,17 @@ class _HomeOldPageState extends State<HomeOldPage> {
     });
     await _fetchicons();
     await _fetchmainBoard();
+    await _fetchWeathers();
     setState(() {
       isLoading = false;
+    });
+  }
+
+  Future<void> _fetchWeathers() async {
+    final response = await ApiService.fetchWeathers();
+
+    setState(() {
+      weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
     });
   }
 
@@ -137,28 +137,47 @@ class _HomeOldPageState extends State<HomeOldPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    
-    
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final orientation = MediaQuery.of(context).orientation;
     final isLandscape = orientation == Orientation.landscape;
     final maxwidth = screenWidth;
-    final maxheight = screenHeight - kTextTabBarHeight;
+    final maxheight = screenHeight;
 
     // Responsive font sizes
-    final fs_small = screenWidth < 360 ? 10.0 : screenWidth < 400 ? 12.0 : isLandscape ? 16.0 : 14.0;
-    final fs_medium = screenWidth < 360 ? 11.0 : screenWidth < 400 ? 13.0 : isLandscape ? 17.0 : 15.0;
-    
+    final fs_small = screenWidth < 360
+        ? 10.0
+        : screenWidth < 400
+        ? 12.0
+        : isLandscape
+        ? 16.0
+        : 14.0;
+    final fs_medium = screenWidth < 360
+        ? 11.0
+        : screenWidth < 400
+        ? 13.0
+        : isLandscape
+        ? 17.0
+        : 15.0;
+
     // Responsive spacing
-    final spacing = screenWidth < 360 ? 8.0 : isLandscape ? 16.0 : 12.0;
-    final padding = screenWidth < 360 ? 8.0 : isLandscape ? 16.0 : 12.0;
-    
+    final spacing = screenWidth < 360
+        ? 8.0
+        : isLandscape
+        ? 16.0
+        : 12.0;
+    final padding = screenWidth < 360
+        ? 8.0
+        : isLandscape
+        ? 16.0
+        : 12.0;
+
     // ดึง item ลำดับที่ 6 - 12 (index 6 ถึง 12)
     final selected1_6 = data.sublist(1, 6);
     final selected6_15 = data.sublist(6, 15);
     final selected15_19 = data.sublist(15, 19);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: Visibility(
@@ -166,7 +185,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
         child: FloatingActionButton(
           backgroundColor: primaryColor,
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MainboardCreatePage())).then((_) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUpdatePage())).then((_) {
               _prepareData();
             });
           },
@@ -183,15 +202,15 @@ class _HomeOldPageState extends State<HomeOldPage> {
               children: [
                 // Header Section
                 Padding(
-                padding: EdgeInsets.all(padding),
-                child: ChickenFarmHeader(
-                  title: 'CHICKEN FARM #1', // เปลี่ยนชื่อได้ตามต้องการ
+                  padding: EdgeInsets.all(padding),
+                  child: ChickenFarmHeader(
+                    title: 'CHICKEN FARM #1', // เปลี่ยนชื่อได้ตามต้องการ
+                  ),
                 ),
-              ),
                 // Section 1: Top card with image and data
                 Container(
                   padding: EdgeInsets.all(padding),
-                  margin: EdgeInsets.fromLTRB(padding, padding  / 10, padding, padding / 2),
+                  margin: EdgeInsets.fromLTRB(padding, padding / 10, padding, padding / 2),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
@@ -203,16 +222,18 @@ class _HomeOldPageState extends State<HomeOldPage> {
                       final leftWidth = (containerWidth - spacing) / 2;
                       final rightWidth = (containerWidth - spacing) / 2;
                       // ปรับขนาดรูปให้ขยายตามหน้าจอและแนวการจัดวาง
-                      final imageHeight = isLandscape 
-                          ? maxheight * 0.55  // แนวนอนให้ใหญ่ขึ้นเพื่อใช้พื้นที่ความสูงที่มี
-                          : screenWidth < 360 
-                              ? maxheight * 0.25 
-                              : screenWidth < 600 
-                                  ? maxheight * 0.30 
-                                  : screenWidth < 900
-                                      ? maxheight * 0.35
-                                      : maxheight * 0.40;
-                      
+                      final imageHeight = isLandscape
+                          ? maxheight * 0.55
+                          : maxheight > 800
+                          ? 280.00
+                          : screenWidth < 360
+                          ? maxheight * 0.35
+                          : screenWidth < 600
+                          ? maxheight * 0.40
+                          : screenWidth < 900
+                          ? maxheight * 0.35
+                          : maxheight * 0.50;
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,48 +242,120 @@ class _HomeOldPageState extends State<HomeOldPage> {
                           SizedBox(
                             width: leftWidth,
                             child: Stack(
+                              alignment: AlignmentGeometry.center,
                               children: [
                                 Positioned(
                                   top: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.water_drop_outlined, color: blackColor, size: isLandscape ? 24 : screenWidth < 360 ? 18 : 20),
-                                          SizedBox(width: 4),
-                                          Text(
-                                            '68%',
-                                            style: TextStyle(
-                                              color: blackColor,
-                                              fontSize: fs_small,
-                                              fontWeight: FontWeight.bold,
+                                  child: Container(
+                                    width: leftWidth,
+
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.water_drop_outlined,
+                                                  color: blackColor,
+                                                  size: isLandscape
+                                                      ? 24
+                                                      : screenWidth < 360
+                                                      ? 18
+                                                      : 20,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  '${weathers['rh']}%',
+                                                  style: TextStyle(
+                                                    color: blackColor,
+                                                    fontSize: fs_small,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.thermostat_outlined, color: blackColor, size: isLandscape ? 24 : screenWidth < 360 ? 18 : 20),
-                                          SizedBox(width: 4),
-                                          Text(
-                                            '32.5°C',
-                                            style: TextStyle(
-                                              color: blackColor,
-                                              fontSize: fs_small,
-                                              fontWeight: FontWeight.bold,
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.thermostat_outlined,
+                                                  color: blackColor,
+                                                  size: isLandscape
+                                                      ? 24
+                                                      : screenWidth < 360
+                                                      ? 18
+                                                      : 20,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  '${weathers['tc']}°C',
+                                                  style: TextStyle(
+                                                    color: blackColor,
+                                                    fontSize: fs_small,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.air,
+                                                  color: blackColor,
+                                                  size: isLandscape
+                                                      ? 24
+                                                      : screenWidth < 360
+                                                      ? 18
+                                                      : 20,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  '${weathers['ws10m']}m/s',
+                                                  style: TextStyle(
+                                                    color: blackColor,
+                                                    fontSize: fs_small,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.cloudy_snowing,
+                                                  color: blackColor,
+                                                  size: isLandscape
+                                                      ? 24
+                                                      : screenWidth < 360
+                                                      ? 18
+                                                      : 20,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  '${weathers['rain']}mm',
+                                                  style: TextStyle(
+                                                    color: blackColor,
+                                                    fontSize: fs_small,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Container(
-                                  // width: leftWidth,
-                                  height: isLandscape ? maxheight * 0.8 : imageHeight,
+                                  width: leftWidth - (leftWidth * 0.15),
+                                  height: isLandscape ? 300 : imageHeight,
                                   alignment: Alignment.center,
                                   child: Image.network(
                                     "${user['baseURL']}../" +
@@ -276,63 +369,64 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               ],
                             ),
                           ),
+
                           SizedBox(width: spacing),
                           // Right section with data rows
                           SizedBox(
-                          width: rightWidth,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: selected1_6.map((item) {
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: spacing),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    gradient: LinearGradient(
-                                      colors: gradientColorsSet,
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
+                            width: rightWidth,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: selected1_6.map((item) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: spacing),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      gradient: LinearGradient(
+                                        colors: gradientColorsSet,
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
+                                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          offset: Offset(0, 2),
+                                          color: Colors.black12,
+                                          spreadRadius: 1,
+                                          blurRadius: 3,
+                                        ),
+                                      ],
                                     ),
-                                    border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
-                                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        offset: Offset(0, 2),
-                                        color: Colors.black12,
-                                        spreadRadius: 1,
-                                        blurRadius: 3,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        item['label_text'],
-                                        style: TextStyle(
-                                          color: Colors.orange,
-                                          fontSize: fs_small,
-                                          fontWeight: FontWeight.bold,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item['label_text'],
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontSize: fs_small,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.left,
                                         ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Text(
-                                        item['value'],
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: fs_small,
-                                          fontWeight: FontWeight.bold,
+                                        Text(
+                                          item['value'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: fs_small,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.right,
                                         ),
-                                        textAlign: TextAlign.right,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                        ),
                         ],
                       );
                     },
@@ -354,23 +448,29 @@ class _HomeOldPageState extends State<HomeOldPage> {
                       final containerWidth = constraints.maxWidth;
                       final itemWidth = (containerWidth - (spacing * 2)) / 3;
                       // ปรับขนาดไอคอนในแนวนอนให้ใหญ่ขึ้น
-                      final iconSize = isLandscape 
-                          ? 60.0 
-                          : screenWidth < 360 
-                              ? 25.0 
-                              : screenWidth < 600 
-                                  ? 35.0 
-                                  : screenWidth < 900 
-                                      ? 45.0 
-                                      : 55.0;
-                      
+                      final iconSize = isLandscape
+                          ? 60.0
+                          : screenWidth < 360
+                          ? 25.0
+                          : screenWidth < 600
+                          ? 35.0
+                          : screenWidth < 900
+                          ? 45.0
+                          : 55.0;
+
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
                         children: selected6_15.map((item) {
                           return Container(
                             width: itemWidth,
-                            padding: EdgeInsets.all(isLandscape ? 12 : screenWidth < 360 ? 14 : 18),
+                            padding: EdgeInsets.all(
+                              isLandscape
+                                  ? 12
+                                  : screenWidth < 360
+                                  ? 14
+                                  : 18,
+                            ),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -445,7 +545,9 @@ class _HomeOldPageState extends State<HomeOldPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
-                    boxShadow: [BoxShadow(offset: Offset(0, 1), color: const Color.fromARGB(31, 136, 136, 136), blurRadius: 0.2)],
+                    boxShadow: [
+                      BoxShadow(offset: Offset(0, 1), color: const Color.fromARGB(31, 136, 136, 136), blurRadius: 0.2),
+                    ],
                   ),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -454,21 +556,21 @@ class _HomeOldPageState extends State<HomeOldPage> {
                       final leftWidth = (itemWidth * 2) + spacing;
                       final rightWidth = itemWidth;
                       // ปรับขนาดไอคอนในลิสต์แนวนอน
-                      final listIconSize = isLandscape 
-                          ? 48.0 
-                          : screenWidth < 360 
-                              ? 20.0 
-                              : screenWidth < 600 
-                                  ? 28.0 
-                                  : screenWidth < 900 
-                                      ? 36.0 
-                                      : 44.0;
-                      
+                      final listIconSize = isLandscape
+                          ? 48.0
+                          : screenWidth < 360
+                          ? 20.0
+                          : screenWidth < 600
+                          ? 28.0
+                          : screenWidth < 900
+                          ? 36.0
+                          : 44.0;
+
                       return Column(
                         children: selected15_19.asMap().entries.map((entry) {
                           final index = entry.key;
                           final item = entry.value;
-                          
+
                           return Container(
                             margin: EdgeInsets.only(bottom: index < selected15_19.length - 1 ? spacing : 0),
                             child: Row(
@@ -477,8 +579,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                   width: leftWidth,
                                   height: listIconSize + (isLandscape ? 32 : 24),
                                   padding: EdgeInsets.symmetric(
-                                    vertical: isLandscape ? 16 : 12, 
-                                    horizontal: isLandscape ? 12 : 8
+                                    vertical: isLandscape ? 16 : 12,
+                                    horizontal: isLandscape ? 12 : 8,
                                   ),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -528,10 +630,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                 Container(
                                   width: rightWidth,
                                   height: listIconSize + (isLandscape ? 32 : 24),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: isLandscape ? 16 : 12, 
-                                    horizontal: 4
-                                  ),
+                                  padding: EdgeInsets.symmetric(vertical: isLandscape ? 16 : 12, horizontal: 4),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: gradientColorsSet,

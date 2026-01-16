@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
-import 'package:iot_app/pages/greenhourse/mainboard-Create.dart';
+import 'package:iot_app/pages/greenhourse/Home-update.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MainboardCreatePage())).then((_) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUpdatePage())).then((_) {
               _prepare();
             });
           },

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:file_picker/file_picker.dart';
@@ -66,6 +65,8 @@ class _IconsPageState extends State<IconsPage> {
               spacing: 8,
               runSpacing: 8,
               children: icons.map((item) {
+
+                debugPrint(item['path']);
                 return Container(
                   width: (maxwidth - 24) / 2,
                   child: Card(
