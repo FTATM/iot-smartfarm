@@ -83,7 +83,9 @@ class _ConfigPageState extends State<ConfigPage> {
     });
   }
 
-  void _showEditDialog(int index, var item, List<int> listTime) {
+  void _showEditDialog(int index, var item, List<int> listDays, List<Map<String, TimeOfDay>> listTime) {
+    List<String?> errorMessages = [];
+    errorMessages = List.filled(listTime.length, null);
     showDialog(
       context: context,
       builder: (context) {
@@ -92,6 +94,23 @@ class _ConfigPageState extends State<ConfigPage> {
             String nameshort = item["monitor_name"] ?? "-";
             if (nameshort.length > 20) {
               nameshort = "${nameshort.substring(0, 20)}...";
+            }
+
+            void addTimeSlot() {
+              setStateDialog(() {
+                listTime.add({
+                  'start': TimeOfDay(hour: 9, minute: 0),
+                  'end': TimeOfDay(hour: 10, minute: 0),
+                });
+                errorMessages.add(null);
+              });
+            }
+
+            void removeTimeSlot(int index) {
+              setStateDialog(() {
+                listTime.removeAt(index);
+                errorMessages.removeAt(index);
+              });
             }
 
             return Dialog(
@@ -422,28 +441,28 @@ class _ConfigPageState extends State<ConfigPage> {
                                     GestureDetector(
                                       onTap: () {
                                         setStateDialog(() {
-                                          if (listTime.contains(dayIndex)) {
-                                            listTime.remove(dayIndex);
+                                          if (listDays.contains(dayIndex)) {
+                                            listDays.remove(dayIndex);
                                           } else {
-                                            listTime.add(dayIndex);
+                                            listDays.add(dayIndex);
                                           }
                                         });
                                         setState(() {
-                                          item['list_time_of_work'] = listTime.join(',');
+                                          item['list_time_of_work'] = listDays.join(',');
                                         });
                                       },
                                       child: Container(
                                         width: 28,
                                         height: 28,
                                         decoration: BoxDecoration(
-                                          color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.white,
+                                          color: listDays.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.white,
                                           borderRadius: BorderRadius.circular(6),
                                           border: Border.all(
-                                            color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.grey[400]!,
+                                            color: listDays.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.grey[400]!,
                                             width: 2,
                                           ),
                                         ),
-                                        child: listTime.contains(dayIndex)
+                                        child: listDays.contains(dayIndex)
                                             ? Icon(Icons.check, color: Colors.white, size: 18)
                                             : null,
                                       ),
@@ -452,7 +471,96 @@ class _ConfigPageState extends State<ConfigPage> {
                                 ),
                               );
                             }).toList(),
-                            SizedBox(height: 12),
+                            Divider(),
+
+                            ...listTime.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final time = entry.value;
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: time['start']!,
+                                              );
+
+                                              if (picked != null) {
+                                                setStateDialog(() {
+                                                  listTime[index]['start'] = picked;
+                                                  errorMessages[index] = null; // ล้าง error
+                                                });
+                                              }
+                                            },
+                                            child: _timeBox(label: 'เวลาเริ่ม', value: time['start']!.format(context)),
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 8),
+
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: time['end']!,
+                                              );
+
+                                              if (picked != null) {
+                                                if (isEndBeforeStart(time['start']!, picked)) {
+                                                  setStateDialog(() {
+                                                    errorMessages[index] = 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม';
+                                                  });
+                                                  print(errorMessages.toString());
+                                                  return;
+                                                }
+
+                                                setStateDialog(() {
+                                                  listTime[index]['end'] = picked;
+                                                  errorMessages[index] = null;
+                                                });
+                                              }
+                                            },
+                                            child: _timeBox(label: 'เวลาสิ้นสุด', value: time['end']!.format(context)),
+                                          ),
+                                        ),
+
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () => removeTimeSlot(index),
+                                        ),
+                                      ],
+                                    ),
+
+                                    /// แสดง error ต่อแถว
+                                    if (errorMessages[index] != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4),
+                                        child: Text(
+                                          errorMessages[index]!,
+                                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: ElevatedButton.icon(
+                                onPressed: addTimeSlot,
+                                icon: const Icon(Icons.add),
+                                label: const Text('เพิ่มช่วงเวลา'),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -582,6 +690,30 @@ class _ConfigPageState extends State<ConfigPage> {
     );
   }
 
+  Widget _timeBox({required String label, required String value}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  bool isEndBeforeStart(TimeOfDay start, TimeOfDay end) {
+    final startMin = start.hour * 60 + start.minute;
+    final endMin = end.hour * 60 + end.minute;
+    return endMin <= startMin;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -614,10 +746,25 @@ class _ConfigPageState extends State<ConfigPage> {
                       int index = entry.key;
                       var item = entry.value;
 
-                      List<int> listTime = [];
+                      List<int> listDays = [];
                       var raw = item['list_time_of_work'];
                       if (raw != null && raw is String && raw.isNotEmpty) {
-                        listTime = raw.split(',').map((e) => int.parse(e)).toList();
+                        listDays = raw.split(',').map((e) => int.parse(e)).toList();
+                      }
+
+                      List<Map<String, TimeOfDay>> listTime = [];
+                      var timeraw = item['list_time'];
+
+                      if (timeraw != null && timeraw.isNotEmpty) {
+                        listTime = timeraw.map<Map<String, TimeOfDay>>((e) {
+                          final start = e['start_work'].split(':');
+                          final end = e['end_work'].split(':');
+
+                          return {
+                            'start': TimeOfDay(hour: int.parse(start[0]), minute: int.parse(start[1])),
+                            'end': TimeOfDay(hour: int.parse(end[0]), minute: int.parse(end[1])),
+                          };
+                        }).toList();
                       }
 
                       txtPath = "";
@@ -727,7 +874,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      _showEditDialog(index, item, listTime);
+                                      _showEditDialog(index, item, listDays, listTime);
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -769,5 +916,4 @@ class _ConfigPageState extends State<ConfigPage> {
       ),
     );
   }
-
 }
