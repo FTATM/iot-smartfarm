@@ -1280,7 +1280,7 @@ class ApiService {
     }
   }
 
-  // fetch Data Weathers
+  // fetch Weathers
   static Future<Map<String, dynamic>> fetchWeathers() async {
     try {
       final response = await http.post(Uri.parse("${baseUrl}fetch-weathers.php"));
@@ -1300,4 +1300,26 @@ class ApiService {
     }
   }
 
+  // fetch Weathers
+  static Future<Map<String, dynamic>> updateWeather(Map<String, dynamic> list) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}update-weathers.php"),
+        body: {'json': jsonEncode(list)},
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
 }

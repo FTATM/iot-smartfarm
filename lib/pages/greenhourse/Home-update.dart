@@ -329,7 +329,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                     scale: 0.85,
                     child: Switch(
                       value: toggleValue ?? false,
-                      activeColor: const Color(0xFFF97316),
+                      activeThumbColor: const Color(0xFFF97316),
                       onChanged: onToggleChanged,
                     ),
                   ),
@@ -425,7 +425,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           ),
                         ),
                         onPressed: () async {
-                          // await ApiService.updateWeather(weather);
+                          await ApiService.updateWeather(weather);
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,

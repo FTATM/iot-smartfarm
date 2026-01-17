@@ -15,7 +15,7 @@ class ChickenFarmHeader extends StatelessWidget {
 
   const ChickenFarmHeader({Key? key, required this.title}) : super(key: key);
 
-@override
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -24,35 +24,27 @@ class ChickenFarmHeader extends StatelessWidget {
     final isLandscape = orientation == Orientation.landscape;
 
     // กำหนดความสูงแบบ responsive
-final headerHeight = isSmallScreen 
-    ? 40.0 
-    : isLandscape 
-        ? 50.0 
-        : screenWidth < 600 
-            ? 50.0 
-            : screenHeight * 0.065;  // ปรับความสูงเป็น 10% ของความสูงหน้าจอ
+    final headerHeight = isSmallScreen
+        ? 40.0
+        : isLandscape
+        ? 50.0
+        : screenWidth < 600
+        ? 50.0
+        : screenHeight * 0.065;
 
-
-      final Width = isSmallScreen
-          ? screenWidth * 0.50  // เปลี่ยนเป็น 50% สำหรับหน้าจอเล็ก
-          : isLandscape
-              ? screenWidth * 0.50  // แนวนอนให้แคบลง 50%
-              : screenWidth < 600
-                  ? screenWidth * 0.50  // หน้าจอกลาง 60%
-                  : screenWidth * 0.50;  // ความกว้างสูงสุด 80% ของหน้าจอ
-
+    final Width = isSmallScreen
+        ? screenWidth * 0.50
+        : isLandscape
+        ? screenWidth * 0.50
+        : screenWidth < 600
+        ? screenWidth * 0.50
+        : screenWidth * 0.50;
 
     return Container(
       height: headerHeight,
       width: Width,
-      margin: EdgeInsets.only(
-        left: isSmallScreen ? 16 : 24,
-        right: isSmallScreen ? 16 : 24,
-        top: 1,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 2 : 4,
-      ),
+      margin: EdgeInsets.only(left: isSmallScreen ? 16 : 24, right: isSmallScreen ? 16 : 24, top: 1),
+      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.white, Color.fromRGBO(255, 242, 230, 1)],
@@ -93,7 +85,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
   bool isEdit = false;
   String userString = "";
   Map<String, dynamic> user = {};
-  Map<String, dynamic> weathers = {'tc': 0, 'rh': 50, 'rain': 4, 'ws10m': 1};
+  Map<String, dynamic> weathers = {'tc': '0.00', 'rh': '0.00', 'rain': '0.00', 'ws10m': '0.00'};
   List<dynamic> data = [];
   List<dynamic> icons = [];
 
@@ -132,7 +124,9 @@ class _HomeOldPageState extends State<HomeOldPage> {
     final response = await ApiService.fetchDataWeathers();
 
     setState(() {
-      weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
+      if (response['status'] == 'success' && response['data'][0]['success']) {
+        weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
+      }
     });
   }
 
@@ -218,9 +212,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                 // Header Section
                 Padding(
                   padding: EdgeInsets.all(padding),
-                  child: ChickenFarmHeader(
-                    title: user['b_name']?.toString().toUpperCase() ?? 'CHICKEN FARM #1',
-                  ),
+                  child: ChickenFarmHeader(title: user['b_name']?.toString().toUpperCase() ?? 'CHICKEN FARM #1'),
                 ),
                 // Section 1: Top card with image and data
                 Container(
@@ -272,20 +264,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.water_drop_outlined,
+                                                  Icons.air,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24* 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18* 0.9
+                                                      : 20* 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['rh']}%',
+                                                  '${weathers['ws10m']}m/s',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small* 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -294,20 +286,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.thermostat_outlined,
+                                                  Icons.cloudy_snowing,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24* 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18* 0.9
+                                                      : 20* 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['tc']}°C',
+                                                  '${weathers['rain']}mm',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small* 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -321,20 +313,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.air,
+                                                  Icons.water_drop_outlined,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24* 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18* 0.9
+                                                      : 20* 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['ws10m']}m/s',
+                                                  '${weathers['rh']}%',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small* 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -343,20 +335,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.cloudy_snowing,
+                                                  Icons.thermostat_outlined,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24* 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18* 0.9
+                                                      : 20* 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['rain']}mm',
+                                                  '${weathers['tc']}°C',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small* 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
