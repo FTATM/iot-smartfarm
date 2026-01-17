@@ -17,11 +17,15 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   String userString = "";
   Map<String, dynamic> user = {};
   Map<String, dynamic> weather = {};
-  // List<dynamic> weathers = [];
   List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> sensors = [];
-  Map<String, dynamic> typeofValues = {"1": "Manual Value", "2": "Time Now", "3": "Time manual", "4": "Sensor"};
+  Map<String, dynamic> typeofValues = {
+    "1": "Manual Value",
+    "2": "Time Now",
+    "3": "Time manual",
+    "4": "Sensor"
+  };
 
   List<TextEditingController> labelControllers = [];
   List<TextEditingController> manualController = [];
@@ -40,9 +44,14 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     setState(() {
       user = CurrentUser;
       isLoading = false;
-
-      labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
-      manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
+      labelControllers = data
+          .map((item) =>
+              TextEditingController(text: item['label_text']?.toString() ?? ''))
+          .toList();
+      manualController = data
+          .map((item) =>
+              TextEditingController(text: item['value']?.toString() ?? ''))
+          .toList();
     });
   }
 
@@ -51,7 +60,6 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     setState(() {
       weather = response['data'][0];
     });
-    print(weather);
   }
 
   Future<void> _fetchicons() async {
@@ -69,7 +77,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   }
 
   Future<void> _fetchconfiguration() async {
-    final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
+    final response =
+        await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
     setState(() {
       sensors = response['data'] as List;
     });
@@ -78,39 +87,83 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   Widget _buildChildByCase(index, item, maxwidth) {
     switch (item['type_values_id']) {
       case "1":
-        return Container(
-          // decoration: BoxDecoration(
-          //   border: Border.all(),
-          //   borderRadius: BorderRadius.all(Radius.circular(16))
-          // ),
-          child: TextField(
-            controller: manualController[index],
-            decoration: InputDecoration(labelText: "value", border: OutlineInputBorder()),
-            onChanged: (value) {
-              setState(() {
-                item['value'] = value;
-              });
-            },
+        return TextField(
+          controller: manualController[index],
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            labelText: "Value",
+            filled: true,
+            fillColor: Colors.grey[50],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFF97316), width: 2),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
+          onChanged: (value) {
+            setState(() {
+              item['value'] = value;
+            });
+          },
         );
 
-      /// Case 2 → แสดงเวลา Now
       case "2":
         String now = DateTime.now().toString().substring(0, 10);
         setState(() {
           item['value'] = now;
         });
-        return Text(now, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold));
+        return Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Text(
+            now,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        );
 
-      /// Case 3 → เลือกวัน เดือน ปี
       case "3":
-        // return Text("3");
-        return Wrap(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.start,
+        return Row(
           children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Text(
+                  item['value'] ?? 'Select date',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
             ElevatedButton(
-              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.orange[700])),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF97316),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: () async {
                 DateTime? picked = await showDatePicker(
                   context: context,
@@ -118,36 +171,31 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                 );
-
                 if (picked != null) {
                   var pickedDate = "${picked.year}-${picked.month}-${picked.day}";
                   setState(() => item['value'] = pickedDate);
                 }
               },
-              child: Text("เลือกวันที่", style: TextStyle(color: Colors.white)),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(item['value'], style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              child: const Text("Select"),
             ),
           ],
         );
+
       case "4":
         return DropdownButtonFormField<String>(
           isExpanded: true,
           decoration: InputDecoration(
-            hintText: "เลือก",
-            // filled: true,
-            fillColor: const Color(0xFFF9FAFB),
-            // contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: brandOrange),
+              borderSide: const BorderSide(color: Color(0xFFF97316), width: 2),
             ),
           ),
           items: sensors.map<DropdownMenuItem<String>>((b) {
@@ -157,31 +205,142 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                 "[${b['monitor_id']}] ${b['monitor_name']}",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                softWrap: false,
               ),
             );
           }).toList(),
           onChanged: (value) {},
         );
+
       default:
-        return Text("โปรดเลือกประเภท", style: TextStyle(color: Colors.grey));
+        return const Text("โปรดเลือกประเภท",
+            style: TextStyle(color: Colors.grey));
     }
   }
 
-  Widget buildFormRow({required String label, required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 60,
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w600),
+  Widget _buildInputField({
+    required String label,
+    required String? initialValue,
+    required Function(String) onChanged,
+    String? hintText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 6),
+          child: Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+              letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(child: child),
+        ),
+        TextFormField(
+          initialValue: initialValue ?? "",
+          onChanged: onChanged,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFF97316), width: 2),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildModernCard({
+    required String title,
+    required IconData icon,
+    required Widget child,
+    bool showToggle = false,
+    bool? toggleValue,
+    Function(bool)? onToggleChanged,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: const Border(
+          top: BorderSide(color: Color(0xFFF97316), width: 4),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.grey[200]!),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: const Color(0xFFF97316), size: 24),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF475569),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                if (showToggle) ...[
+                  Text(
+                    "STATUS",
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey[400],
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Transform.scale(
+                    scale: 0.85,
+                    child: Switch(
+                      value: toggleValue ?? false,
+                      activeColor: const Color(0xFFF97316),
+                      onChanged: onToggleChanged,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: child,
+          ),
         ],
       ),
     );
@@ -191,338 +350,346 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
+        backgroundColor: Color(0xFFF8FAFC),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFFF97316),
+          ),
+        ),
       );
     }
+
     final maxwidth = MediaQuery.of(context).size.width;
-    final maxheight = MediaQuery.of(context).size.height - kToolbarHeight;
 
     return Scaffold(
-      backgroundColor: Colors.grey[400],
-      appBar: AppbarWidget(txtt: 'Edit Home'),
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppbarWidget(txtt: "Edit Home"),
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
           child: Column(
-            spacing: 12,
             children: [
-              Container(
-                width: maxwidth,
-                padding: EdgeInsets.all(12),
+              // Weather API Card
+              _buildModernCard(
+                title: "Weather TMD-API",
+                icon: Icons.cloud,
                 child: Column(
                   children: [
-                    /// header
-                    Container(
-                      width: maxwidth - 16,
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.orange[700],
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                      ),
-                      child: Text(
-                        "Weather ${weather['name']}",
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                    _buildInputField(
+                      label: "API URL",
+                      initialValue: weather['url_api'],
+                      onChanged: (value) => weather['url_api'] = value,
+                      hintText: "https://example.com/api",
                     ),
-
-                    ///body
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 5), blurRadius: 2)],
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: maxwidth,
-                            child: buildFormRow(
-                              label: "API URL :",
-                              child: TextFormField(
-                                initialValue: weather['url_api'] ?? "",
-                                onChanged: (value) => weather['url_api'] = value,
-                                style: const TextStyle(fontSize: 12),
-                                decoration: InputDecoration(
-                                  hintText: "https://example.com/api",
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInputField(
+                            label: "Latitude",
+                            initialValue: weather['lat'],
+                            onChanged: (value) => weather['lat'] = value,
+                            hintText: "7.2021",
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildInputField(
+                            label: "Longitude",
+                            initialValue: weather['lon'],
+                            onChanged: (value) => weather['lon'] = value,
+                            hintText: "100.5972",
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInputField(
+                      label: "Token",
+                      initialValue: weather['token'],
+                      onChanged: (value) => weather['token'] = value,
+                      hintText: "Enter token",
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF97316),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shadowColor: const Color(0xFFF97316).withOpacity(0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async {
+                          // await ApiService.updateWeather(weather);
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.save, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ),
-
-                          SizedBox(
-                            width: maxwidth,
-                            child: buildFormRow(
-                              label: "lat :",
-                              child: TextFormField(
-                                initialValue: weather['lat'] ?? "",
-                                onChanged: (value) => weather['lat'] = value,
-                                style: const TextStyle(fontSize: 12),
-                                decoration: InputDecoration(
-                                  hintText: "7.232",
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(
-                            width: maxwidth,
-                            child: buildFormRow(
-                              label: "lon :",
-                              child: TextFormField(
-                                initialValue: weather['lon'] ?? "",
-                                onChanged: (value) => weather['lon'] = value,
-                                style: const TextStyle(fontSize: 12),
-                                decoration: InputDecoration(
-                                  hintText: "100.4321",
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(
-                            width: maxwidth,
-                            child: buildFormRow(
-                              label: "Token :",
-                              child: TextFormField(
-                                initialValue: weather['token'] ?? "",
-                                onChanged: (value) => weather['token'] = value,
-                                style: const TextStyle(fontSize: 12),
-                                decoration: InputDecoration(
-                                  hintText: "7.232",
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: maxwidth * 0.3,
-                            height: 40,
-                            child: TextButton(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(Colors.orange[700]),
-                                shadowColor: WidgetStatePropertyAll(Colors.black12),
-                              ),
-
-                              onPressed: () async {
-                                // var response = await ApiService.updateWeather(weather);
-                                // ScaffoldMessenger.of(
-                                //   context,
-                                // ).showSnackBar(SnackBar(content: Text(response['message'])));
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: 6,
-                                children: [
-                                  Icon(Icons.save_outlined, color: Colors.white),
-                                  Text("Save", style: TextStyle(color: Colors.white)),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(height: 5),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
 
+              // Dynamic Data Cards
               ...data.asMap().entries.map((entry) {
                 int index = entry.key;
                 var item = entry.value;
-                var foundIcon = icons.where((i) {
-                  return item['icon_id'] == i['id'];
-                });
+                var foundIcon = icons.where((i) => item['icon_id'] == i['id']);
 
-                return Container(
-                  width: maxwidth,
-                  // padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  padding: EdgeInsets.all(12),
+                return _buildModernCard(
+                  title: "${item['id']} ${item['name']}",
+                  icon: Icons.dashboard_customize,
+                  showToggle: true,
+                  toggleValue: item['is_active'] == 't',
+                  onToggleChanged: (value) {
+                    setState(() {
+                      item['is_active'] = value ? 't' : 'f';
+                    });
+                  },
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// header
-                      Container(
-                        width: maxwidth - 16,
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.orange[700],
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "${item['id']} ${item['name']}",
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                      _buildInputField(
+                        label: "Label",
+                        initialValue: item['label_text'],
+                        onChanged: (value) {
+                          setState(() {
+                            data[index]['label_text'] = value;
+                            labelControllers[index].text = value;
+                          });
+                        },
                       ),
-
-                      ///body
-                      Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 5), blurRadius: 2)],
-                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
-                        ),
-                        child: Column(
+                      if (item['icon_id'] != '0') ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: (maxwidth - 24),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(child: Text("Label :", textAlign: TextAlign.center)),
-                                  SizedBox(
-                                    // color: Colors.cyan,
-                                    width: (maxwidth - 24) * 0.34,
-                                    child: TextField(
-                                      controller: labelControllers[index],
-                                      decoration: InputDecoration(labelText: "Label", border: OutlineInputBorder()),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          data[index]['label_text'] = value;
-                                        });
-                                      },
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 4, bottom: 6),
+                                    child: Text(
+                                      "SELECT ICON",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[600],
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
                                   ),
-                                  Expanded(child: Text("Status :", textAlign: TextAlign.center)),
-                                  Container(
-                                    width: (maxwidth - 24) * 0.2,
-                                    child: Switch(
-                                      value: item['is_active'] == 't',
-                                      activeThumbColor: Colors.orange[700],
-                                      inactiveThumbColor: Colors.grey[600],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          item['is_active'] = value ? 't' : 'f';
-                                        });
-                                      },
+                                  DropdownButtonFormField<String>(
+                                    value: item['icon_id'] == '0' ||
+                                            foundIcon.isEmpty
+                                        ? null
+                                        : item['icon_id'],
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.grey[50],
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 14),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[300]!),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[300]!),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFF97316), width: 2),
+                                      ),
+                                    ),
+                                    items: icons.map<DropdownMenuItem<String>>(
+                                        (icon) {
+                                      return DropdownMenuItem(
+                                        value: icon['id'],
+                                        child: Text(icon['name']),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() => item['icon_id'] = value);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Container(
+                              width: 100,
+                              height: 120,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.grey[300]!,
+                                  width: 2,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Image.network(
+                                      "${user['baseURL']}../${icons.firstWhere(
+                                        (i) => i['id'] == item['icon_id'],
+                                        orElse: () =>
+                                            {"path": "img/icons/default.png"},
+                                      )['path']}",
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "PREVIEW",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[400],
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-
-                            Visibility(
-                              visible: item['icon_id'] != '0',
-                              child: Container(
-                                padding: EdgeInsets.only(left: 8),
-                                // color: Colors.greenAccent,
-                                // width: (maxwidth - 16),
-                                child: Row(
-                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    SizedBox(width: maxwidth * 0.15, child: Text("Icon :")),
-                                    SizedBox(
-                                      width: maxwidth * 0.5,
-                                      child: SizedBox(
-                                        width: maxwidth * 0.4,
-                                        child: DropdownButton<String>(
-                                          hint: Text("เลือก icon"),
-                                          value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
-                                          items: icons.map<DropdownMenuItem<String>>((icon) {
-                                            return DropdownMenuItem(value: icon['id'], child: Text(icon['name']));
-                                          }).toList(),
-                                          onChanged: (value) {
-                                            setState(() => item['icon_id'] = value);
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: SizedBox(
-                                        width: maxwidth * 0.15,
-                                        height: maxwidth * 0.15,
-                                        child: Image.network(
-                                          // ignore: prefer_interpolation_to_compose_strings
-                                          "${user['baseURL']}../" +
-                                              icons.firstWhere(
-                                                (i) => i['id'] == item['icon_id'],
-                                                orElse: () => {"path": "img/icons/dafault.png"},
-                                              )['path'],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            Visibility(
-                              visible: item['type_values_id'] != '0',
-                              child: Container(
-                                width: maxwidth - 16,
-                                height: maxheight * 0.15,
-                                padding: EdgeInsets.only(left: 8),
-                                child: Row(
-                                  children: [
-                                    SizedBox(width: maxwidth * 0.15, child: Text("type :")),
-                                    SizedBox(
-                                      width: maxwidth * 0.34,
-                                      child: DropdownButton<String>(
-                                        value: item['type_values_id'] == "0" ? '1' : item['type_values_id'],
-                                        hint: Text("เลือกประเภท"),
-                                        items: typeofValues.entries.map((entry) {
-                                          return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            item['type_values_id'] = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(width: maxwidth * 0.15, child: Text("value :")),
-                                    Expanded(child: _buildChildByCase(index, item, maxwidth)),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            Container(
-                              width: maxwidth * 0.3,
-                              height: 40,
-                              child: TextButton(
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(Colors.orange[700]),
-                                  shadowColor: WidgetStatePropertyAll(Colors.black12),
-                                ),
-
-                                onPressed: () async {
-                                  var response = await ApiService.updateMainboardById(item);
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(SnackBar(content: Text(response['message'])));
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  spacing: 6,
-                                  children: [
-                                    Icon(Icons.save_outlined, color: Colors.white),
-                                    Text("Save", style: TextStyle(color: Colors.white)),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 5),
                           ],
+                        ),
+                      ],
+                      if (item['type_values_id'] != '0') ...[
+                        const SizedBox(height: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4, bottom: 6),
+                              child: Text(
+                                "TYPE",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[600],
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            DropdownButtonFormField<String>(
+                              value: item['type_values_id'] == "0"
+                                  ? '1'
+                                  : item['type_values_id'],
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 14),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFF97316), width: 2),
+                                ),
+                              ),
+                              items: typeofValues.entries
+                                  .map((entry) => DropdownMenuItem<String>(
+                                        value: entry.key,
+                                        child: Text(entry.value),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  item['type_values_id'] = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4, bottom: 6),
+                              child: Text(
+                                "VALUE",
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[600],
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            _buildChildByCase(index, item, maxwidth),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF97316),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor:
+                                const Color(0xFFF97316).withOpacity(0.3),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () async {
+                            var response =
+                                await ApiService.updateMainboardById(item);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['message'])),
+                            );
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.save, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                "Save Configuration",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
