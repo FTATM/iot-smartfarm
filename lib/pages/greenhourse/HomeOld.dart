@@ -96,6 +96,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
   Map<String, dynamic> weathers = {'tc': 0, 'rh': 50, 'rain': 4, 'ws10m': 1};
   List<dynamic> data = [];
   List<dynamic> icons = [];
+  List<dynamic> logos = [];
 
   List<Color> colorlist = [
     Color.fromARGB(255, 240, 240, 240),
@@ -135,7 +136,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
       weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
     });
   }
-
+  
   Future<void> _fetchicons() async {
     final response = await ApiService.fetchIcons();
     setState(() {
