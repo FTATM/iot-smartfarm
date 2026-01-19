@@ -192,7 +192,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
               child: Text("[${b['monitor_id']}] ${b['monitor_name']}", maxLines: 1, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
-          onChanged: (value) {},
+          onChanged: (value) {
+            item['value'] = value;
+          },
         );
 
       default:
@@ -701,7 +703,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                 ),
                               ),
                             ),
-                            _buildChildByCase(index, item, maxwidth),
+                            _buildChildByCase(index + 1, item, maxwidth),
                           ],
                         ),
                       ],
