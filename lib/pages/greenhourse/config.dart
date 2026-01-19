@@ -24,6 +24,8 @@ class _ConfigPageState extends State<ConfigPage> {
   List<TextEditingController> linesControllers = [];
   List<TextEditingController> emailsControllers = [];
 
+  // List<WorkTime> listTime = [];
+
   List<dynamic> data = [];
   List<dynamic> groups = [];
   List<dynamic> devices = [];
@@ -40,7 +42,7 @@ class _ConfigPageState extends State<ConfigPage> {
     super.initState();
     _fetchData();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      // _fetchData(); // ดึงซ้ำทุก 5 วิ
+      // _fetchData();
     });
   }
 
@@ -83,10 +85,38 @@ class _ConfigPageState extends State<ConfigPage> {
     });
   }
 
-  void _showEditDialog(int index, var item, List<int> listTime) {
+  void _showEditDialog(int index, var item) {
+    List<int> listDay = [];
+    var raw = item['list_time_of_work'];
+    if (raw != null && raw is String && raw.isNotEmpty) {
+      listDay = raw.split(',').map((e) => int.parse(e)).toList();
+    }
+
+    final raw2 = item['list_time'] as List;
+
+    List<WorkTime> listTime = raw2.map((e) => WorkTime.fromApi(e)).toList();
     showDialog(
       context: context,
       builder: (context) {
+        void addTimeSlot(StateSetter setStateDialog) {
+          setStateDialog(() {
+            listTime.add(
+              WorkTime(
+                id: 0,
+                start: const TimeOfDay(hour: 8, minute: 0),
+                end: const TimeOfDay(hour: 9, minute: 0),
+                isdelete: 0,
+              ),
+            );
+          });
+        }
+
+        void removeTimeSlot(StateSetter setStateDialog, int index) {
+          setStateDialog(() {
+            listTime[index].isdelete = 1;
+          });
+        }
+
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             String nameshort = item["monitor_name"] ?? "-";
@@ -422,28 +452,28 @@ class _ConfigPageState extends State<ConfigPage> {
                                     GestureDetector(
                                       onTap: () {
                                         setStateDialog(() {
-                                          if (listTime.contains(dayIndex)) {
-                                            listTime.remove(dayIndex);
+                                          if (listDay.contains(dayIndex)) {
+                                            listDay.remove(dayIndex);
                                           } else {
-                                            listTime.add(dayIndex);
+                                            listDay.add(dayIndex);
                                           }
                                         });
                                         setState(() {
-                                          item['list_time_of_work'] = listTime.join(',');
+                                          item['list_time_of_work'] = listDay.join(',');
                                         });
                                       },
                                       child: Container(
                                         width: 28,
                                         height: 28,
                                         decoration: BoxDecoration(
-                                          color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.white,
+                                          color: listDay.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.white,
                                           borderRadius: BorderRadius.circular(6),
                                           border: Border.all(
-                                            color: listTime.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.grey[400]!,
+                                            color: listDay.contains(dayIndex) ? Color(0xFFFF9F43) : Colors.grey[400]!,
                                             width: 2,
                                           ),
                                         ),
-                                        child: listTime.contains(dayIndex)
+                                        child: listDay.contains(dayIndex)
                                             ? Icon(Icons.check, color: Colors.white, size: 18)
                                             : null,
                                       ),
@@ -453,6 +483,97 @@ class _ConfigPageState extends State<ConfigPage> {
                               );
                             }).toList(),
                             SizedBox(height: 12),
+
+                            ...listTime.asMap().entries.where((e) => e.value.isdelete != 1).map((entry) {
+                              final index = entry.key;
+                              final time = entry.value;
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        /// เวลาเริ่ม
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: time.start,
+                                              );
+
+                                              if (picked != null) {
+                                                setStateDialog(() {
+                                                  time.start = picked;
+                                                  time.error = null;
+                                                });
+                                              }
+                                            },
+                                            child: timeBox(label: 'เวลาเริ่ม', value: time.start.format(context)),
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 8),
+
+                                        /// เวลาสิ้นสุด
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: time.end,
+                                              );
+
+                                              if (picked == null) return;
+
+                                              setStateDialog(() {
+                                                // 1. อัปเดตค่าก่อน
+                                                time.end = picked;
+
+                                                // 2. validate หลังอัปเดต
+                                                if (time.isEndBeforeStart()) {
+                                                  time.error = 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม';
+                                                } else {
+                                                  time.error = null;
+                                                }
+                                              });
+                                            },
+                                            child: timeBox(label: 'เวลาสิ้นสุด', value: time.end.format(context)),
+                                          ),
+                                        ),
+
+                                        /// ลบ
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () => removeTimeSlot(setStateDialog, index),
+                                        ),
+                                      ],
+                                    ),
+
+                                    /// error
+                                    if (time.error != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 4),
+                                        child: Text(
+                                          time.error!,
+                                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: ElevatedButton.icon(
+                                onPressed: () => addTimeSlot(setStateDialog),
+                                icon: const Icon(Icons.add),
+                                label: const Text('เพิ่มช่วงเวลา'),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -498,7 +619,11 @@ class _ConfigPageState extends State<ConfigPage> {
                                   data[index] = Map<String, dynamic>.from(item);
                                   data[index] = item;
                                 });
+                                item['list_time'] = listTime.map((e) => e.toApi()).toList();
+                                debugPrint(item['list_time'].toString());
                                 await ApiService.updateMonitorById(item);
+                                
+                                _fetchData();
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(vertical: 14),
@@ -614,12 +739,6 @@ class _ConfigPageState extends State<ConfigPage> {
                       int index = entry.key;
                       var item = entry.value;
 
-                      List<int> listTime = [];
-                      var raw = item['list_time_of_work'];
-                      if (raw != null && raw is String && raw.isNotEmpty) {
-                        listTime = raw.split(',').map((e) => int.parse(e)).toList();
-                      }
-
                       txtPath = "";
                       txtPath +=
                           groups.where((g) => g['group_id'] == item['group_id']).map((g) => g['group_name']).first +
@@ -727,7 +846,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      _showEditDialog(index, item, listTime);
+                                      _showEditDialog(index, item);
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -770,4 +889,74 @@ class _ConfigPageState extends State<ConfigPage> {
     );
   }
 
+  Widget timeBox({required String label, required String value}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class WorkTime {
+  int id;
+  TimeOfDay start;
+  TimeOfDay end;
+  int isdelete;
+  String? error;
+
+  WorkTime({required this.id, required this.start, required this.end, required this.isdelete, this.error});
+
+  /// ตรวจสอบ end <= start
+  bool isEndBeforeStart() {
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+    return endMinutes <= startMinutes;
+  }
+
+  /// สร้างจาก API
+  factory WorkTime.fromApi(Map<String, dynamic> json) {
+    return WorkTime(
+      id: int.parse(json['monitor_sub_id'].toString()),
+      start: parseTime(json['start_work']),
+      end: parseTime(json['end_work']),
+      isdelete: 0,
+    );
+  }
+
+  Map<String, dynamic> toApi() {
+    String two(int n) => n.toString().padLeft(2, '0');
+
+    return {
+      'id': id,
+      'start_work': '${two(start.hour)}:${two(start.minute)}:00',
+      'end_work': '${two(end.hour)}:${two(end.minute)}:00',
+      'is_delete': isdelete,
+    };
+  }
+
+  /// แปลง String -> TimeOfDay
+  static TimeOfDay parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  @override
+  String toString() {
+    String two(int n) => n.toString().padLeft(2, '0');
+
+    return 'WorkTime(start: ${two(start.hour)}:${two(start.minute)}, '
+        'end: ${two(end.hour)}:${two(end.minute)}, '
+        'error: $error)';
+  }
 }

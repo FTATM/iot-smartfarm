@@ -29,6 +29,7 @@ class _mainboardPageState extends State<mainboardPage> {
   }
 
   Future<void> _prepareData() async {
+        if (!mounted) return;
     setState(() {
       isLoading = false;
     });
