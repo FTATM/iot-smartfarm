@@ -447,7 +447,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               ],
                             ),
                           ),
-                        ],
+                        ], //children
                       );
                     },
                   ),
