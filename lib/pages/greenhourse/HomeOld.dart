@@ -92,6 +92,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
   List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> logos = [];
+  List<dynamic> sensors = [];
 
   List<Color> colorlist = [
     Color.fromARGB(255, 240, 240, 240),
@@ -120,6 +121,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
     await _fetchLogos();
     await _fetchmainBoard();
     await _fetchDataWeathers();
+    await _fetchconfiguration();
     setState(() {
       isLoading = false;
     });
@@ -134,6 +136,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
       }
     });
   }
+
   Future<void> _fetchLogos() async {
     final response = await ApiService.fetchLogos();
     setState(() {
@@ -152,6 +155,13 @@ class _HomeOldPageState extends State<HomeOldPage> {
     final response = await ApiService.fetchMainboard();
     setState(() {
       data = response['data'] as List;
+    });
+  }
+
+  Future<void> _fetchconfiguration() async {
+    final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
+    setState(() {
+      sensors = response['data'] as List;
     });
   }
 
@@ -394,7 +404,6 @@ class _HomeOldPageState extends State<HomeOldPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-
                                 ...selected1_6.map((item) {
                                   return Padding(
                                     padding: EdgeInsets.only(bottom: spacing),
@@ -482,6 +491,18 @@ class _HomeOldPageState extends State<HomeOldPage> {
                         spacing: spacing,
                         runSpacing: spacing,
                         children: selected6_15.map((item) {
+                          String value = "";
+
+                          if (item['type_values_id'].toString() == '4') {
+                            final sensor = sensors.firstWhere((s) {
+                              return s['monitor_id'].toString() == item['value'].toString();
+                            }, orElse: () => {});
+
+                            value = sensor.isEmpty ? (item['value'] ?? "") : sensor['datax_value'].toString();
+                          } else {
+                            value = item['value']?.toString() ?? "";
+                          }
+
                           return Container(
                             width: itemWidth,
                             padding: EdgeInsets.all(
@@ -511,7 +532,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                     "${user['baseURL']}../" +
                                         icons.firstWhere(
                                           (i) => i['id'] == item['icon_id'],
-                                          orElse: () => {"path": "img/icons/ph.png"},
+                                          orElse: () => {"path": "img/icons/default.png"},
                                         )['path'],
                                     fit: BoxFit.contain,
                                     color: Color.fromARGB(255, 255, 131, 0),
@@ -536,7 +557,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                       ),
                                       SizedBox(height: 1),
                                       Text(
-                                        "${item['value']} ${item['unitofvalue'] == '' ? "x" : item['unitofvalue']}",
+                                        "$value ${item['unitofvalue'] == '' ? "x" : item['unitofvalue']}",
                                         style: TextStyle(
                                           fontSize: screenWidth < 360 ? 18 : 20,
                                           fontWeight: FontWeight.bold,
@@ -628,7 +649,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                           "${user['baseURL']}../" +
                                               icons.firstWhere(
                                                 (i) => i['id'] == item['icon_id'],
-                                                orElse: () => {"path": "img/icons/ph.png"},
+                                                orElse: () => {"path": "img/icons/default.png"},
                                               )['path'],
                                           fit: BoxFit.contain,
                                           color: Color.fromARGB(255, 255, 131, 0),
