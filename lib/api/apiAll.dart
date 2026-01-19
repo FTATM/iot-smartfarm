@@ -1342,38 +1342,42 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-      // fetch Logo
-  static Future<Map<String, dynamic>> createLogo(Map<String, dynamic> list) async {
+    // insert icons
+  static Future<bool> createLogo(String name, Uint8List bytes) async {
     try {
-      final response = await http.post(Uri.parse("${baseUrl}create-logo.php"),
-        body: {'json': jsonEncode(list)}
-      );
-      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+      var request = http.MultipartRequest('POST', Uri.parse("${baseUrl}create-logo.php"));
 
-        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
-        return data;
-      } else {
-        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
-      }
+      request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: name));
+
+      var response = await request.send();
+
+      // แปลง StreamedResponse เป็น String
+      var responseBody = await response.stream.bytesToString();
+
+      // print("Status code: ${response.statusCode}");
+      print("Body: $responseBody");
+      return response.statusCode == 200;
     } catch (e) {
-      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
-      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+      print("Upload error: $e");
+      return false;
     }
   }
-      // fetch Logo
-  static Future<Map<String, dynamic>> deleteLogo(Map<String, dynamic> list) async {
+
+  // Delete icons
+  static Future<Map<String, dynamic>> deleteLogoById(Map<String, dynamic> list) async {
     try {
-      final response = await http.post(Uri.parse("${baseUrl}delete-logo.php"),
-        body: {'json': jsonEncode(list)}
+      print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}delete-logo.php"),
+        //  headers: {'Content-Type': 'application/json'},
+        body: {'json': jsonEncode(list)},
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
+        // print(response.body);  //ดู error sql
         final data = json.decode(response.body);
 
-        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
         return data;
       } else {
         return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
