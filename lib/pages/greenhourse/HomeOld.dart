@@ -15,7 +15,7 @@ class ChickenFarmHeader extends StatelessWidget {
 
   const ChickenFarmHeader({Key? key, required this.title}) : super(key: key);
 
-@override
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -24,35 +24,30 @@ class ChickenFarmHeader extends StatelessWidget {
     final isLandscape = orientation == Orientation.landscape;
 
     // กำหนดความสูงแบบ responsive
-final headerHeight = isSmallScreen 
-    ? 40.0 
-    : isLandscape 
-        ? 50.0 
-        : screenWidth < 600 
-            ? 50.0 
-            : screenHeight * 0.065;  // ปรับความสูงเป็น 10% ของความสูงหน้าจอ
+    final headerHeight = isSmallScreen
+        ? 40.0
+        : isLandscape
+        ? 50.0
+        : screenWidth < 600
+        ? 50.0
+        : screenHeight * 0.065; // ปรับความสูงเป็น 10% ของความสูงหน้าจอ
 
-
-      final Width = isSmallScreen
-          ? screenWidth * 0.50  // เปลี่ยนเป็น 50% สำหรับหน้าจอเล็ก
-          : isLandscape
-              ? screenWidth * 0.50  // แนวนอนให้แคบลง 50%
-              : screenWidth < 600
-                  ? screenWidth * 0.50  // หน้าจอกลาง 60%
-                  : screenWidth * 0.50;  // ความกว้างสูงสุด 80% ของหน้าจอ
-
+    final Width = isSmallScreen
+        ? screenWidth *
+              0.50 // เปลี่ยนเป็น 50% สำหรับหน้าจอเล็ก
+        : isLandscape
+        ? screenWidth *
+              0.50 // แนวนอนให้แคบลง 50%
+        : screenWidth < 600
+        ? screenWidth *
+              0.50 // หน้าจอกลาง 60%
+        : screenWidth * 0.50; // ความกว้างสูงสุด 80% ของหน้าจอ
 
     return Container(
       height: headerHeight,
       width: Width,
-      margin: EdgeInsets.only(
-        left: isSmallScreen ? 16 : 24,
-        right: isSmallScreen ? 16 : 24,
-        top: 1,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 2 : 4,
-      ),
+      margin: EdgeInsets.only(left: isSmallScreen ? 16 : 24, right: isSmallScreen ? 16 : 24, top: 1),
+      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.white, Color.fromRGBO(255, 242, 230, 1)],
@@ -93,7 +88,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
   bool isEdit = false;
   String userString = "";
   Map<String, dynamic> user = {};
-  Map<String, dynamic> weathers = {'tc': 0, 'rh': 50, 'rain': 4, 'ws10m': 1};
+  Map<String, dynamic> weathers = {'tc': '0.00', 'rh': '0.00', 'rain': '0.00', 'ws10m': '0.00'};
   List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> logos = [];
@@ -122,6 +117,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
       user = CurrentUser;
     });
     await _fetchicons();
+    await _fetchLogos();
     await _fetchmainBoard();
     await _fetchDataWeathers();
     setState(() {
@@ -133,10 +129,18 @@ class _HomeOldPageState extends State<HomeOldPage> {
     final response = await ApiService.fetchDataWeathers();
 
     setState(() {
-      weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
+      if (response['data'][0]['success']) {
+        weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
+      }
     });
   }
-  
+  Future<void> _fetchLogos() async {
+    final response = await ApiService.fetchLogos();
+    setState(() {
+      logos = response['data'] as List;
+    });
+  }
+
   Future<void> _fetchicons() async {
     final response = await ApiService.fetchIcons();
     setState(() {
@@ -189,7 +193,6 @@ class _HomeOldPageState extends State<HomeOldPage> {
         ? 16.0
         : 12.0;
 
-    // ดึง item ลำดับที่ 6 - 12 (index 6 ถึง 12)
     final selected1_6 = data.sublist(1, 6);
     final selected6_15 = data.sublist(6, 15);
     final selected15_19 = data.sublist(15, 19);
@@ -219,9 +222,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                 // Header Section
                 Padding(
                   padding: EdgeInsets.all(padding),
-                  child: ChickenFarmHeader(
-                    title: user['b_name']?.toString().toUpperCase() ?? 'CHICKEN FARM #1',
-                  ),
+                  child: ChickenFarmHeader(title: user['b_name']?.toString().toUpperCase() ?? 'CHICKEN FARM #1'),
                 ),
                 // Section 1: Top card with image and data
                 Container(
@@ -273,20 +274,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.water_drop_outlined,
+                                                  Icons.air,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24 * 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18 * 0.9
+                                                      : 20 * 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['rh']}%',
+                                                  '${weathers['ws10m']}m/s',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small * 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -295,20 +296,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.thermostat_outlined,
+                                                  Icons.cloudy_snowing,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24 * 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18 * 0.9
+                                                      : 20 * 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['tc']}°C',
+                                                  '${weathers['rain']}mm',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small * 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -322,20 +323,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.air,
+                                                  Icons.water_drop_outlined,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24 * 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18 * 0.9
+                                                      : 20 * 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['ws10m']}m/s',
+                                                  '${weathers['rh']}%',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small * 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -344,20 +345,20 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             Row(
                                               children: [
                                                 Icon(
-                                                  Icons.cloudy_snowing,
+                                                  Icons.thermostat_outlined,
                                                   color: blackColor,
                                                   size: isLandscape
-                                                      ? 24
+                                                      ? 24 * 0.9
                                                       : screenWidth < 360
-                                                      ? 18
-                                                      : 20,
+                                                      ? 18 * 0.9
+                                                      : 20 * 0.9,
                                                 ),
                                                 SizedBox(width: 4),
                                                 Text(
-                                                  '${weathers['rain']}mm',
+                                                  '${weathers['tc']}°C',
                                                   style: TextStyle(
                                                     color: blackColor,
-                                                    fontSize: fs_small,
+                                                    fontSize: fs_small * 0.9,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -375,9 +376,9 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                   alignment: Alignment.center,
                                   child: Image.network(
                                     "${user['baseURL']}../" +
-                                        icons.firstWhere(
+                                        logos.firstWhere(
                                           (i) => i['id'] == data[0]['icon_id'],
-                                          orElse: () => {"path": "img/icons/ph.png"},
+                                          orElse: () => {"path": "img/logos/default.png"},
                                         )['path'],
                                     fit: BoxFit.contain,
                                   ),
@@ -392,55 +393,58 @@ class _HomeOldPageState extends State<HomeOldPage> {
                             width: rightWidth,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: selected1_6.map((item) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: spacing),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      gradient: LinearGradient(
-                                        colors: gradientColorsSet,
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
+                              children: [
+
+                                ...selected1_6.map((item) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: spacing),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        gradient: LinearGradient(
+                                          colors: gradientColorsSet,
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            offset: Offset(0, 2),
+                                            color: Colors.black12,
+                                            spreadRadius: 1,
+                                            blurRadius: 3,
+                                          ),
+                                        ],
                                       ),
-                                      border: Border(bottom: BorderSide(width: 2.5, color: primaryColor)),
-                                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          offset: Offset(0, 2),
-                                          color: Colors.black12,
-                                          spreadRadius: 1,
-                                          blurRadius: 3,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          item['label_text'],
-                                          style: TextStyle(
-                                            color: Colors.orange,
-                                            fontSize: fs_small,
-                                            fontWeight: FontWeight.bold,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            item['label_text'],
+                                            style: TextStyle(
+                                              color: Colors.orange,
+                                              fontSize: fs_small,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.left,
                                           ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Text(
-                                          item['value'],
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: fs_small,
-                                            fontWeight: FontWeight.bold,
+                                          Text(
+                                            item['value'],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: fs_small,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.right,
                                           ),
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
+                                  );
+                                }).toList(),
+                              ],
                             ),
                           ),
                         ],

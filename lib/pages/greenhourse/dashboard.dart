@@ -39,7 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     _prepareData();
     _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _updateTime();
     });
   }
@@ -197,6 +197,7 @@ class _DashboardPageState extends State<DashboardPage> {
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
         child: FloatingActionButton(
+          shape: CircleBorder(),
           onPressed: () {
             setState(() {
               isEdit = !isEdit;

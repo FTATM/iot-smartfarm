@@ -1366,7 +1366,6 @@ class ApiService {
   // Delete icons
   static Future<Map<String, dynamic>> deleteLogoById(Map<String, dynamic> list) async {
     try {
-      print(jsonEncode(list));
       final response = await http.post(
         Uri.parse("${baseUrl}delete-logo.php"),
         //  headers: {'Content-Type': 'application/json'},
