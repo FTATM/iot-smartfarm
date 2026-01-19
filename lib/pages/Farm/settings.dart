@@ -9,6 +9,7 @@ import 'package:iot_app/pages/greenhourse/datax.dart';
 import 'package:iot_app/pages/greenhourse/device.dart';
 import 'package:iot_app/pages/greenhourse/group.dart';
 import 'package:iot_app/pages/greenhourse/icons.dart';
+import 'package:iot_app/pages/greenhourse/logos.dart';
 import 'package:iot_app/pages/greenhourse/users_admin.dart';
 import 'package:iot_app/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,6 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             _subMenu("Devices", Icons.devices, () => _go(const DevicePage())),
                             _subMenu("Dataxs", Icons.data_usage, () => _go(const DataxPage())),
                             _subMenu("Icons", Icons.image, () => _go(const IconsPage())),
+                            _subMenu("Logos", Icons.layers, () => _go(const LogosPage())),
                             _subMenu("Users", Icons.person, () => _go(const UserAdminPage())),
                           ],
                         )
