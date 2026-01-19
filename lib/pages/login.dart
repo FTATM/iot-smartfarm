@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loadConfig() async {
     final config = await ServerConfig.loadServerConfig();
-
+    if (!mounted) return;
     setState(() {
       _IpServerController.text = config['ip'] ?? "";
       _PathtoAPIController.text = config['path'] ?? "";
@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     var username = _usernameController.text.trim();
@@ -51,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (response['status'] == 'success') {
