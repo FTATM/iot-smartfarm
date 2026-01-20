@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/functions/function.dart';
+import 'package:iot_app/pages/Farm/settings.dart';
 
 class ScheduleCreatePage extends StatefulWidget {
   const ScheduleCreatePage({super.key});
@@ -32,11 +36,12 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
       'is_deleted': '0',
       'rows': [
         {
-          'd_id': 'new',
+          'd_id': helper().tempId(),
           'd_name_table_id': 'Table_new',
           'd_start_day': '0',
           'd_end_day': '0',
           'd_value': '',
+          'd_row_parent_id': null,
           'd_second_label': null,
         },
       ],
@@ -111,7 +116,7 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                         const Text("ชื่อตาราง", style: TextStyle(fontSize: 14, color: Colors.black87)),
                         const SizedBox(height: 8),
                         TextFormField(
-                          initialValue: parent['label'],
+                          initialValue: parent['name'],
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -126,7 +131,7 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           ),
-                          onChanged: (v) => parent['label'] = v,
+                          onChanged: (v) => parent['name'] = v,
                           onTapOutside: (_) => setState(() {}),
                         ),
 
@@ -147,12 +152,21 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                                     padding: EdgeInsets.all(10),
                                     child: Center(child: Text("ช่วงเวลา")),
                                   ),
-
-                                  const Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Center(child: Text("ข้อความ")),
+                                  Padding(
+                                    padding: const EdgeInsets.all(6),
+                                    child: TextFormField(
+                                      initialValue: parent['label'] ?? "",
+                                      style: TextStyle(fontSize: fsSmall),
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      onChanged: (v) => parent['label'] = v,
+                                      onTapOutside: (_) => setState(() {}),
+                                    ),
                                   ),
-
                                   for (final c in childList)
                                     Padding(
                                       padding: const EdgeInsets.all(6),
@@ -182,8 +196,7 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                               ...parent['rows'].asMap().entries.map((e) {
                                 final index = e.key;
                                 final row = e.value;
-                                final start = row['d_start_day'];
-                                final end = row['d_end_day'];
+
                                 return TableRow(
                                   children: [
                                     //start - end
@@ -265,7 +278,7 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                                             builder: (_) {
                                               final rowsChild = c['rows'] ?? [];
                                               final match = rowsChild.firstWhere(
-                                                (r) => r['d_start_day'] == start && r['d_end_day'] == end,
+                                                (r) => r['d_row_parent_id'] == row['d_id'],
                                                 orElse: () => null,
                                               );
 
@@ -325,17 +338,9 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               ),
-                              onPressed: () {
-                                final Map<String, String?> newRow = {
-                                  'd_id': 'new',
-                                  'd_name_table_id': parent['id']?.toString(),
-                                  'd_start_day': '0',
-                                  'd_end_day': '0',
-                                  'd_value': '',
-                                  'd_second_label': null,
-                                };
 
-                                (parent['rows'] as List<Map<String, String?>>).add(newRow);
+                              onPressed: () {
+                                helper().addRowToParentAndChildren(parent, childList);
                                 setState(() {});
                               },
                               icon: const Icon(Icons.add, color: Colors.orange),
@@ -356,28 +361,7 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                     ),
                                     onPressed: () {
-                                      Map<String, dynamic> newTable = {
-                                        'id': "${parent['id']}_${childList.length}",
-                                        'name': "new column",
-                                        'label': "new Column",
-                                        'branch_id': parent['branch_id'],
-                                        'child_of_table_id': parent['id'],
-                                        'is_deleted': '0',
-                                        'rows': [],
-                                      };
-
-                                      for (var i = 0; i < parent['rows'].length; i++) {
-                                        newTable['rows'].add({
-                                          'd_id': 'new',
-                                          'd_name_table_id': newTable['id'],
-                                          'd_start_day': parent['rows'][i]['d_start_day'],
-                                          'd_end_day': parent['rows'][i]['d_end_day'],
-                                          'd_value': '',
-                                          'd_second_label': null,
-                                        });
-                                      }
-
-                                      temps.add(newTable);
+                                      helper().addColumn(parent, temps);
                                       setState(() {});
                                     },
                                     icon: const Icon(Icons.view_column, color: Colors.orange),
@@ -425,13 +409,14 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                         if (res['status'] == 'success') {}
 
                         if (dialogContext != null) {
-                        Navigator.pop(dialogContext!);
+                          Navigator.pop(dialogContext!);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("เพิ่มตารางสำเร็จ.")));
                         }
 
-                        // if (context.mounted) {
-                        // Navigator.pop(context);
-                        //   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeOldPage()));
-                        // }
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                        }
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
