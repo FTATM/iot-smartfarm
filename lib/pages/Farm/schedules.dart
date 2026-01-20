@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/functions/function.dart';
 import 'package:iot_app/pages/Farm/schedule-create.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -23,9 +24,9 @@ class _SchedulePageState extends State<SchedulePage> {
   double maxheight = 600;
 
   List<dynamic> tables = [];
-  List<dynamic> temps = [];
-  List<dynamic> tempParentTables = [];
-  List<dynamic> tempChildTables = [];
+  List<Map<String, dynamic>> temps = [];
+  List<Map<String, dynamic>> tempParentTables = [];
+  List<Map<String, dynamic>> tempChildTables = [];
 
   @override
   void initState() {
@@ -37,7 +38,8 @@ class _SchedulePageState extends State<SchedulePage> {
     final responsetable = await ApiService.fetchTablesknowledgeById(CurrentUser['branch_id']);
     setState(() {
       tables = jsonDecode(jsonEncode(responsetable['data']));
-      temps = jsonDecode(jsonEncode(responsetable['data']));
+      temps = (jsonDecode(jsonEncode(responsetable['data'])) as List).map((e) => Map<String, dynamic>.from(e)).toList();
+
       isLoading = false;
     });
   }
@@ -174,7 +176,7 @@ class _SchedulePageState extends State<SchedulePage> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: item['label'],
+                    initialValue: item['name'],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -189,7 +191,7 @@ class _SchedulePageState extends State<SchedulePage> {
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     ),
-                    onChanged: (v) => item['label'] = v,
+                    onChanged: (v) => item['name'] = v,
                     onTapOutside: (_) => setState(() {}),
                   ),
                 ),
@@ -198,7 +200,6 @@ class _SchedulePageState extends State<SchedulePage> {
                   visible: isEdit,
                   child: IconButton(
                     onPressed: () async {
-                      // debugPrint(item.toString());
                       var res = await ApiService.deleteColumnById(item);
                       if (res['status'] == 'success') {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบตารางสำเร็จ.")));
@@ -336,14 +337,7 @@ class _SchedulePageState extends State<SchedulePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   onPressed: () {
-                    item['rows'].add({
-                      'd_id': 'new',
-                      'd_name_table_id': item['id'],
-                      'd_start_day': '0',
-                      'd_end_day': '0',
-                      'd_value': '',
-                      'd_second_label': null,
-                    });
+                    helper().addRowToParentAndChildren(item, []);
                     setState(() {});
                   },
                   icon: const Icon(Icons.add, color: Colors.orange),
@@ -399,7 +393,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  Widget _buildParentChildTable(dynamic parent, List<dynamic> children) {
+  Widget _buildParentChildTable(dynamic parent, List<Map<String, dynamic>> children) {
     final childList = children.where((c) => c['child_of_table_id']?.toString() == parent['id'].toString()).toList();
 
     final lengthColumn = childList.length + 1;
@@ -424,7 +418,7 @@ class _SchedulePageState extends State<SchedulePage> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: parent['label'],
+                    initialValue: parent['name'],
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -439,7 +433,7 @@ class _SchedulePageState extends State<SchedulePage> {
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     ),
-                    onChanged: (v) => parent['label'] = v,
+                    onChanged: (v) => parent['name'] = v,
                     onTapOutside: (_) => setState(() {}),
                   ),
                 ),
@@ -456,7 +450,6 @@ class _SchedulePageState extends State<SchedulePage> {
                           context,
                         ).showSnackBar(SnackBar(content: Text("ลบตารางไม่สำเร็จ กรุณาลองอีกครั้ง.")));
                       }
-                      // debugPrint(parent.toString());
                       await prepare();
                     },
                     icon: Icon(Icons.delete, color: Colors.red),
@@ -613,7 +606,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                 builder: (_) {
                                   final rowsChild = c['rows'] ?? [];
                                   final match = rowsChild.firstWhere(
-                                    (r) => r['d_start_day'] == start && r['d_end_day'] == end,
+                                    (r) => r['d_row_parent_id'] == row['d_id'],
                                     orElse: () => null,
                                   );
 
@@ -724,6 +717,7 @@ class _SchedulePageState extends State<SchedulePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   onPressed: () {
+                    helper().addRowToParentAndChildren(parent, children);
                     parent['rows'].add({
                       'd_id': 'new',
                       'd_name_table_id': parent['id'],

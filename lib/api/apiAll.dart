@@ -1185,9 +1185,7 @@ class ApiService {
       // print(jsonEncode(list));
       final response = await http.post(Uri.parse("${baseUrl}update-schedule.php"), body: {'json': jsonEncode(list)});
 
-
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
-      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
@@ -1303,10 +1301,7 @@ class ApiService {
   // fetch Weathers
   static Future<Map<String, dynamic>> updateWeather(Map<String, dynamic> list) async {
     try {
-      final response = await http.post(
-        Uri.parse("${baseUrl}update-weathers.php"),
-        body: {'json': jsonEncode(list)},
-      );
+      final response = await http.post(Uri.parse("${baseUrl}update-weathers.php"), body: {'json': jsonEncode(list)});
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
@@ -1323,7 +1318,7 @@ class ApiService {
     }
   }
 
-    // fetch Logo
+  // fetch Logo
   static Future<Map<String, dynamic>> fetchLogos() async {
     try {
       final response = await http.post(Uri.parse("${baseUrl}fetch-logos.php"));
@@ -1342,7 +1337,8 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-    // insert icons
+
+  // insert icons
   static Future<bool> createLogo(String name, Uint8List bytes) async {
     try {
       var request = http.MultipartRequest('POST', Uri.parse("${baseUrl}create-logo.php"));

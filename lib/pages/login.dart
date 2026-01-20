@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาดในการเชื่อมต่อ')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')));
     }
   }
 
