@@ -115,7 +115,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
     }).toList();
     debugPrint(filterDates.toString());
 
-    calculateDay(filterDates[1]['value'], filterDates[2]['value']);
+    calculateDay(filterDates[1]['value'], filterDates[0]['value']);
   }
 
   @override
@@ -609,5 +609,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
     setState(() {
       diffDay = endDate.difference(startDate).inDays;
     });
+    print(diffDay);
   }
 }
