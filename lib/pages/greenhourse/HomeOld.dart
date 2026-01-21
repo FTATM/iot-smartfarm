@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
@@ -84,6 +86,7 @@ class ChickenFarmHeader extends StatelessWidget {
 }
 
 class _HomeOldPageState extends State<HomeOldPage> {
+  Timer? _timer;
   bool isLoading = true;
   bool isEdit = false;
   String userString = "";
@@ -93,13 +96,6 @@ class _HomeOldPageState extends State<HomeOldPage> {
   List<dynamic> icons = [];
   List<dynamic> logos = [];
   List<dynamic> sensors = [];
-
-  List<Color> colorlist = [
-    Color.fromARGB(255, 240, 240, 240),
-    Color.fromARGB(255, 240, 240, 240),
-    Color.fromARGB(255, 240, 240, 240),
-    Color.fromARGB(255, 189, 189, 189),
-  ];
 
   List<Color> gradientColorsSet = [Colors.white, Color.fromRGBO(255, 242, 230, 1)];
 
@@ -111,6 +107,15 @@ class _HomeOldPageState extends State<HomeOldPage> {
   void initState() {
     super.initState();
     _prepareData();
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _prepareData();
+    });
+  }
+    @override
+  void dispose() {
+    _timer?.cancel();
+
+    super.dispose();
   }
 
   Future<void> _prepareData() async {
