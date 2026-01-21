@@ -42,7 +42,7 @@ class _ConfigPageState extends State<ConfigPage> {
     super.initState();
     _fetchData();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      // _fetchData();
+      _fetchData();
     });
   }
 
