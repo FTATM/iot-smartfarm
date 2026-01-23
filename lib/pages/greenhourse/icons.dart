@@ -5,6 +5,7 @@ import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:iot_app/components/session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:universal_html/html.dart' as html;
@@ -37,6 +38,8 @@ class _IconsPageState extends State<IconsPage> {
       icons = response['data'] as List;
       isLoading = false;
     });
+
+    debugPrint(CurrentUser.toString());
   }
 
   @override
@@ -66,7 +69,6 @@ class _IconsPageState extends State<IconsPage> {
               runSpacing: 8,
               children: icons.map((item) {
 
-                debugPrint(item['path']);
                 return Container(
                   width: (maxwidth - 24) / 2,
                   child: Card(
@@ -95,7 +97,7 @@ class _IconsPageState extends State<IconsPage> {
                           height: (maxwidth - 24) / 2 * 0.7,
                           padding: const EdgeInsets.all(20),
                           child: Image.network(
-                            "http://49.0.69.152/iotsf/${item['path']}",
+                            "${CurrentUser['baseURL']}../${item['path']}",
                             fit: BoxFit.contain,
                           ),
                         ),

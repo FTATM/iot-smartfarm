@@ -59,12 +59,18 @@ class _SettingsPageState extends State<SettingsPage> {
               // ================= SETTINGS =================
               _sectionTitle("Setting"),
               _card([
-                _menuItem("Configuration", Icons.tune, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => ConfigPage()));
-                }),
-                _menuItem("Management", Icons.group, () {
-                  setState(() => _isOpen = !_isOpen);
-                }),
+                Visibility(
+                  visible: int.parse(CurrentUser['role_id']) >= 55,
+                  child: _menuItem("Configuration", Icons.tune, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => ConfigPage()));
+                  }),
+                ),
+                Visibility(
+                  visible: int.parse(CurrentUser['role_id']) >= 55,
+                  child: _menuItem("Management", Icons.group, () {
+                    setState(() => _isOpen = !_isOpen);
+                  }),
+                ),
                 AnimatedSize(
                   duration: const Duration(milliseconds: 300),
                   child: _isOpen
@@ -81,9 +87,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         )
                       : const SizedBox(),
                 ),
-                _menuItem("Schedule", Icons.schedule, () {
-                  _go(const SchedulePage());
-                }),
+                Visibility(
+                  visible: int.parse(CurrentUser['role_id']) >= 55,
+                  child: _menuItem("Schedule", Icons.schedule, () {
+                    _go(const SchedulePage());
+                  }),
+                ),
                 _menuItem("Knowledge", Icons.menu_book, () {
                   _go(const GuidebookPage());
                 }),
@@ -107,7 +116,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       rootNavigator: true,
                     ).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (route) => false);
                   }
-                  
                 }, color: Colors.red),
               ]),
               const SizedBox(height: 40),

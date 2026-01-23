@@ -195,7 +195,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppbarWidget(txtt: user['b_name'] ?? "Loading..."),
       floatingActionButton: Visibility(
-        visible: int.parse(CurrentUser['role_id']) >= 88,
+        visible: int.parse(CurrentUser['role_id']) >= 55,
         child: FloatingActionButton(
           shape: CircleBorder(),
           onPressed: () {
