@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
@@ -30,69 +28,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
     prepare();
   }
 
-  // ขนาดตัวอักษร
-  double _getResponsiveFontSize(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
-    // ถ้าเป็นแนวนอน ลดขนาดลง 20%
-    double multiplier = isLandscape ? 0.8 : 1.0;
-
-    // มือถือเล็ก (< 360px)
-    if (screenWidth < 360) {
-      return 14 * multiplier;
-    }
-    // มือถือปกติ (360px - 414px)
-    else if (screenWidth >= 360 && screenWidth < 414) {
-      return 15 * multiplier;
-    }
-    // มือถือใหญ่ (414px - 600px)
-    else if (screenWidth >= 414 && screenWidth < 600) {
-      return 17 * multiplier;
-    }
-    // แท็บเล็ต (600px - 900px)
-    else if (screenWidth >= 600 && screenWidth < 900) {
-      return 20 * multiplier;
-    }
-    // แท็บเล็ตใหญ่/Desktop เล็ก (900px - 1200px)
-    else if (screenWidth >= 900 && screenWidth < 1200) {
-      return 23 * multiplier;
-    }
-    // Desktop ใหญ่ (>= 1200px)
-    else {
-      return 28 * multiplier;
-    }
-  }
-
-  // ความสูง AppBar
-  double _getResponsiveAppBarHeight(BuildContext context) {
-    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    // แนวนอน: ใช้ความสูงน้อยกว่า
-    if (isLandscape) {
-      return screenHeight * 0.09; // 12% ของความสูงหน้าจอ
-    }
-    // แนวตั้ง: ใช้ความสูงปกติ
-    else {
-      return screenHeight * 0.08; // 8% ของความสูงหน้าจอ
-    }
-  }
-
-  // ความโค้งมุม
-  double _getResponsiveBorderRadius(BuildContext context) {
-    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    // แนวนอน: ลดความโค้งลง
-    if (isLandscape) {
-      return screenWidth * 0.03; // 3% ของความกว้างหน้าจอ
-    }
-    // แนวตั้ง: ความโค้งปกติ
-    else {
-      return screenWidth * 0.05; // 5% ของความกว้างหน้าจอ
-    }
-  }
 
   Future<void> prepare() async {
     final responsetable = await ApiService.fetchTablesknowledgeById(CurrentUser['branch_id']);
@@ -108,9 +43,11 @@ class _KnowledgePageState extends State<KnowledgePage> {
     filterDates = mainboard.where((element) {
       return element['name'].toString().startsWith('date');
     }).toList();
-    debugPrint(filterDates.toString());
 
     calculateDay(filterDates[1]['value'], filterDates[0]['value']);
+
+    debugPrint(tables.toString());
+    debugPrint(mainboard.toString());
   }
 
   @override
@@ -175,7 +112,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(_getIconForTable(item['label']), color: whiteColor, size: 20),
+                  child: Icon(_getIconForTable(item['name']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -299,12 +236,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(_getIconForTable(parent['label']), color: whiteColor, size: 20),
+                  child: Icon(_getIconForTable(parent['name']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    parent['label'],
+                    parent['name'],
                     style: TextStyle(color: whiteColor, fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),

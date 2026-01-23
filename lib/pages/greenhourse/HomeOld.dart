@@ -108,10 +108,11 @@ class _HomeOldPageState extends State<HomeOldPage> {
     super.initState();
     _prepareData();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      _prepareData();
+      // _prepareData();
     });
   }
-    @override
+
+  @override
   void dispose() {
     _timer?.cancel();
 
@@ -130,13 +131,14 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       isLoading = false;
     });
+
   }
 
   Future<void> _fetchDataWeathers() async {
     final response = await ApiService.fetchDataWeathers();
 
     setState(() {
-      if (response['data'][0]['success']) {
+      if (response['status'] == "success" && response['data'][0]['success']) {
         weathers = response['data'][0]['data']['WeatherForecasts'][0]['forecasts'][0]['data'];
       }
     });
@@ -147,6 +149,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       logos = response['data'] as List;
     });
+    // print("----- logo ------");
+    // print(logos.toString());
   }
 
   Future<void> _fetchicons() async {
@@ -154,6 +158,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       icons = response['data'] as List;
     });
+    // print("----- icons ------");
+    // print(icons.toString());
   }
 
   Future<void> _fetchmainBoard() async {
@@ -161,6 +167,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       data = response['data'] as List;
     });
+    // print("----- data ------");
+    // print(data.toString());
   }
 
   Future<void> _fetchconfiguration() async {
@@ -168,6 +176,8 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       sensors = response['data'] as List;
     });
+    // print("----- sensor ------");
+    // print(sensors);
   }
 
   @override
@@ -503,7 +513,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               return s['monitor_id'].toString() == item['value'].toString();
                             }, orElse: () => {});
 
-                            value = sensor.isEmpty ? (item['value'] ?? "") : sensor['datax_value'].toString();
+                            value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
                           } else {
                             value = item['value']?.toString() ?? "";
                           }
@@ -571,6 +581,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
+                                      SizedBox(height: 1),
                                     ],
                                   ),
                                 ),

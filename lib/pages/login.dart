@@ -31,8 +31,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loadConfig() async {
     final config = await ServerConfig.loadServerConfig();
+    final re = await RememberConfig.loadRememberConfig();
     if (!mounted) return;
     setState(() {
+      _usernameController.text = re['e'] ?? "";
+      _passwordController.text = re['p'] ?? "";
       _IpServerController.text = config['ip'] ?? "";
       _PathtoAPIController.text = config['path'] ?? "";
       baseURL = "${_IpServerController.text}/${_PathtoAPIController.text}";
@@ -46,8 +49,8 @@ class _LoginPageState extends State<LoginPage> {
     var username = _usernameController.text.trim();
     var password = _passwordController.text.trim();
 
-    username = username == "" ? "superadmin" : username;
-    password = password == "" ? "abc+123" : password;
+    // username = username == "" ? "superadmin" : username;
+    // password = password == "" ? "abc+123" : password;
     // baseURL = "49.0.69.152/iotsf/api-app";
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
@@ -56,6 +59,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = false);
 
     if (response['status'] == 'success') {
+
+      await RememberConfig.saveRememberConfig(username, password);
       var user = response['user'];
       user['baseURL'] = 'http://$baseURL/';
 
@@ -138,7 +143,8 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(statuslogin),
-                                    GestureDetector(child: Text("Forgotten Password.")),
+                                    GestureDetector(
+                                      child: Text("Remember me.")),
                                   ],
                                 ),
                               ),
