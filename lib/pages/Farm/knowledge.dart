@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
-import 'dart:ui';
 
 class KnowledgePage extends StatefulWidget {
   const KnowledgePage({super.key});
@@ -46,8 +45,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
     calculateDay(filterDates[1]['value'], filterDates[0]['value']);
 
-    debugPrint(tables.toString());
-    debugPrint(mainboard.toString());
   }
 
   @override
@@ -166,9 +163,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
                       ],
                     ),
                     ...item['rows'].map<TableRow>((row) {
-                      final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                      final endView = row['d_end_day'] == '999' ? "เป็นต้นไป" : row['d_end_day'];
                       final start = int.parse(row['d_start_day'].toString());
-                      final end = row['d_end_day'].toString() == '99' ? 99999 : int.parse(row['d_end_day'].toString());
+                      final end = row['d_end_day'].toString() == '999' ? 99999 : int.parse(row['d_end_day'].toString());
 
                       final isThisDay = start <= diffDay && end >= diffDay;
                       return TableRow(
@@ -325,9 +322,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
                       // Data rows
                       ...rows.map<TableRow>((row) {
-                        final endView = row['d_end_day'] == '99' ? "เป็นต้นไป" : row['d_end_day'];
+                        final endView = row['d_end_day'] == '999' ? "เป็นต้นไป" : row['d_end_day'];
                         final start = int.parse(row['d_start_day'].toString());
-                        final end = row['d_end_day'].toString() == '99'
+                        final end = row['d_end_day'].toString() == '999'
                             ? 99999
                             : int.parse(row['d_end_day'].toString());
 
@@ -416,6 +413,5 @@ class _KnowledgePageState extends State<KnowledgePage> {
     setState(() {
       diffDay = endDate.difference(startDate).inDays;
     });
-    print(diffDay);
   }
 }
