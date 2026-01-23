@@ -355,28 +355,7 @@ class _SchedulePageState extends State<SchedulePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   onPressed: () {
-                    Map<String, dynamic> newTable = {
-                      'id': "Table_${item['id']}_1",
-                      'name': "new column",
-                      'label': "new Column",
-                      'branch_id': item['branch_id'],
-                      'child_of_table_id': item['id'],
-                      'is_deleted': '0',
-                      'rows': [],
-                    };
-
-                    for (var i = 0; i < item['rows'].length; i++) {
-                      newTable['rows'].add({
-                        'd_id': '${item['id']}_$i',
-                        'd_name_table_id': newTable['id'],
-                        'd_start_day': item['rows'][i]['d_start_day'],
-                        'd_end_day': item['rows'][i]['d_end_day'],
-                        'd_value': '',
-                        'd_second_label': null,
-                      });
-                    }
-
-                    temps.add(newTable);
+                    helper().addColumn(item, temps);
                     setState(() {});
                   },
                   icon: const Icon(Icons.view_column, color: Colors.orange),
@@ -718,24 +697,6 @@ class _SchedulePageState extends State<SchedulePage> {
                   ),
                   onPressed: () {
                     helper().addRowToParentAndChildren(parent, children);
-                    parent['rows'].add({
-                      'd_id': 'new',
-                      'd_name_table_id': parent['id'],
-                      'd_start_day': '0',
-                      'd_end_day': '0',
-                      'd_value': '',
-                      'd_second_label': null,
-                    });
-                    for (var c in childList) {
-                      c['rows'].add({
-                        'd_id': 'new',
-                        'd_name_table_id': c['id'],
-                        'd_start_day': '0',
-                        'd_end_day': '0',
-                        'd_value': '',
-                        'd_second_label': null,
-                      });
-                    }
                     setState(() {});
                   },
                   icon: const Icon(Icons.add, color: Colors.orange),
@@ -756,28 +717,7 @@ class _SchedulePageState extends State<SchedulePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
                         onPressed: () {
-                          Map<String, dynamic> newTable = {
-                            'id': "Table_${parent['id']}_1",
-                            'name': "new column",
-                            'label': "new Column",
-                            'branch_id': parent['branch_id'],
-                            'child_of_table_id': parent['id'],
-                            'is_deleted': '0',
-                            'rows': [],
-                          };
-
-                          for (var i = 0; i < parent['rows'].length; i++) {
-                            newTable['rows'].add({
-                              'd_id': '${parent['id']}_$i',
-                              'd_name_table_id': newTable['id'],
-                              'd_start_day': parent['rows'][i]['d_start_day'],
-                              'd_end_day': parent['rows'][i]['d_end_day'],
-                              'd_value': '',
-                              'd_second_label': null,
-                            });
-                          }
-
-                          temps.add(newTable);
+                          helper().addColumn(parent, temps);
                           setState(() {});
                         },
                         icon: const Icon(Icons.view_column, color: Colors.orange),

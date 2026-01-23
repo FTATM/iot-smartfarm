@@ -170,8 +170,10 @@ class ApiService {
       final response = await http.post(Uri.parse("${baseUrl}fetch-config.php"), body: {'bid': bid});
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      // print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+
 
         // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
         return data;
