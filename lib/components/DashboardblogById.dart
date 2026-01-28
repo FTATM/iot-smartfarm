@@ -44,84 +44,6 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
     super.initState();
   }
 
-  // Helper method to build standard container
-  Widget _buildStandardContainer(double sizewidth, double sizeheight, Widget content) {
-    return Container(
-      width: sizewidth,
-      height: sizeheight,
-      padding: const EdgeInsets.all(4),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(25, 0, 0, 0),
-              blurRadius: 1,
-              spreadRadius: 1,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: content,
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build header with icon and title
-  Widget _buildHeader(String title, String path, Color color, double size_) {
-    return Row(
-      children: [
-        Image.network(
-          path,
-          width: size_ == 1 ? 28 : (size_ == 2 ? 24 : 20),
-          height: size_ == 1 ? 28 : (size_ == 2 ? 24 : 20),
-          color: color,
-          errorBuilder: (context, error, stackTrace) {
-            return Icon(
-              Icons.dashboard,
-              size: size_ == 1 ? 28 : (size_ == 2 ? 24 : 20),
-              color: color,
-            );
-          },
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: size_ == 1 ? 16 : (size_ == 2 ? 15 : 14),
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Helper method to build center content with icon and value/control
-  Widget _buildCenterContent(Widget icon, Widget valueWidget, double size_) {
-    return Expanded(
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(flex: 1, child: icon),
-            SizedBox(width: size_ == 1 ? 16 : (size_ == 2 ? 12 : 10)),
-            Flexible(flex: 2, child: valueWidget),
-          ],
-        ),
-      ),
-    );
-  }
-  
   @override
   Widget build(BuildContext context) {
     final type = widget.type;
@@ -140,8 +62,6 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
 
     Color base = widget.color;
     Color light = lighten(base, 0.25);
-    Color textColor = isColorLight(base) ? Colors.black : Colors.white;
-    List<Color> colorlist = [base, light];
 
     // Replace Type 1 section in DashboardblogById.dart (around line 50-120)
 
@@ -157,7 +77,6 @@ if (type == '1') {
       builder: (context, constraints) {
         // คำนวณขนาดตามพื้นที่ที่มี
         final availableHeight = constraints.maxHeight;
-        final availableWidth = constraints.maxWidth;
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
@@ -271,7 +190,6 @@ if (type == '1') {
       builder: (context, constraints) {
         // คำนวณขนาดตามพื้นที่ที่มี - เหมือนเงื่อนไขที่ 1
         final availableHeight = constraints.maxHeight;
-        final availableWidth = constraints.maxWidth;
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);
@@ -388,7 +306,6 @@ if (type == '1') {
       builder: (context, constraints) {
         // คำนวณขนาดตามพื้นที่ที่มี - เหมือนเงื่อนไขที่ 1 และ 2
         final availableHeight = constraints.maxHeight;
-        final availableWidth = constraints.maxWidth;
         
         // ใช้ scale factor เดียวสำหรับทุกอย่าง เพื่อคงสัดส่วน
         final scaleFactor = (availableHeight / 400).clamp(0.3, 1.5);

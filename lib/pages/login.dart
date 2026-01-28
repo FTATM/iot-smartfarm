@@ -52,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
     // username = username == "" ? "superadmin" : username;
     // password = password == "" ? "abc+123" : password;
     // baseURL = "49.0.69.152/iotsf/api-app";
+    debugPrint("$baseURL $username $password");
 
     final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
 
@@ -59,9 +60,9 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = false);
 
     if (response['status'] == 'success') {
-
       await RememberConfig.saveRememberConfig(username, password);
       var user = response['user'];
+      user['IP'] = _IpServerController.text;
       user['baseURL'] = 'http://$baseURL/';
 
       final prefs = await SharedPreferences.getInstance();
@@ -143,8 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(statuslogin),
-                                    GestureDetector(
-                                      child: Text("Remember me.")),
+                                    GestureDetector(child: Text("Remember me.")),
                                   ],
                                 ),
                               ),

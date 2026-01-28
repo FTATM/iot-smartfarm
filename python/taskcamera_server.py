@@ -91,6 +91,13 @@ async def infer_and_send(ws, cam_name):
     loop = asyncio.get_running_loop()
     last_send = 0
     print(f"{cam_name} infer task started")
+    
+    payload = {
+        "type": "setCamera",
+        "data": cam_list
+    }
+
+    await ws.send(json.dumps(payload))
 
     while True:
         frame = latest_frames.get(cam_name)
@@ -144,7 +151,7 @@ async def infer_and_send(ws, cam_name):
                     cv2.rectangle(thermal_frame, (x1, y1), (x2, y2), (255, 255, 255), 2)
                     cv2.putText(
                         thermal_frame,
-                        pred["class"] + f" {round(float(max_temp),2)}°C",
+                        pred["class"] + f" {round(float(max_temp),2)}C",
                         (x1, max(20, y1 - 10)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         0.7,
