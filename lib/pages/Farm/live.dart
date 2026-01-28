@@ -1,105 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:iot_app/api/apiAll.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_app/components/appbar.dart';
+import 'package:iot_app/components/session.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ConnectedIcon extends StatelessWidget {
   final double size;
   final Color color;
 
-  const ConnectedIcon({
-    super.key,
-    this.size = 24,
-    this.color = Colors.green,
-  });
+  const ConnectedIcon({super.key, this.size = 24, this.color = Colors.green});
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _ConnectedIconPainter(color),
-    );
-  }
-}
-
-// ขนาดตัวอักษรสำหรับ AppBar Title
-double _getAppBarTitleFontSize(BuildContext context) {
-  double screenWidth = MediaQuery.of(context).size.width;
-  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-  // ถ้าเป็นแนวนอน ลดขนาดลง 20%
-  double multiplier = isLandscape ? 0.8 : 1.0;
-  
-  // มือถือเล็ก (< 360px)
-  if (screenWidth < 360) {
-    return 14 * multiplier;
-  }
-  // มือถือปกติ (360px - 414px)
-  else if (screenWidth >= 360 && screenWidth < 414) {
-    return 15 * multiplier;
-  }
-  // มือถือใหญ่ (414px - 600px)
-  else if (screenWidth >= 414 && screenWidth < 600) {
-    return 17 * multiplier;
-  }
-  // แท็บเล็ต (600px - 900px)
-  else if (screenWidth >= 600 && screenWidth < 900) {
-    return 20 * multiplier;
-  }
-  // แท็บเล็ตใหญ่/Desktop เล็ก (900px - 1200px)
-  else if (screenWidth >= 900 && screenWidth < 1200) {
-    return 23 * multiplier;
-  }
-  // Desktop ใหญ่ (>= 1200px)
-  else {
-    return 25 * multiplier;
-  }
-}
-
-// ความสูงของ AppBar
-double _getAppBarHeight(BuildContext context) {
-  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-  double screenHeight = MediaQuery.of(context).size.height;
-  
-  // แนวนอน: ใช้ความสูงน้อยกว่า
-  if (isLandscape) {
-    return screenHeight * 0.12; // 12% ของความสูงหน้าจอ
-  }
-  // แนวตั้ง: ใช้ความสูงปกติ
-  else {
-    return screenHeight * 0.08; // 8% ของความสูงหน้าจอ
-  }
-}
-
-// ความโค้งมุมของ AppBar
-double _getAppBarBorderRadius(BuildContext context) {
-  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-  double screenWidth = MediaQuery.of(context).size.width;
-  
-  // แนวนอน: ลดความโค้งลง
-  if (isLandscape) {
-    return screenWidth * 0.03; // 3% ของความกว้างหน้าจอ
-  }
-  // แนวตั้ง: ความโค้งปกติ
-  else {
-    return screenWidth * 0.05; // 5% ของความกว้างหน้าจอ
-  }
-}
-
-// Padding ด้านบนของ Title
-double _getAppBarTitleTopPadding(BuildContext context) {
-  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-  double screenHeight = MediaQuery.of(context).size.height;
-  
-  // แนวนอน: padding น้อยลง
-  if (isLandscape) {
-    return screenHeight * 0.02; // 2% ของความสูงหน้าจอ
-  }
-  // แนวตั้ง: padding ปกติ
-  else {
-    return screenHeight * 0.01; // 1% ของความสูงหน้าจอ
+    return CustomPaint(size: Size(size, size), painter: _ConnectedIconPainter(color));
   }
 }
 
@@ -166,18 +81,11 @@ class DisconnectedIcon extends StatelessWidget {
   final double size;
   final Color color;
 
-  const DisconnectedIcon({
-    super.key,
-    this.size = 24,
-    this.color = Colors.red,
-  });
+  const DisconnectedIcon({super.key, this.size = 24, this.color = Colors.red});
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _DisconnectedIconPainter(color),
-    );
+    return CustomPaint(size: Size(size, size), painter: _DisconnectedIconPainter(color));
   }
 }
 
@@ -252,10 +160,11 @@ class _LivePageState extends State<LivePage> {
   Timer? _reconnectTimer;
   StreamSubscription? _socketSub;
 
-  bool isConnected = false;
+  bool isConnectedCamera = false;
+  bool isConnectedWebsocket = false;
 
-  /// กล้องทั้งหมด (room ต้องตรงกับ Python)
-  final List<String> cameraRooms = ['Camera1'];
+  // /// กล้องทั้งหมด (room ต้องตรงกับ Python)
+  late Map<String, dynamic> camList = {};
 
   /// room -> image bytes
   final Map<String, Uint8List> _frames = {};
@@ -265,111 +174,145 @@ class _LivePageState extends State<LivePage> {
   /// room ที่กำลังดู
   String? selectedRoom;
 
-  final String wsUrl = 'ws://192.168.1.124:8765'; // 🔥 เปลี่ยนเป็น IP server
+  // final String wsUrl = 'ws://192.168.1.115:8765'; // 🔥 เปลี่ยนเป็น IP server
+  final String wsUrl = "ws://${CurrentUser['IP'].split(':')[0]}:8765";
 
   // =========================
-  // SOCKET CONNECT
+  // Connect
   // =========================
   void _connectSocket() {
-    debugPrint('🔌 Connecting WebSocket...');
     _socket = WebSocketChannel.connect(Uri.parse(wsUrl));
 
     _socketSub = _socket!.stream.listen(
       _onMessage,
       onDone: () {
-            debugPrint('🔌 Connected WebSocket');
+        debugPrint('🔴 WebSocket closed');
+        _onDisconnected();
       },
       onError: (e) {
         debugPrint('❌ WS error: $e');
         _onDisconnected();
       },
     );
+
+    debugPrint("✅ Connected WebSocket");
+    setState(() {
+      isConnectedWebsocket = true;
+    });
+
+    // ✅ หลัง connect สำเร็จ → ขอ camera list
+    _getCamera();
   }
 
   // =========================
-  // MESSAGE HANDLER
+  // GetCamera
   // =========================
+  void _getCamera() {
+    if (_socket == null) return;
+
+    debugPrint("📡 Requesting camera list...");
+
+    _socket!.sink.add(jsonEncode({"type": "getCamera"}));
+  }
+
   void _onMessage(dynamic message) {
     if (!mounted) return;
 
     final data = jsonDecode(message);
 
-    if (data['type'] == 'image') {
+    // ==========================
+    // ✅ Camera List Response
+    // ==========================
+    if (data['type'] == 'cameraData') {
+      if (data['status'] == 'ok') {
+        camList = Map<String, dynamic>.from(data['data']);
+
+        debugPrint("✅ Camera list received: $camList");
+
+        // ✅ Join room หลังจากได้ camera list
+        for (final room in camList.keys) {
+          _joinRoom(room);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ไม่พบกล้องที่เชื่อมต่อใน server นี้")));
+        debugPrint("⚠️ No camera available yet");
+      }
+    }
+    // ==========================
+    // ✅ Image Streaming
+    // ==========================
+    else if (data['type'] == 'image') {
       final room = data['room'];
       final bytes = base64Decode(data['data']);
       final datatemp = data['crops'];
 
       setState(() {
         _frames[room] = bytes;
+
         if (_datatemp.length >= 20) {
           _datatemp.removeAt(0);
         }
+
         _datatemp.addAll(datatemp);
-        isConnected = true; // Update connection status when receiving data
       });
     }
   }
 
   // =========================
-  // DISCONNECTED
+  // DISPOSE
+  // =========================
+  void _joinRoom(String room) {
+    if (_socket == null) return;
+
+    _socket!.sink.add(jsonEncode({'type': 'joinroom', 'data': room}));
+
+    debugPrint('📡 Joined room: $room');
+    setState(() {
+      isConnectedCamera = true;
+    });
+  }
+
+  // =========================
+  // DISPOSE
+  // =========================
+  void _startAutoReconnect() {
+    _reconnectTimer?.cancel();
+
+    _reconnectTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) return;
+
+      if (_socket == null) {
+        debugPrint('🔄 Reconnecting...');
+        _connectSocket();
+
+        // ❌ ไม่ต้อง joinRoom เอง
+        // เพราะ connect แล้วจะ getCamera ใหม่
+      }
+    });
+  }
+
+  // =========================
+  // DISPOSE
   // =========================
   void _onDisconnected() {
     debugPrint('🔴 WebSocket disconnected');
-    isConnected = false;
+
+    isConnectedCamera = false;
+    isConnectedWebsocket = false;
     _socket = null;
 
     _startAutoReconnect();
   }
 
   // =========================
-  // AUTO RECONNECT
-  // =========================
-  void _startAutoReconnect() {
-    if (_reconnectTimer != null) {
-      _reconnectTimer?.cancel();
-    }
-
-    _reconnectTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (!mounted) return;
-      if (_socket == null) {
-        debugPrint('🔄 Reconnecting...');
-        _connectSocket();
-
-        /// join ห้องทั้งหมดที่เคยดู
-        for (final room in cameraRooms) {
-          _joinRoom(room);
-        }
-      }
-    });
-  }
-
-  // =========================
-  // JOIN ROOM
-  // =========================
-  void _joinRoom(String room) {
-    if (_socket == null) {
-      _connectSocket();
-      return;
-    }
-
-    _socket!.sink.add(jsonEncode({'type': 'joinroom', 'data': room}));
-
-    debugPrint('📡 Joined room $room');
-  }
-
-  // =========================
-  // INIT
+  // DISPOSE
   // =========================
   @override
   void initState() {
     super.initState();
-    _connectSocket();
 
-    /// join ทุกกล้อง (รองรับหลายกล้องพร้อมกัน)
-    for (final room in cameraRooms) {
-      _joinRoom(room);
-    }
-        debugPrint('🔌 Connecting WebSocket...');
+    debugPrint("🔌 Connecting WebSocket...");
+    _connectSocket();
   }
 
   // =========================
@@ -378,8 +321,8 @@ class _LivePageState extends State<LivePage> {
   @override
   void dispose() {
     _reconnectTimer?.cancel();
-    _socket?.sink.close();
     _socketSub?.cancel();
+    _socket?.sink.close();
     _socket = null;
     super.dispose();
   }
@@ -390,7 +333,7 @@ class _LivePageState extends State<LivePage> {
   @override
   Widget build(BuildContext context) {
     final maxwidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppbarWidget(txtt: "ไลฟ์สดจากกล้อง"),
@@ -417,11 +360,8 @@ class _LivePageState extends State<LivePage> {
                           selectedRoom == null || !_frames.containsKey(selectedRoom)
                               ? Center(
                                   child: Text(
-                                    'กำลังรอสัญญาณ...',
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16,
-                                    ),
+                                    'กรุณาเลือกกล้อง...',
+                                    style: TextStyle(color: Colors.black87, fontSize: 16),
                                   ),
                                 )
                               : ClipRRect(
@@ -434,7 +374,7 @@ class _LivePageState extends State<LivePage> {
                                     height: double.infinity,
                                   ),
                                 ),
-                          
+
                           // STATUS INDICATOR (TOP LEFT)
                           Positioned(
                             top: 16,
@@ -442,9 +382,7 @@ class _LivePageState extends State<LivePage> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
-                                color: isConnected 
-                                    ? const Color(0xFF2D5F3F)
-                                    : const Color(0xFF5A5A5A),
+                                color: isConnectedCamera ? const Color(0xFF2D5F3F) : const Color(0xFF5A5A5A),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -454,18 +392,14 @@ class _LivePageState extends State<LivePage> {
                                     width: 8,
                                     height: 8,
                                     decoration: BoxDecoration(
-                                      color: isConnected ? Colors.green : Colors.red,
+                                      color: isConnectedCamera ? Colors.green : Colors.red,
                                       shape: BoxShape.circle,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    isConnected ? 'ออนไลน์' : 'ออฟไลน์',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    isConnectedCamera ? 'ออนไลน์' : 'ออฟไลน์',
+                                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                                   ),
                                 ],
                               ),
@@ -481,15 +415,15 @@ class _LivePageState extends State<LivePage> {
                     Row(
                       children: [
                         Icon(
-                          isConnected ? Icons.check_circle : Icons.cancel,
-                          color: isConnected ? Colors.green : Colors.red,
+                          isConnectedWebsocket ? Icons.check_circle : Icons.cancel,
+                          color: isConnectedWebsocket ? Colors.green : Colors.red,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isConnected ? 'เชื่อมต่อแล้ว' : 'ตัดการเชื่อมต่อ',
+                          isConnectedWebsocket ? 'เชื่อมต่อแล้ว' : 'ตัดการเชื่อมต่อ',
                           style: TextStyle(
-                            color: isConnected ? Colors.green : Colors.red,
+                            color: isConnectedWebsocket ? Colors.green : Colors.red,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -501,174 +435,169 @@ class _LivePageState extends State<LivePage> {
 
                     // CAMERA SELECTOR
                     InkWell(
-  onTap: () {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-              child: Row(
-                children: [
-                  Text(
-                    'เลือกกล้อง',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.close, color: Colors.grey.shade600),
-                    onPressed: () => Navigator.pop(context),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                  ),
-                ],
-              ),
-            ),
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Handle bar
+                                Container(
+                                  margin: const EdgeInsets.only(top: 12, bottom: 8),
+                                  width: 40,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                ),
 
-            // Camera list with icons
-            ...cameraRooms.asMap().entries.map((entry) {
-              // final index = entry.key;
-              final room = entry.value;
-              final isSelected = selectedRoom == room;
-              
-              // กำหนดไอคอนตามชื่อกล้อง
-              IconData cameraIcon;
-              if (room.toLowerCase().contains('living')) {
-                cameraIcon = Icons.videocam;
-              } else if (room.toLowerCase().contains('door') || room.toLowerCase().contains('front')) {
-                cameraIcon = Icons.security;
-              } else if (room.toLowerCase().contains('garage')) {
-                cameraIcon = Icons.garage;
-              } else {
-                cameraIcon = Icons.camera_alt;
-              }
+                                // Header
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'เลือกกล้อง',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      IconButton(
+                                        icon: Icon(Icons.close, color: Colors.grey.shade600),
+                                        onPressed: () => Navigator.pop(context),
+                                        padding: EdgeInsets.zero,
+                                        constraints: BoxConstraints(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-              return Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        selectedRoom = room;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Color(0xFFFFF3E8) : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected ? Color(0xFFFF9944) : Colors.grey.shade200,
-                          width: isSelected ? 2 : 1,
+                                // Camera list with icons
+                                ...camList.entries.map((entry) {
+                                  // final index = entry.key;
+                                  final room = entry.key;
+                                  final value = entry.value;
+                                  final isSelected = selectedRoom == room;
+
+                                  // กำหนดไอคอนตามชื่อกล้อง
+                                  IconData cameraIcon;
+                                  if (room.toLowerCase().contains('living')) {
+                                    cameraIcon = Icons.videocam;
+                                  } else if (room.toLowerCase().contains('door') ||
+                                      room.toLowerCase().contains('front')) {
+                                    cameraIcon = Icons.security;
+                                  } else if (room.toLowerCase().contains('garage')) {
+                                    cameraIcon = Icons.garage;
+                                  } else {
+                                    cameraIcon = Icons.camera_alt;
+                                  }
+
+                                  return Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedRoom = room;
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                            color: isSelected ? Color(0xFFFFF3E8) : Colors.white,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(
+                                              color: isSelected ? Color(0xFFFF9944) : Colors.grey.shade200,
+                                              width: isSelected ? 2 : 1,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              // Camera icon
+                                              Container(
+                                                padding: const EdgeInsets.all(12),
+                                                decoration: BoxDecoration(
+                                                  color: isSelected ? Color(0xFFFF9944) : Colors.grey.shade100,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Icon(
+                                                  cameraIcon,
+                                                  color: isSelected ? Colors.white : Colors.grey.shade700,
+                                                  size: 24,
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 16),
+
+                                              // Camera name
+                                              Expanded(
+                                                child: Text(
+                                                  room,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                                    color: isSelected ? Color(0xFFFF9944) : Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // Check icon
+                                              if (isSelected)
+                                                Container(
+                                                  padding: const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFFF9944),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Icon(Icons.check, color: Colors.white, size: 20),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+
+                                const SizedBox(height: 24),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedRoom ?? 'เลือกกล้อง',
+                              style: TextStyle(color: selectedRoom == null ? Colors.grey : Colors.black, fontSize: 16),
+                            ),
+                            Icon(Icons.arrow_drop_down, color: Colors.grey),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          // Camera icon
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: isSelected ? Color(0xFFFF9944) : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              cameraIcon,
-                              color: isSelected ? Colors.white : Colors.grey.shade700,
-                              size: 24,
-                            ),
-                          ),
-                          
-                          const SizedBox(width: 16),
-                          
-                          // Camera name
-                          Expanded(
-                            child: Text(
-                              room,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                color: isSelected ? Color(0xFFFF9944) : Colors.black87,
-                              ),
-                            ),
-                          ),
-                          
-                          // Check icon
-                          if (isSelected)
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFF9944),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                        ],
-                      ),
                     ),
-                  ),
-                ],
-              );
-            }).toList(),
-
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          selectedRoom ?? 'เลือกกล้อง',
-          style: TextStyle(
-            color: selectedRoom == null ? Colors.grey : Colors.black,
-            fontSize: 16,
-          ),
-        ),
-        Icon(Icons.arrow_drop_down, color: Colors.grey),
-      ],
-    ),
-  ),
-),
 
                     const SizedBox(height: 20),
 
@@ -685,19 +614,11 @@ class _LivePageState extends State<LivePage> {
                             padding: const EdgeInsets.all(16),
                             child: Row(
                               children: [
-                                Icon(
-                                  Icons.thermostat,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
+                                Icon(Icons.thermostat, color: Colors.white, size: 28),
                                 const SizedBox(width: 12),
                                 Text(
                                   'อุณหภูมิจากกล้อง',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 const Spacer(),
                                 Container(
@@ -733,9 +654,7 @@ class _LivePageState extends State<LivePage> {
                                 // TABLE HEADER
                                 Container(
                                   padding: const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                  ),
+                                  decoration: BoxDecoration(color: Colors.grey.shade100),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -743,10 +662,7 @@ class _LivePageState extends State<LivePage> {
                                         child: Center(
                                           child: Text(
                                             'ชื่อ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                           ),
                                         ),
                                       ),
@@ -755,10 +671,7 @@ class _LivePageState extends State<LivePage> {
                                         child: Center(
                                           child: Text(
                                             'ตำแหน่ง',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                           ),
                                         ),
                                       ),
@@ -767,10 +680,7 @@ class _LivePageState extends State<LivePage> {
                                         child: Center(
                                           child: Text(
                                             'อุณหภูมิ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                           ),
                                         ),
                                       ),
@@ -783,22 +693,14 @@ class _LivePageState extends State<LivePage> {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey.shade200,
-                                          width: 1,
-                                        ),
-                                      ),
+                                      border: Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
                                     ),
                                     child: Row(
                                       children: [
                                         Expanded(
                                           flex: 2,
                                           child: Center(
-                                            child: Text(
-                                              item['class'] ?? '',
-                                              style: TextStyle(fontSize: 13),
-                                            ),
+                                            child: Text(item['class'] ?? '', style: TextStyle(fontSize: 13)),
                                           ),
                                         ),
                                         Expanded(
@@ -828,13 +730,7 @@ class _LivePageState extends State<LivePage> {
                                 if (_datatemp.isEmpty)
                                   Padding(
                                     padding: const EdgeInsets.all(24),
-                                    child: Text(
-                                      'ไม่มีข้อมูล',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                    child: Text('ไม่มีข้อมูล', style: TextStyle(color: Colors.grey, fontSize: 14)),
                                   ),
                               ],
                             ),

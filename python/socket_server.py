@@ -5,37 +5,82 @@ import asyncpg
 from datetime import datetime
 
 rooms = {}  # room_name -> set(websocket)
+camera_data = None
+camera_owner = None
 
 
 async def handler(ws):
-    print("WebSocket server running ws://0.0.0.0:8765")
-    current_rooms = set()
+    global camera_data, camera_owner
+
     print("Client connected")
+    current_rooms = set()
 
     try:
         async for msg in ws:
             data = json.loads(msg)
 
+            # ==========================
+            # JOIN ROOM
+            # ==========================
             if data["type"] == "joinroom":
                 room = data["data"]
                 rooms.setdefault(room, set()).add(ws)
                 current_rooms.add(room)
                 print(f"Joined room: {room}")
 
+            # ==========================
+            # IMAGE BROADCAST
+            # ==========================
             elif data["type"] == "image":
                 room = data["room"]
-                # broadcast ไปเฉพาะ room
                 for client in rooms.get(room, []):
                     if client != ws:
                         await client.send(json.dumps(data))
+
+            # ==========================
+            # SET CAMERA (Owner only)
+            # ==========================
+            elif data["type"] == "setCamera":
+                camera_data = data["data"]
+                camera_owner = ws
+
+                print("Camera set:", camera_data)
+
+            # ==========================
+            # GET CAMERA (Others)
+            # ==========================
+            elif data["type"] == "getCamera":
+
+                if camera_data is None:
+                    await ws.send(
+                        json.dumps(
+                            {
+                                "type": "cameraData",
+                                "status": "empty",
+                                "message": "No camera has been set yet",
+                            }
+                        )
+                    )
+                else:
+                    await ws.send(
+                        json.dumps(
+                            {"type": "cameraData", "status": "ok", "data": camera_data}
+                        )
+                    )
 
     except websockets.exceptions.ConnectionClosed:
         print("Client disconnected")
 
     finally:
-        # cleanup
+        # cleanup room
         for room in current_rooms:
             rooms[room].discard(ws)
+
+        # ถ้า owner หลุด → reset camera
+        if ws == camera_owner:
+            camera_data = None
+            camera_owner = None
+            print("Camera owner disconnected → cleared camera_data")
 
 
 async def db_service():
@@ -67,9 +112,9 @@ async def db_service():
                     )
 
                     await check_and_update_monitor(conn, row, times)
-                    
+
                     if count == 4:
-                        print('\n')
+                        print("\n")
                         count = 0
                     else:
                         print(end="   \t")
@@ -139,17 +184,18 @@ async def check_and_update_monitor(conn, row, times):
         monitor_id,
     )
 
-    print(f"[{monitor_id}] → {is_work}",end="")
+    print(f"[{monitor_id}] → {is_work}", end="")
 
 
 async def main():
-    # async with websockets.serve(handler, "0.0.0.0", 8765, max_size=10_000_000):
-    #     print("WebSocket server running ws://0.0.0.0:8765")
-    #     await asyncio.Future()
+    async with websockets.serve(handler, "0.0.0.0", 8765, max_size=10_000_000):
+        print("WebSocket server running ws://0.0.0.0:8765")
+        await asyncio.Future()
 
-    ws_server = websockets.serve(handler, "0.0.0.0", 8765, max_size=10_000_000)
-    print("WebSocket server running ws://0.0.0.0:8765")
-    await asyncio.gather(ws_server, db_service())
+    # ws_server = websockets.serve(handler, "0.0.0.0", 8765, max_size=10_000_000)
+    # print("WebSocket server running ws://0.0.0.0:8765")
+    # await asyncio.gather(ws_server, db_service())
+    # await asyncio.gather(ws_server)
 
 
 asyncio.run(main())
