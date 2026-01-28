@@ -174,7 +174,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-
         // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
         return data;
       } else {
@@ -1300,7 +1299,7 @@ class ApiService {
     }
   }
 
-  // fetch Weathers
+  // update Weathers
   static Future<Map<String, dynamic>> updateWeather(Map<String, dynamic> list) async {
     try {
       final response = await http.post(Uri.parse("${baseUrl}update-weathers.php"), body: {'json': jsonEncode(list)});
@@ -1384,4 +1383,38 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
+
+  // Post Sensor
+  static Future<Map<String, dynamic>> updateSensorById(Map<String, dynamic> list) async {
+    try {
+      // ✅ สร้าง JSON body ตามที่ API ต้องการ
+      final bodyData = {
+        "group_id": list["m_group_id"].toString(),
+        "device_id": list["m_device_id"].toString(),
+        "type_id": list["m_type_id"].toString(),
+        "datax_id": list["m_datax_id"].toString(),
+        "data_value": double.parse(list["m_value"].toString()),
+      };
+      final url = Uri.parse("http://${CurrentUser['IP']}/iotsf/api_push_data_by_hardware_process.php");
+
+      final response = await http.post(
+        url,
+        body: jsonEncode(bodyData),
+      );
+
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
 }

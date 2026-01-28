@@ -131,7 +131,6 @@ class _HomeOldPageState extends State<HomeOldPage> {
     setState(() {
       isLoading = false;
     });
-
   }
 
   Future<void> _fetchDataWeathers() async {
@@ -420,6 +419,17 @@ class _HomeOldPageState extends State<HomeOldPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ...selected1_6.map((item) {
+                                  String value = "";
+
+                                  if (item['type_values_id'].toString() == '4') {
+                                    final sensor = sensors.firstWhere((s) {
+                                      return s['monitor_id'].toString() == item['value'].toString();
+                                    }, orElse: () => {});
+
+                                    value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
+                                  } else {
+                                    value = item['value']?.toString() ?? "";
+                                  }
                                   return Padding(
                                     padding: EdgeInsets.only(bottom: spacing),
                                     child: Container(
@@ -455,7 +465,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                             textAlign: TextAlign.left,
                                           ),
                                           Text(
-                                            item['value'],
+                                            value,
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: fs_small,
@@ -627,6 +637,17 @@ class _HomeOldPageState extends State<HomeOldPage> {
                         children: selected15_19.asMap().entries.map((entry) {
                           final index = entry.key;
                           final item = entry.value;
+                          String value = "";
+
+                          if (item['type_values_id'].toString() == '4') {
+                            final sensor = sensors.firstWhere((s) {
+                              return s['monitor_id'].toString() == item['value'].toString();
+                            }, orElse: () => {});
+
+                            value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
+                          } else {
+                            value = item['value']?.toString() ?? "";
+                          }
 
                           return Container(
                             margin: EdgeInsets.only(bottom: index < selected15_19.length - 1 ? spacing : 0),
@@ -710,7 +731,7 @@ class _HomeOldPageState extends State<HomeOldPage> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          item['value'],
+                                          value,
                                           style: TextStyle(fontSize: fs_small),
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,

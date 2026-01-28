@@ -13,6 +13,7 @@ class EditDashboardItemDialog extends StatefulWidget {
 }
 
 class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
+  late bool foundMonitor;
   late String monitorId;
   late Color chooseColor;
 
@@ -21,6 +22,7 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
     super.initState();
     monitorId = widget.subItem['monitor_id'].toString();
     chooseColor = hexToColor(widget.subItem['label_color_code']);
+    foundMonitor = widget.monitors.any((m) => m['monitor_id'].toString() == monitorId);
   }
 
   String colorToHex(Color color) {
@@ -42,13 +44,14 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
           children: [
             // เลือก monitor
             DropdownButton<String>(
-              value: monitorId,
+              value: foundMonitor ? monitorId : null,
               isExpanded: true,
               items: widget.monitors.map<DropdownMenuItem<String>>((m) {
+                final id = m['monitor_id'].toString();
+
                 return DropdownMenuItem(
-                  value: m['monitor_id']?.toString(),
-                  child: Text("[${m['monitor_id']}] ${m['monitor_name']}"),
-                );
+                  value: id, 
+                  child: Text("[${m['monitor_id']}] ${m['monitor_name']}"));
               }).toList(),
               onChanged: (v) {
                 setState(() {
@@ -93,7 +96,7 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
             TextButton(
               style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),
               child: Text("ลบ", style: TextStyle(color: Colors.white)),
-              onPressed: () => Navigator.pop(context, {'delete' : true}),
+              onPressed: () => Navigator.pop(context, {'delete': true}),
             ),
 
             Row(
@@ -102,7 +105,11 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
                 TextButton(
                   child: Text("บันทึก"),
                   onPressed: () {
-                    Navigator.pop(context, {'monitor_id': monitorId, 'label_color_code': colorToHex(chooseColor),'delete' : false});
+                    Navigator.pop(context, {
+                      'monitor_id': monitorId,
+                      'label_color_code': colorToHex(chooseColor),
+                      'delete': false,
+                    });
                   },
                 ),
               ],

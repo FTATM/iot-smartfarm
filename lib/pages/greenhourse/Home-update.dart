@@ -559,7 +559,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           });
                         },
                       ),
-                      if (item['icon_id'] != '0') ...[
+                      if (item['icon_id'] != '-1') ...[
                         const SizedBox(height: 16),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,7 +582,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                     ),
                                   ),
                                   DropdownButtonFormField<String>(
-                                    value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
+                                    value: item['icon_id'] == '-1' || foundIcon.isEmpty ? null : item['icon_id'],
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: Colors.grey[50],
