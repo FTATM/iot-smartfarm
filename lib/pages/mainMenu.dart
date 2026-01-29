@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/pages/Farm/knowledge.dart';
-import 'package:iot_app/pages/greenhourse/HomeOld.dart';
 import 'package:iot_app/pages/Farm/live.dart';
 import 'package:iot_app/pages/Farm/settings.dart';
+import 'package:iot_app/pages/greenhourse/Home.dart';
 import 'package:iot_app/pages/greenhourse/dashboard.dart';
 
 class mainboardPage extends StatefulWidget {
@@ -18,7 +18,7 @@ class _mainboardPageState extends State<mainboardPage> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   final List<Widget> _pages = [
-    HomeOldPage(), 
+    HomePage(), 
     DashboardPage(), 
     LivePage(), KnowledgePage(), SettingsPage()];
 

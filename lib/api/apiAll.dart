@@ -120,6 +120,25 @@ class ApiService {
     }
   }
 
+  // fetch HomeBranch
+  static Future<Map<String, dynamic>> fetchHomeBranch(String bid) async {
+    try {
+      final response = await http.post(Uri.parse("${baseUrl}fetch-homebranch.php"), body: {'bid': bid});
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // 🔹 ส่งผลลัพธ์กลับให้ login.dart ใช้งาน
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
   // fetch dashboard sub
   static Future<Map<String, dynamic>> fetchDashboardSub() async {
     try {
@@ -367,7 +386,7 @@ class ApiService {
   // Update dashboard
   static Future<Map<String, dynamic>> updateDashboardById(Map<String, dynamic> list) async {
     try {
-      print(jsonEncode(list));
+      // print(jsonEncode(list));
       final response = await http.post(
         Uri.parse("${baseUrl}update-dashboard.php"),
         //  headers: {'Content-Type': 'application/json'},

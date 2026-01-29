@@ -65,6 +65,17 @@ class _ConfigPageState extends State<ConfigPage> {
     final tres = await ApiService.fetchTypesBybranchId();
     final xres = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
 
+    debugPrint("======== res ======");
+    debugPrint(response.toString());
+    debugPrint("======== gres ======");
+    debugPrint(gres.toString());
+    debugPrint("======== dres ======");
+    debugPrint(dres.toString());
+    debugPrint("======== tres ======");
+    debugPrint(tres.toString());
+    debugPrint("======== xres ======");
+    debugPrint(xres.toString());
+
     if (!mounted) return;
 
     setState(() {
@@ -123,6 +134,19 @@ class _ConfigPageState extends State<ConfigPage> {
             if (nameshort.length > 20) {
               nameshort = "${nameshort.substring(0, 20)}...";
             }
+
+            String? selectedGroupValue = groups.any((d) => d['group_id']?.toString() == item['group_id'])
+                ? item['group_id']
+                : null;
+            String? selectedDeviceValue = devices.any((d) => d['device_id']?.toString() == item['device_id'])
+                ? item['device_id']
+                : null;
+            String? selectedTypeValue = types.any((d) => d['type_id']?.toString() == item['type_id'])
+                ? item['type_id']
+                : null;
+            String? selectedDataxValue = dataxs.any((d) => d['datax_id']?.toString() == item['datax_id'])
+                ? item['datax_id']
+                : null;
 
             return Dialog(
               backgroundColor: Colors.transparent,
@@ -205,7 +229,7 @@ class _ConfigPageState extends State<ConfigPage> {
                             // Group Dropdown
                             _buildDropdownField(
                               label: 'Group',
-                              value: item['group_id'],
+                              value: selectedGroupValue,
                               items: groups.map<DropdownMenuItem<String>>((group) {
                                 return DropdownMenuItem<String>(
                                   value: group['group_id']?.toString(),
@@ -225,7 +249,7 @@ class _ConfigPageState extends State<ConfigPage> {
                             // Device Dropdown
                             _buildDropdownField(
                               label: 'Device',
-                              value: item['device_id'],
+                              value: selectedDeviceValue,
                               items: devices.map<DropdownMenuItem<String>>((device) {
                                 return DropdownMenuItem<String>(
                                   value: device['device_id']?.toString(),
@@ -246,7 +270,7 @@ class _ConfigPageState extends State<ConfigPage> {
                             // Type Dropdown
                             _buildDropdownField(
                               label: 'Type',
-                              value: item['type_id'],
+                              value: selectedTypeValue,
                               items: types.map<DropdownMenuItem<String>>((type) {
                                 return DropdownMenuItem<String>(
                                   value: type['type_id'],
@@ -267,7 +291,7 @@ class _ConfigPageState extends State<ConfigPage> {
                             // Data Dropdown
                             _buildDropdownField(
                               label: 'Data',
-                              value: item['datax_id'],
+                              value: selectedDataxValue,
                               items: dataxs.map<DropdownMenuItem<String>>((datax) {
                                 return DropdownMenuItem<String>(
                                   value: datax['datax_id']?.toString(),
@@ -622,7 +646,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                 item['list_time'] = listTime.map((e) => e.toApi()).toList();
                                 debugPrint(item['list_time'].toString());
                                 await ApiService.updateMonitorById(item);
-                                
+
                                 _fetchData();
                               },
                               style: TextButton.styleFrom(
@@ -649,12 +673,44 @@ class _ConfigPageState extends State<ConfigPage> {
     );
   }
 
+  // Widget _buildDropdownField({
+  //   required String label,
+  //   required String? value,
+  //   required List<DropdownMenuItem<String>> items,
+  //   required Function(String?) onChanged,
+  // }) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         label,
+  //         style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
+  //       ),
+  //       SizedBox(height: 6),
+  //       Container(
+  //         padding: EdgeInsets.symmetric(horizontal: 16),
+  //         decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
+  //         child: DropdownButton<String>(
+  //           value: value,
+  //           items: items,
+  //           isExpanded: true,
+  //           underline: SizedBox(),
+  //           icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
+  //           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+  //           onChanged: onChanged,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
   Widget _buildDropdownField({
     required String label,
     required String? value,
     required List<DropdownMenuItem<String>> items,
     required Function(String?) onChanged,
   }) {
+    bool isEmpty = items.isEmpty;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -663,17 +719,27 @@ class _ConfigPageState extends State<ConfigPage> {
           style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         SizedBox(height: 6),
+
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
+
           child: DropdownButton<String>(
-            value: value,
-            items: items,
+            value: isEmpty ? null : value,
+            items: isEmpty
+                ? [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text("No devices available", style: TextStyle(color: Colors.grey)),
+                    ),
+                  ]
+                : items,
+
             isExpanded: true,
             underline: SizedBox(),
             icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
-            onChanged: onChanged,
+
+            onChanged: isEmpty ? null : onChanged,
           ),
         ),
       ],
@@ -740,12 +806,46 @@ class _ConfigPageState extends State<ConfigPage> {
                       var item = entry.value;
 
                       txtPath = "";
-                      txtPath +=
-                          groups.where((g) => g['group_id'] == item['group_id']).map((g) => g['group_name']).first +
-                          "/";
-                      txtPath +=
-                          devices.where((g) => g['device_id'] == item['device_id']).map((g) => g['divice_name']).first +
-                          "/";
+
+                      // GROUP
+                      var groupName = groups.firstWhere(
+                        (g) => g['group_id'] == item['group_id'],
+                        orElse: () => null,
+                      )?['group_name'];
+
+                      if (groupName != null) {
+                        txtPath += "$groupName/";
+                      }
+
+                      // DEVICE
+                      var deviceName = devices.firstWhere(
+                        (d) => d['device_id'] == item['device_id'],
+                        orElse: () => null,
+                      )?['divice_name'];
+
+                      if (deviceName != null) {
+                        txtPath += "$deviceName/";
+                      }
+
+                      // TYPE
+                      var typeName = types.firstWhere(
+                        (t) => t['type_id'] == item['type_id'],
+                        orElse: () => null,
+                      )?['type_name'];
+
+                      if (typeName != null) {
+                        txtPath += "$typeName/";
+                      }
+
+                      // DATAX
+                      var dataxName = dataxs.firstWhere(
+                        (x) => x['datax_id'] == item['datax_id'],
+                        orElse: () => null,
+                      )?['datax_name'];
+
+                      if (dataxName != null) {
+                        txtPath += "$dataxName/";
+                      }
 
                       String name = item["monitor_name"] ?? "-";
                       if (name.length > 20) {

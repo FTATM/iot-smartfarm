@@ -21,7 +21,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   List<dynamic> icons = [];
   List<dynamic> logos = [];
   List<dynamic> sensors = [];
-  Map<String, dynamic> typeofValues = {"1": "Manual Value", "2": "Time Now", "3": "Time manual", "4": "Sensor"};
+  List<dynamic> homebranchs = [];
+  Map<String, dynamic> typeofValues = {"1": "Value Manual", "2": "Time Now", "3": "Time manual", "4": "Sensor"};
 
   List<TextEditingController> labelControllers = [];
   List<TextEditingController> manualController = [];
@@ -38,12 +39,22 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     await _fetchmainBoard();
     await _fetchconfiguration();
     await _fetchWeathers();
+    await _fetchHomeBranch();
     setState(() {
       user = CurrentUser;
       isLoading = false;
       labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
-      manualController = data.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
+      manualController = homebranchs.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
     });
+  }
+
+  Future<void> _fetchHomeBranch() async {
+    final response = await ApiService.fetchHomeBranch(CurrentUser['branch_id']);
+    setState(() {
+      homebranchs = response['data'] as List;
+    });
+    // print("----- homeBranch ------");
+    // print(homebranchs.toString());
   }
 
   Future<void> _fetchLogos() async {
@@ -81,7 +92,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     });
   }
 
-  Widget _buildChildByCase(index, item, maxwidth) {
+  Widget _buildChildByCase(index, item, homevalue, maxwidth) {
     switch (item['type_values_id']) {
       case "1":
         return TextField(
@@ -107,7 +118,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
           ),
           onChanged: (value) {
             setState(() {
-              item['value'] = value;
+              homevalue['value'] = value;
             });
           },
         );
@@ -115,7 +126,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
       case "2":
         String now = DateTime.now().toString().substring(0, 10);
         setState(() {
-          item['value'] = now;
+          homevalue['value'] = now;
         });
         return Container(
           padding: const EdgeInsets.all(14),
@@ -139,7 +150,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: Text(
-                  item['value'] ?? 'Select date',
+                  homevalue['value'] ?? 'Select date',
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -162,7 +173,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                 );
                 if (picked != null) {
                   var pickedDate = "${picked.year}-${picked.month}-${picked.day}";
-                  setState(() => item['value'] = pickedDate);
+                  setState(() => homevalue['value'] = pickedDate);
                 }
               },
               child: const Text("Select"),
@@ -193,7 +204,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
             );
           }).toList(),
           onChanged: (value) {
-            item['value'] = value;
+            homevalue['value'] = value;
           },
         );
 
@@ -582,7 +593,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                     ),
                                   ),
                                   DropdownButtonFormField<String>(
-                                    value: item['icon_id'] == '-1' || foundIcon.isEmpty ? null : item['icon_id'],
+                                    value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: Colors.grey[50],
@@ -703,7 +714,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                 ),
                               ),
                             ),
-                            _buildChildByCase(index + 1, item, maxwidth),
+                            _buildChildByCase(index + 1, item, homebranchs[index + 1], maxwidth),
                           ],
                         ),
                       ],
