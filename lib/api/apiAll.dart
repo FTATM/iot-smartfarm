@@ -456,13 +456,15 @@ class ApiService {
   }
 
   // Update mainboard
-  static Future<Map<String, dynamic>> updateMainboardById(Map<String, dynamic> list) async {
+  static Future<Map<String, dynamic>> updateMainboardById(Map<String, dynamic> list, Map<String, dynamic> values) async {
     try {
-      print(jsonEncode(list));
       final response = await http.post(
         Uri.parse("${baseUrl}update-mainboard.php"),
         //  headers: {'Content-Type': 'application/json'},
-        body: {'json': jsonEncode(list)},
+        body: {
+          'json': jsonEncode(list),
+          'homebranch' : jsonEncode(values),
+        },
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
