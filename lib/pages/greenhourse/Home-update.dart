@@ -44,7 +44,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
       user = CurrentUser;
       isLoading = false;
       labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
-      manualController = homebranchs.map((item) => TextEditingController(text: item['value']?.toString() ?? '')).toList();
+      manualController = homebranchs
+          .map((item) => TextEditingController(text: item['value']?.toString() ?? ''))
+          .toList();
     });
   }
 
@@ -90,9 +92,18 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     setState(() {
       sensors = response['data'] as List;
     });
+    print(sensors);
   }
 
   Widget _buildChildByCase(index, item, homevalue, maxwidth) {
+    String? selectedValue =
+    sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
+        ? homevalue['value'].toString()
+        : null;
+    print("initialValue = '${homevalue['value']}'");
+    print("items = ${sensors.map((e) => e['monitor_id']).toList()}");
+    print((index + 1).toString() +" \t" + item['id'] + " \t" + homevalue.toString());
+
     switch (item['type_values_id']) {
       case "1":
         return TextField(
@@ -183,6 +194,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
       case "4":
         return DropdownButtonFormField<String>(
+          initialValue: selectedValue,
           isExpanded: true,
           decoration: InputDecoration(
             filled: true,
@@ -199,7 +211,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
           ),
           items: sensors.map<DropdownMenuItem<String>>((b) {
             return DropdownMenuItem(
-              value: b['monitor_id'],
+              value: b['monitor_id'].toString(),
               child: Text("[${b['monitor_id']}] ${b['monitor_name']}", maxLines: 1, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
@@ -525,7 +537,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: () async {
-                          var response = await ApiService.updateMainboardById(data[0]);
+                          var response = await ApiService.updateMainboardById(data[0], homebranchs[0]);
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'])));
                         },
                         child: const Row(
@@ -719,6 +731,17 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                         ),
                       ],
                       const SizedBox(height: 20),
+                      _buildInputField(
+                        label: "Unit",
+                        initialValue: item['unitofvalue'],
+                        onChanged: (value) {
+                          setState(() {
+                            data[index + 1]['unitofvalue'] = value;
+                            labelControllers[index + 1].text = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -731,7 +754,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: () async {
-                            var response = await ApiService.updateMainboardById(item);
+                            debugPrint(homebranchs[index + 1].toString());
+                            var response = await ApiService.updateMainboardById(item, homebranchs[index + 1]);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'])));
                           },
                           child: const Row(
