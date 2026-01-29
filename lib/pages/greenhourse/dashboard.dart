@@ -33,14 +33,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<TextEditingController> nameControllers = [];
   List<TextEditingController> sizeControllers = [];
+  List<TextEditingController> sortControllers = [];
 
   @override
   void initState() {
     super.initState();
     _prepareData();
     _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _updateTime();
+      _fetchDashboard(CurrentUser['branch_id']);
     });
   }
 
@@ -51,6 +53,9 @@ class _DashboardPageState extends State<DashboardPage> {
       controller.dispose();
     }
     for (var controller in sizeControllers) {
+      controller.dispose();
+    }
+    for (var controller in sortControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -105,23 +110,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
     setState(() {
       // เรียงลำดับจากล่าสุดไปเก่าสุด (ใช้ id)
-      data = (response['data'] as List)
-        ..sort((a, b) {
-          // ถ้ามี created_at ให้ใช้อันนี้
-          // final aTime = DateTime.parse(a['created_at'] ?? '1970-01-01');
-          // final bTime = DateTime.parse(b['created_at'] ?? '1970-01-01');
-          // return bTime.compareTo(aTime);
-
-          // หรือใช้ id (id ที่ใหญ่กว่าคือข้อมูลใหม่กว่า)
-          final aId = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
-          final bId = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
-          return bId.compareTo(aId); // เรียงจากมากไปน้อย (ใหม่ไปเก่า)
-        });
+      data = (response['data'] as List);
 
       clone = data.map((e) => Map<String, dynamic>.from(e)).toList();
 
       nameControllers = data.map((item) => TextEditingController(text: item['item_name']?.toString() ?? '')).toList();
       sizeControllers = data.map((item) => TextEditingController(text: item['size']?.toString() ?? '')).toList();
+      sortControllers = data.map((item) => TextEditingController(text: item['sort']?.toString() ?? '')).toList();
     });
   }
 
@@ -243,6 +238,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   builder: (context, constraints) {
                     // คำนวณจำนวนคอลัมน์ตามขนาด
                     List<Widget> buildRow(List<dynamic> items) {
+                      // debugPrint(items.toString());
                       return items.map((item) {
                         final bg = hexToColor(item['sub_bg_color_code'] ?? '#999999');
                         final size = double.parse(item['size']);
@@ -338,36 +334,38 @@ class _DashboardPageState extends State<DashboardPage> {
                     int i = 0;
 
                     while (i < data.length) {
-                      final currentSize = double.parse(data[i]['size']);
+                      // final currentSize = double.parse(data[i]['size']);
 
-                      if (currentSize == 1) {
-                        // ขนาดใหญ่ - 1 อันต่อแถว
-                        rows.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: buildRow([data[i]])));
-                        i++;
-                      } else if (currentSize == 2) {
-                        // ขนาดกลาง - 2 อันต่อแถว
-                        List<dynamic> rowItems = [data[i]];
-                        if (i + 1 < data.length && double.parse(data[i + 1]['size']) == 2) {
-                          rowItems.add(data[i + 1]);
-                          i += 2;
-                        } else {
-                          i++;
-                        }
-                        rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
-                      } else {
-                        // ขนาดเล็ก - 3 อันต่อแถว
-                        List<dynamic> rowItems = [data[i]];
-                        int count = 1;
-                        while (count < 3 && i + count < data.length && double.parse(data[i + count]['size']) == 3) {
-                          rowItems.add(data[i + count]);
-                          count++;
-                        }
-                        i += count;
-                        rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
-                      }
+                      rows.add(buildRow([data[i]]).first);
+                      i++;
+                      // if (currentSize == 1) {
+                      //   // ขนาดใหญ่ - 1 อันต่อแถว
+                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: buildRow([data[i]])));
+                      //   i++;
+                      // } else if (currentSize == 2) {
+                      //   // ขนาดกลาง - 2 อันต่อแถว
+                      //   List<dynamic> rowItems = [data[i]];
+                      //   if (i + 1 < data.length && double.parse(data[i + 1]['size']) == 2) {
+                      //     rowItems.add(data[i + 1]);
+                      //     i += 2;
+                      //   } else {
+                      //     i++;
+                      //   }
+                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
+                      // } else {
+                      //   // ขนาดเล็ก - 3 อันต่อแถว
+                      //   List<dynamic> rowItems = [data[i]];
+                      //   int count = 1;
+                      //   while (count < 3 && i + count < data.length && double.parse(data[i + count]['size']) == 3) {
+                      //     rowItems.add(data[i + count]);
+                      //     count++;
+                      //   }
+                      //   i += count;
+                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
+                      // }
                     }
 
-                    return Column(children: rows);
+                    return Wrap(alignment: WrapAlignment.spaceBetween, children: rows);
                   },
                 ),
               ],
@@ -550,6 +548,42 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                   const SizedBox(height: 20),
 
+                                  // Sort Field
+                                  const Text(
+                                    'ลำดับของ Dashboard นี้',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF424242),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  TextField(
+                                    controller: sortControllers[index],
+                                    decoration: InputDecoration(
+                                      hintText: 'ใส่ตัวเลข',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFAFAFA),
+                                    ),
+                                    onChanged: (value) {
+                                      clone[index]['sort'] = value;
+                                      item['sort'] = value;
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
                                   // Icon Dropdown
                                   const Text(
                                     'ไอคอน',
@@ -893,6 +927,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _handleSave(BuildContext context, var item, int index) async {
     Navigator.of(context).pop();
 
+    if (!mounted) return;
     setState(() {
       data[index] = clone[index];
     });
@@ -903,12 +938,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     setState(() {
       // เรียงลำดับเหมือนกับ _fetchDashboard
-      data = (responsedata['data'] as List)
-        ..sort((a, b) {
-          final aId = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
-          final bId = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
-          return bId.compareTo(aId);
-        });
+      data = (responsedata['data'] as List);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("บันทึกสำเร็จ")));

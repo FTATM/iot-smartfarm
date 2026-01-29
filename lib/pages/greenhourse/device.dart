@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
+import 'package:iot_app/components/session.dart';
 
 const Color brandOrange = Color(0xFFFF8021);
 const Color brandOrangeLight = Color(0xFFFF9D52);
@@ -29,7 +30,7 @@ class _DevicePageState extends State<DevicePage> {
 
   void _fetchData() async {
     final bres = await ApiService.fetchBranchAll();
-    final response = await ApiService.fetchDeviceAll();
+    final response = await ApiService.fetchDevicesBybranchId(CurrentUser['branch_id']);
     if (!mounted) return;
 
     setState(() {

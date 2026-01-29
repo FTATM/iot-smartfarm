@@ -449,7 +449,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
         return safeParse(rawValue[1][index]);
       });
       final maxAll = [...list1, ...list2].reduce(max);
-      debugPrint(maxAll.toString());
+      final minAll = [...list1, ...list2].reduce(min);
+      // debugPrint(rawValue.toString());
 
       final labels = ["00:00", "06:00", "12:00", "18:00", "24:00"];
       final values = [
@@ -530,8 +531,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                         padding: EdgeInsets.symmetric(horizontal: contentPadding),
                         child: LineChart(
                           LineChartData(
-                            minY: 0,
-                            maxY: ((10 + maxAll) * 1.2),
+                            minY: (minAll + 1) * 0.75,
+                            maxY: (maxAll + 1) * 1.4,
                             titlesData: FlTitlesData(
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
