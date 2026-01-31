@@ -40,6 +40,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     await _fetchconfiguration();
     await _fetchWeathers();
     await _fetchHomeBranch();
+    if (!mounted) return;
     setState(() {
       user = CurrentUser;
       isLoading = false;
@@ -52,6 +53,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchHomeBranch() async {
     final response = await ApiService.fetchHomeBranch(CurrentUser['branch_id']);
+    if (!mounted) return;
     setState(() {
       homebranchs = response['data'] as List;
     });
@@ -61,6 +63,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchLogos() async {
     final response = await ApiService.fetchLogos();
+    if (!mounted) return;
     setState(() {
       logos = response['data'];
     });
@@ -68,6 +71,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchWeathers() async {
     final response = await ApiService.fetchWeathers();
+    if (!mounted) return;
     setState(() {
       weather = response['data'][0];
     });
@@ -75,6 +79,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchicons() async {
     final response = await ApiService.fetchIcons();
+    if (!mounted) return;
     setState(() {
       icons = response['data'] as List;
     });
@@ -82,6 +87,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchmainBoard() async {
     final response = await ApiService.fetchMainboard();
+    if (!mounted) return;
     setState(() {
       data = response['data'] as List;
     });
@@ -89,20 +95,16 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchconfiguration() async {
     final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
+    if (!mounted) return;
     setState(() {
       sensors = response['data'] as List;
     });
-    print(sensors);
   }
 
   Widget _buildChildByCase(index, item, homevalue, maxwidth) {
-    String? selectedValue =
-    sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
+    String? selectedValue = sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
         ? homevalue['value'].toString()
         : null;
-    print("initialValue = '${homevalue['value']}'");
-    print("items = ${sensors.map((e) => e['monitor_id']).toList()}");
-    print((index + 1).toString() +" \t" + item['id'] + " \t" + homevalue.toString());
 
     switch (item['type_values_id']) {
       case "1":
@@ -128,6 +130,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
           onChanged: (value) {
+            if (!mounted) return;
             setState(() {
               homevalue['value'] = value;
             });
@@ -605,7 +608,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                     ),
                                   ),
                                   DropdownButtonFormField<String>(
-                                    value: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
+                                    isExpanded: true,
+                                    initialValue: item['icon_id'] == '0' || foundIcon.isEmpty ? null : item['icon_id'],
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: Colors.grey[50],

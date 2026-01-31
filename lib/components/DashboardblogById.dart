@@ -437,26 +437,45 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
     } else if (type == '5') {
       // Type 5: Linear Chart
       final rawValue = jsonDecode(valueJson);
+      final labels = List.generate(rawValue[0].length, (index) {
+        final now = DateTime.now();
+        final hour = now.hour.toString().padLeft(2, '0');
+        final second = now.second.toString().padLeft(2, '0');
+        final minute = now.minute.toString().padLeft(2, '0');
+        return "$hour:$minute";
+      });
+      List<dynamic> values = [];
+      double maxAll = 0;
+      double minAll = 0;
 
-      if (rawValue.length != 2) {
-        rawValue.add([0, 0, 0, 0, 0]);
-      }
+      print("-------- decode ----------");
       final list1 = List.generate(rawValue[0].length, (index) {
-        return safeParse(rawValue[0][index]);
+        return double.parse(rawValue[0][index].toString());
       });
 
-      final list2 = List.generate(rawValue[1].length, (index) {
-        return safeParse(rawValue[1][index]);
-      });
-      final maxAll = [...list1, ...list2].reduce(max);
-      final minAll = [...list1, ...list2].reduce(min);
-      // debugPrint(rawValue.toString());
+      var all = [...list1];
 
-      final labels = ["00:00", "06:00", "12:00", "18:00", "24:00"];
-      final values = [
+      maxAll = all.reduce((a, b) => max(a, b));
+      minAll = all.reduce((a, b) => min(a, b));
+      values = [
         {"data": rawValue[0], "color": "#FF0000"},
-        {"data": rawValue[1], "color": "#00BFFF"},
       ];
+      if (rawValue.length == 2) {
+        // rawValue.add([0, 0, 0, 0, 0]);
+        final list2 = List.generate(rawValue[1].length, (index) {
+          return safeParse(rawValue[1][index]);
+        });
+
+        var all = [...list1, ...list2];
+        maxAll = all.reduce((a, b) => max(a, b));
+        minAll = all.reduce((a, b) => min(a, b));
+        values = [
+          {"data": rawValue[0], "color": "#FF0000"},
+          {"data": rawValue[1], "color": "#00BFFF"},
+        ];
+      }
+
+      print("$minAll  $maxAll  $values");
 
       return Container(
         width: sizewidth,
@@ -531,8 +550,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                         padding: EdgeInsets.symmetric(horizontal: contentPadding),
                         child: LineChart(
                           LineChartData(
-                            minY: (minAll + 1) * 0.75,
-                            maxY: (maxAll + 1) * 1.4,
+                            minY: minAll - (minAll * 0.1),
+                            maxY: maxAll + (maxAll * 0.1),
                             titlesData: FlTitlesData(
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
@@ -552,10 +571,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   reservedSize: reservedSizeLeft,
-                                  getTitlesWidget: (value, meta) => Text(
-                                    'V ${value.toStringAsFixed(0)}',
-                                    style: TextStyle(fontSize: chartLabelFontSize),
-                                  ),
+                                  getTitlesWidget: (value, meta) =>
+                                      Text(value.toStringAsFixed(0), style: TextStyle(fontSize: chartLabelFontSize)),
                                 ),
                               ),
                               rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

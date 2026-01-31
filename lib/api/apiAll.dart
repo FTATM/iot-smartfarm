@@ -17,6 +17,8 @@ class ApiService {
         body: {'username': username, 'password': password},
       );
 
+      print(response.body);
+
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -456,15 +458,12 @@ class ApiService {
   }
 
   // Update mainboard
-  static Future<Map<String, dynamic>> updateMainboardById(Map<String, dynamic> list, Map<String, dynamic> values) async {
+  static Future<Map<String, dynamic>> updateMainboardById( Map<String, dynamic> list, Map<String, dynamic> values) async {
     try {
       final response = await http.post(
         Uri.parse("${baseUrl}update-mainboard.php"),
         //  headers: {'Content-Type': 'application/json'},
-        body: {
-          'json': jsonEncode(list),
-          'homebranch' : jsonEncode(values),
-        },
+        body: {'json': jsonEncode(list), 'homebranch': jsonEncode(values)},
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
@@ -1418,10 +1417,7 @@ class ApiService {
       };
       final url = Uri.parse("http://${CurrentUser['IP']}/iotsf/api_push_data_by_hardware_process.php");
 
-      final response = await http.post(
-        url,
-        body: jsonEncode(bodyData),
-      );
+      final response = await http.post(url, body: jsonEncode(bodyData));
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
@@ -1437,5 +1433,4 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-
 }

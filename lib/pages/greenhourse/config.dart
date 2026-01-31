@@ -65,17 +65,6 @@ class _ConfigPageState extends State<ConfigPage> {
     final tres = await ApiService.fetchTypesBybranchId();
     final xres = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
 
-    debugPrint("======== res ======");
-    debugPrint(response.toString());
-    debugPrint("======== gres ======");
-    debugPrint(gres.toString());
-    debugPrint("======== dres ======");
-    debugPrint(dres.toString());
-    debugPrint("======== tres ======");
-    debugPrint(tres.toString());
-    debugPrint("======== xres ======");
-    debugPrint(xres.toString());
-
     if (!mounted) return;
 
     setState(() {

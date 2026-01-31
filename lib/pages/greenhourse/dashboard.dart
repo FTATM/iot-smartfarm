@@ -255,6 +255,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ? (maxwidth - 36) /
                                   2 // Half width
                             : (maxwidth - 48) / 3; // Third width
+
                         return Container(
                           width: itemWidth,
                           margin: const EdgeInsets.only(bottom: 12),

@@ -22,11 +22,14 @@ bool isColorLight(Color color) {
   return luminance > 0.5; // มากกว่า 0.5 = อ่อน , น้อย = เข้ม
 }
 
-int safeParse(dynamic v) {
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v) ?? 0;
-  return 0;
+double safeParse(dynamic value) {
+  if (value == null) return 0.0;
+
+  try {
+    return double.parse(value.toString());
+  } catch (e) {
+    return 0.0;
+  }
 }
 
 Color hexToColor(String hex) {
