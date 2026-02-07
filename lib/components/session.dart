@@ -12,9 +12,10 @@ Future<void> loadUserData() async {
 }
 
 class ServerConfig {
-  static Future<void> saveServerConfig(String ip, String path) async {
+  static Future<void> saveServerConfig(String ip, String path, portws) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('server_ip', ip);
+    await prefs.setString('port_ws', portws);
     await prefs.setString('server_path', path);
   }
 
@@ -22,6 +23,7 @@ class ServerConfig {
     final prefs = await SharedPreferences.getInstance();
     return {
       'ip': prefs.getString('server_ip'),
+      'portws': prefs.getString('port_ws'),
       'path': prefs.getString('server_path'),
     };
   }
@@ -29,6 +31,7 @@ class ServerConfig {
   static Future<void> clearConfig() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('server_ip');
+    await prefs.remove('port_ws');
     await prefs.remove('server_path');
   }
 }
