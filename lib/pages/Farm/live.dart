@@ -175,12 +175,13 @@ class _LivePageState extends State<LivePage> {
   String? selectedRoom;
 
   // final String wsUrl = 'ws://192.168.1.115:8765'; // 🔥 เปลี่ยนเป็น IP server
-  final String wsUrl = "ws://${CurrentUser['IP'].split(':')[0]}:8765";
+  final String wsUrl = "ws://${CurrentUser['IP'].split(':')[0]}:${CurrentUser['portws']}";
 
   // =========================
   // Connect
   // =========================
   void _connectSocket() {
+    print(CurrentUser);
     _socket = WebSocketChannel.connect(Uri.parse(wsUrl));
 
     _socketSub = _socket!.stream.listen(
@@ -195,7 +196,6 @@ class _LivePageState extends State<LivePage> {
       },
     );
 
-    debugPrint("✅ Connected WebSocket");
     setState(() {
       isConnectedWebsocket = true;
     });
@@ -487,9 +487,8 @@ class _LivePageState extends State<LivePage> {
 
                                 // Camera list with icons
                                 ...camList.entries.map((entry) {
-                                  // final index = entry.key;
                                   final room = entry.key;
-                                  final value = entry.value;
+                                  // final value = entry.value;
                                   final isSelected = selectedRoom == room;
 
                                   // กำหนดไอคอนตามชื่อกล้อง

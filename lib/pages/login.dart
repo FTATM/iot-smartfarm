@@ -17,7 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _IpServerController = TextEditingController();
-  final _PathtoAPIController = TextEditingController();
+  final _PathtoAPIController = TextEditingController(text: "iotsf/api-app");
+  final _portWebsocketController = TextEditingController(text: "8765");
   bool _isLoading = false;
   String baseURL = "";
 
@@ -34,10 +35,11 @@ class _LoginPageState extends State<LoginPage> {
     final re = await RememberConfig.loadRememberConfig();
     if (!mounted) return;
     setState(() {
-      _usernameController.text = re['e'] ?? "";
-      _passwordController.text = re['p'] ?? "";
-      _IpServerController.text = config['ip'] ?? "";
-      _PathtoAPIController.text = config['path'] ?? "";
+      _usernameController.text = re['e'] ?? _usernameController.text;
+      _passwordController.text = re['p'] ?? _passwordController.text;
+      _IpServerController.text = config['ip'] ?? _IpServerController.text;
+      _portWebsocketController.text = config['portws'] ?? _portWebsocketController.text;
+      _PathtoAPIController.text = config['path'] ?? _PathtoAPIController.text;
       baseURL = "${_IpServerController.text}/${_PathtoAPIController.text}";
     });
   }
@@ -53,7 +55,11 @@ class _LoginPageState extends State<LoginPage> {
     // password = password == "" ? "abc+123" : password;
     // baseURL = "49.0.69.152/iotsf/api-app";
 
-    final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
+    final response = await ApiService.checkLogin(
+      username,
+      password,
+      'http://$baseURL/',
+    );
 
     if (!mounted) return;
     setState(() => _isLoading = false);
@@ -62,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       await RememberConfig.saveRememberConfig(username, password);
       var user = response['user'];
       user['IP'] = _IpServerController.text;
+      user['portws'] = _portWebsocketController.text;
       user['baseURL'] = 'http://$baseURL/';
 
       final prefs = await SharedPreferences.getInstance();
@@ -70,10 +77,16 @@ class _LoginPageState extends State<LoginPage> {
 
       await loadUserData();
 
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const mainboardPage()),
+        (route) => false,
+      );
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')),
+      );
     }
   }
 
@@ -102,7 +115,13 @@ class _LoginPageState extends State<LoginPage> {
                       //   height: 50,
                       //   child: Text("Login", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       // ),
-                      SizedBox(height: maxheight * 0.2, child: Image.asset("assets/images/Logo.png", width: 120)),
+                      SizedBox(
+                        height: maxheight * 0.2,
+                        child: Image.asset(
+                          "assets/images/Logo.png",
+                          width: 120,
+                        ),
+                      ),
                       SizedBox(
                         child: Column(
                           spacing: 4,
@@ -110,27 +129,41 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             SizedBox(
                               width: maxwidth,
-                              child: Text("Your Username", style: TextStyle(fontWeight: FontWeight.bold)),
+                              child: Text(
+                                "Your Username",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                             SizedBox(
                               height: 60,
                               child: TextField(
                                 controller: _usernameController,
                                 decoration: const InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(
                               width: maxwidth,
-                              child: Text("Your Password", style: TextStyle(fontWeight: FontWeight.bold)),
+                              child: Text(
+                                "Your Password",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                             SizedBox(
                               // height: 60,
                               child: TextField(
                                 controller: _passwordController,
                                 decoration: const InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                  ),
                                 ),
                                 obscureText: true,
                               ),
@@ -140,10 +173,13 @@ class _LoginPageState extends State<LoginPage> {
                               child: Align(
                                 alignment: AlignmentGeometry.topCenter,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(statuslogin),
-                                    GestureDetector(child: Text("Remember me.")),
+                                    GestureDetector(
+                                      child: Text("Remember me."),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -155,16 +191,23 @@ class _LoginPageState extends State<LoginPage> {
                                     height: 45,
                                     child: TextButton(
                                       style: ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 255, 130, 1)),
+                                        backgroundColor: WidgetStatePropertyAll(
+                                          Color.fromARGB(255, 255, 130, 1),
+                                        ),
                                         shape: WidgetStatePropertyAll(
                                           RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8), // 👈 ปรับตรงนี้
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ), // 👈 ปรับตรงนี้
                                           ),
                                         ),
                                       ),
 
                                       onPressed: _login,
-                                      child: const Text('Login', style: TextStyle(color: Colors.white)),
+                                      child: const Text(
+                                        'Login',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ),
                           ],
@@ -183,7 +226,11 @@ class _LoginPageState extends State<LoginPage> {
                   child: GestureDetector(
                     child: Padding(
                       padding: EdgeInsetsGeometry.all(20),
-                      child: Icon(Icons.settings, size: maxwidth * 0.05, color: Colors.black),
+                      child: Icon(
+                        Icons.settings,
+                        size: maxwidth * 0.05,
+                        color: Colors.black,
+                      ),
                     ),
                     onTap: () {
                       showDialog(
@@ -191,68 +238,131 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) {
                           return StatefulBuilder(
                             builder: (context, setStateDialog) => AlertDialog(
-                              title: Text("ตั้งค่า server"),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              title: Text(
+                                "ตั้งค่า server",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                               backgroundColor: Colors.white,
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          height: maxheight * 0.05,
-                                          child: Text('Result : ', style: TextStyle(color: Colors.black)),
-                                        ),
-                                        SizedBox(width: maxwidth * 0.4, height: maxheight * 0.05, child: Text(baseURL)),
-                                      ],
-                                    ),
+                                  // SizedBox(
+                                  //   child: Row(
+                                  //     children: [
+                                  //       SizedBox(
+                                  //         height: maxheight * 0.05,
+                                  //         child: Text('Result : ', style: TextStyle(color: Colors.black)),
+                                  //       ),
+                                  //       SizedBox(width: maxwidth * 0.4, height: maxheight * 0.05, child: Text(baseURL)),
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                  // TextField(
+                                  //   controller: _IpServerController,
+                                  //   decoration: const InputDecoration(labelText: 'IP/DNS server.'),
+                                  //   onChanged: (value) {
+                                  //     setStateDialog(() {
+                                  //       baseURL = '$value/${_PathtoAPIController.text}';
+                                  //     });
+                                  //   },
+                                  // ),
+                                  // SizedBox(
+                                  //   width: maxwidth * 0.8,
+                                  //   child: Text('ex. 123.456.789.000', style: TextStyle(color: Colors.black45)),
+                                  // ),
+                                  // TextField(
+                                  //   controller: _PathtoAPIController,
+                                  //   decoration: const InputDecoration(labelText: 'Path to API'),
+                                  //   onChanged: (value) {
+                                  //     setStateDialog(() {
+                                  //       baseURL = '${_IpServerController.text}/$value';
+                                  //     });
+                                  //   },
+                                  // ),
+                                  // SizedBox(
+                                  //   width: maxwidth * 0.8,
+                                  //   child: Text('ex. iot/api', style: TextStyle(color: Colors.black45)),
+                                  // ),
+                                  // TextField(
+                                  //   controller: _portWebsocketController,
+                                  //   decoration: const InputDecoration(labelText: 'Port Websocket'),
+                                  //   onChanged: (value) {
+                                  //     setStateDialog(() {
+                                  //       _IpServerController.text = value;
+                                  //     });
+                                  //   },
+                                  // ),
+                                  _buildTextField(
+                                    label: 'IP / DNS Server',
+                                    placeholder: 'ex. 123.456.789.000',
+                                    textController: _IpServerController
                                   ),
-                                  TextField(
-                                    controller: _IpServerController,
-                                    decoration: const InputDecoration(labelText: 'IP/DNS server.'),
-                                    onChanged: (value) {
-                                      setStateDialog(() {
-                                        baseURL = '$value/${_PathtoAPIController.text}';
-                                      });
-                                    },
+                                  SizedBox(height: 16),
+                                  _buildTextField(
+                                    label: 'Path to API',
+                                    placeholder: 'ex. iot/api',
+                                    textController: _PathtoAPIController
                                   ),
-                                  SizedBox(
-                                    width: maxwidth * 0.8,
-                                    child: Text('ex. 123.456.789.000', style: TextStyle(color: Colors.black45)),
-                                  ),
-                                  TextField(
-                                    controller: _PathtoAPIController,
-                                    decoration: const InputDecoration(labelText: 'Path to API'),
-                                    onChanged: (value) {
-                                      setStateDialog(() {
-                                        baseURL = '${_IpServerController.text}/$value';
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: maxwidth * 0.8,
-                                    child: Text('ex. iot/api', style: TextStyle(color: Colors.black45)),
+                                  SizedBox(height: 16),
+                                  _buildTextField(
+                                    label: 'Port Websocket',
+                                    placeholder: 'ex. 8080',
+                                    textController: _portWebsocketController,
+                                    keyboardType: TextInputType.number,
                                   ),
                                 ],
                               ),
                               actions: [
                                 TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("ปิด"),
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'CANCEL',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
-                                TextButton(
+                                ElevatedButton(
                                   onPressed: () async {
+                                    // จัดการการบันทึกข้อมูลที่นี่
                                     await ServerConfig.saveServerConfig(
                                       _IpServerController.text.trim(),
                                       _PathtoAPIController.text.trim(),
+                                      _portWebsocketController.text.trim(),
                                     );
                                     await loadConfig();
                                     Navigator.pop(context);
                                   },
-                                  child: Text("บันทึก"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'SAVE',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
+                                // TextButton(
+                                //   onPressed: () {
+                                //     Navigator.pop(context);
+                                //   },
+                                //   child: Text("ปิด"),
+                                // ),
+                                // TextButton(
+                                //   onPressed: () async {
+                                //     await ServerConfig.saveServerConfig(
+                                //       _IpServerController.text.trim(),
+                                //       _PathtoAPIController.text.trim(),
+                                //       _portWebsocketController.text.trim(),
+                                //     );
+                                //     await loadConfig();
+                                //     Navigator.pop(context);
+                                //   },
+                                //   child: Text("บันทึก"),
+                                // ),
                               ],
                             ),
                           );
@@ -266,6 +376,42 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required String placeholder,
+    required TextEditingController textController,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        TextField(
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: placeholder,
+            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            contentPadding: EdgeInsets.symmetric(vertical: 8),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+            ),
+          ),
+          controller: textController,
+        ),
+      ],
     );
   }
 }
