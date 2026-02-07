@@ -32,7 +32,8 @@ class DashboardBlogByIdWidget extends StatefulWidget {
   });
 
   @override
-  State<DashboardBlogByIdWidget> createState() => _DashboardBlogByIdWidgetState();
+  State<DashboardBlogByIdWidget> createState() =>
+      _DashboardBlogByIdWidgetState();
 }
 
 class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
@@ -94,7 +95,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -111,7 +114,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.thermostat, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.thermostat,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -139,7 +146,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: largeIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.thermostat, size: largeIconSize, color: color);
+                            return Icon(
+                              Icons.thermostat,
+                              size: largeIconSize,
+                              color: color,
+                            );
                           },
                         ),
                       ),
@@ -148,7 +159,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Center(
                       child: Text(
                         value.toStringAsFixed(0),
-                        style: TextStyle(fontSize: valueFontSize, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: valueFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     SizedBox(height: spacing),
@@ -165,7 +180,13 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       if (values.isEmpty) {
         return const Center(child: Text("No data"));
       }
-      final chartColors = [color, Colors.orange, Colors.purple, Colors.green, Colors.red];
+      final chartColors = [
+        color,
+        Colors.orange,
+        Colors.purple,
+        Colors.green,
+        Colors.red,
+      ];
 
       return Container(
         width: sizewidth,
@@ -194,7 +215,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -211,7 +234,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.pie_chart, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.pie_chart,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -241,11 +268,16 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                               sectionsSpace: 1,
                               centerSpaceRadius: centerSpaceRadius,
                               sections: List.generate(values.length, (index) {
-                                final double val = (double.tryParse(values[index].toString()) ?? 0.0);
+                                final double val =
+                                    (double.tryParse(
+                                      values[index].toString(),
+                                    ) ??
+                                    0.0);
                                 final displayValue = val > 0 ? val : 1.0;
                                 return PieChartSectionData(
                                   value: displayValue,
-                                  color: chartColors[index % chartColors.length],
+                                  color:
+                                      chartColors[index % chartColors.length],
                                   showTitle: false,
                                   radius: chartRadius,
                                 );
@@ -259,7 +291,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Center(
                       child: Text(
                         value.toString(),
-                        style: TextStyle(fontSize: valueFontSize, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: valueFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     SizedBox(height: spacing),
@@ -301,7 +337,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Column(
                 children: [
@@ -317,7 +355,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.thermostat, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.thermostat,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -356,18 +398,26 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                     width: thermometerWidth,
                                     height: thermometerHeight,
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey.shade400, width: 2 * scaleFactor),
-                                      borderRadius: BorderRadius.circular(12 * scaleFactor),
+                                      border: Border.all(
+                                        color: Colors.grey.shade400,
+                                        width: 2 * scaleFactor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        12 * scaleFactor,
+                                      ),
                                       color: Colors.grey.shade200,
                                     ),
                                   ),
                                   // แถบสีที่เติม
                                   Container(
                                     width: thermometerWidth,
-                                    height: (value / 100 * thermometerHeight).clamp(0.0, thermometerHeight),
+                                    height: (value / 100 * thermometerHeight)
+                                        .clamp(0.0, thermometerHeight),
                                     decoration: BoxDecoration(
                                       color: color,
-                                      borderRadius: BorderRadius.circular(12 * scaleFactor),
+                                      borderRadius: BorderRadius.circular(
+                                        12 * scaleFactor,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -379,7 +429,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           Center(
                             child: Text(
                               '${value.toStringAsFixed(1)}°C',
-                              style: TextStyle(fontSize: valueFontSize, fontWeight: FontWeight.bold, color: color),
+                              style: TextStyle(
+                                fontSize: valueFontSize,
+                                fontWeight: FontWeight.bold,
+                                color: color,
+                              ),
                             ),
                           ),
                           SizedBox(height: spacing),
@@ -424,10 +478,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                   const SizedBox(height: 8),
                   Text(
                     clockService.formattedTime(now),
-                    style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Text(clockService.formattedDate(now), style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                  Text(
+                    clockService.formattedDate(now),
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
                 ],
               ),
             ),
@@ -437,26 +498,42 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
     } else if (type == '5') {
       // Type 5: Linear Chart
       final rawValue = jsonDecode(valueJson);
+      final labels = List.generate(rawValue[0].length, (index) {
+        final now = DateTime.now();
+        final hour = now.hour.toString().padLeft(2, '0');
+        final second = now.second.toString().padLeft(2, '0');
+        final minute = now.minute.toString().padLeft(2, '0');
+        return "$hour:$minute";
+      });
+      List<dynamic> values = [];
+      double maxAll = 0;
+      double minAll = 0;
 
-      if (rawValue.length != 2) {
-        rawValue.add([0, 0, 0, 0, 0]);
-      }
       final list1 = List.generate(rawValue[0].length, (index) {
-        return safeParse(rawValue[0][index]);
+        return double.parse(rawValue[0][index].toString());
       });
 
-      final list2 = List.generate(rawValue[1].length, (index) {
-        return safeParse(rawValue[1][index]);
-      });
-      final maxAll = [...list1, ...list2].reduce(max);
-      final minAll = [...list1, ...list2].reduce(min);
-      // debugPrint(rawValue.toString());
+      var all = [...list1];
 
-      final labels = ["00:00", "06:00", "12:00", "18:00", "24:00"];
-      final values = [
+      maxAll = all.reduce((a, b) => max(a, b));
+      minAll = all.reduce((a, b) => min(a, b));
+      values = [
         {"data": rawValue[0], "color": "#FF0000"},
-        {"data": rawValue[1], "color": "#00BFFF"},
       ];
+      if (rawValue.length == 2) {
+        // rawValue.add([0, 0, 0, 0, 0]);
+        final list2 = List.generate(rawValue[1].length, (index) {
+          return safeParse(rawValue[1][index]);
+        });
+
+        var all = [...list1, ...list2];
+        maxAll = all.reduce((a, b) => max(a, b));
+        minAll = all.reduce((a, b) => min(a, b));
+        values = [
+          {"data": rawValue[0], "color": "#FF0000"},
+          {"data": rawValue[1], "color": "#00BFFF"},
+        ];
+      }
 
       return Container(
         width: sizewidth,
@@ -486,7 +563,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -503,7 +582,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.show_chart, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.show_chart,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -528,11 +611,13 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     // 2. Center Content: Line Chart (centered)
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: contentPadding),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: contentPadding,
+                        ),
                         child: LineChart(
                           LineChartData(
-                            minY: (minAll + 1) * 0.75,
-                            maxY: (maxAll + 1) * 1.4,
+                            minY: minAll - (minAll * 0.1),
+                            maxY: maxAll + (maxAll * 0.1),
                             titlesData: FlTitlesData(
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
@@ -542,7 +627,12 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                   getTitlesWidget: (value, meta) {
                                     final index = value.toInt();
                                     if (index >= 0 && index < labels.length) {
-                                      return Text(labels[index], style: TextStyle(fontSize: chartLabelFontSize));
+                                      return Text(
+                                        labels[index],
+                                        style: TextStyle(
+                                          fontSize: chartLabelFontSize,
+                                        ),
+                                      );
                                     }
                                     return const SizedBox.shrink();
                                   },
@@ -553,18 +643,28 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                   showTitles: true,
                                   reservedSize: reservedSizeLeft,
                                   getTitlesWidget: (value, meta) => Text(
-                                    'V ${value.toStringAsFixed(0)}',
-                                    style: TextStyle(fontSize: chartLabelFontSize),
+                                    value.toStringAsFixed(0),
+                                    style: TextStyle(
+                                      fontSize: chartLabelFontSize,
+                                    ),
                                   ),
                                 ),
                               ),
-                              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
                             ),
                             lineBarsData: values.map((s) {
-                              final lineColor = hexToColor((s['color'] ?? "#000000").toString());
+                              final lineColor = hexToColor(
+                                (s['color'] ?? "#000000").toString(),
+                              );
                               final dataPoints = List<double>.from(
-                                (s['data'] as List).map((v) => double.tryParse(v.toString()) ?? 0.0),
+                                (s['data'] as List).map(
+                                  (v) => double.tryParse(v.toString()) ?? 0.0,
+                                ),
                               );
 
                               return LineChartBarData(
@@ -580,13 +680,19 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
-                                    colors: [lineColor.withOpacity(0.5), lineColor.withOpacity(0.0)],
+                                    colors: [
+                                      lineColor.withOpacity(0.5),
+                                      lineColor.withOpacity(0.0),
+                                    ],
                                   ),
                                 ),
                                 dotData: const FlDotData(show: false),
                               );
                             }).toList(),
-                            gridData: const FlGridData(show: true, drawVerticalLine: false),
+                            gridData: const FlGridData(
+                              show: true,
+                              drawVerticalLine: false,
+                            ),
                             borderData: FlBorderData(show: false),
                           ),
                         ),
@@ -612,7 +718,10 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
       List<Map<String, dynamic>> chartData = [];
 
       for (int i = 0; i < rawValue[0].length; i++) {
-        chartData.add({"dx": (i * 5).toDouble(), "dy": int.parse(rawValue[0][i])});
+        chartData.add({
+          "dx": (i * 5).toDouble(),
+          "dy": int.parse(rawValue[0][i]),
+        });
       }
       final values = [
         {"name": "Oxygen", "data": chartData},
@@ -645,7 +754,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -662,7 +773,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.scatter_plot, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.scatter_plot,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -687,12 +802,19 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     // 2. Center Content: Scatter Chart (centered)
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: contentPadding),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: contentPadding,
+                        ),
                         child: ScatterChart(
                           ScatterChartData(
                             scatterSpots: (values).expand((s) {
                               final dataPoints = (s['data'] as List)
-                                  .map((p) => ScatterSpot((p['dx'] as num).toDouble(), (p['dy'] as num).toDouble()))
+                                  .map(
+                                    (p) => ScatterSpot(
+                                      (p['dx'] as num).toDouble(),
+                                      (p['dy'] as num).toDouble(),
+                                    ),
+                                  )
                                   .toList();
                               return dataPoints;
                             }).toList(),
@@ -700,26 +822,42 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             maxX: 40,
                             minY: 0,
                             maxY: 20,
-                            gridData: const FlGridData(show: true, drawVerticalLine: true, drawHorizontalLine: true),
+                            gridData: const FlGridData(
+                              show: true,
+                              drawVerticalLine: true,
+                              drawHorizontalLine: true,
+                            ),
                             titlesData: FlTitlesData(
                               leftTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   reservedSize: reservedSizeLeft,
-                                  getTitlesWidget: (value, meta) =>
-                                      Text(value.toStringAsFixed(1), style: TextStyle(fontSize: chartLabelFontSize)),
+                                  getTitlesWidget: (value, meta) => Text(
+                                    value.toStringAsFixed(1),
+                                    style: TextStyle(
+                                      fontSize: chartLabelFontSize,
+                                    ),
+                                  ),
                                 ),
                               ),
                               bottomTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   reservedSize: reservedSizeBottom,
-                                  getTitlesWidget: (value, meta) =>
-                                      Text(value.toStringAsFixed(1), style: TextStyle(fontSize: chartLabelFontSize)),
+                                  getTitlesWidget: (value, meta) => Text(
+                                    value.toStringAsFixed(1),
+                                    style: TextStyle(
+                                      fontSize: chartLabelFontSize,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
                             ),
                             borderData: FlBorderData(show: false),
                           ),
@@ -761,16 +899,20 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             final buttonFontSize = 36.0 * scaleFactor;
             final contentPadding = 12.0 * scaleFactor;
             final spacing = 8.0 * scaleFactor;
-            final buttonBorderRadius = 28.0 * scaleFactor; // คูณกับ scaleFactor เพื่อรักษาสัดส่วน
+            final buttonBorderRadius =
+                28.0 * scaleFactor; // คูณกับ scaleFactor เพื่อรักษาสัดส่วน
             final buttonPaddingH = 48.0 * scaleFactor;
             final buttonPaddingV = 24.0 * scaleFactor;
             final buttonMinWidth = 140.0 * scaleFactor;
-            final bottomSpacing = 20.0 * scaleFactor; // ระยะห่างด้านล่างเพิ่มขึ้น
+            final bottomSpacing =
+                20.0 * scaleFactor; // ระยะห่างด้านล่างเพิ่มขึ้น
 
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -787,7 +929,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.power_settings_new, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.power_settings_new,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -835,15 +981,27 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isOn ? color : Colors.grey[300],
-                            foregroundColor: isOn ? Colors.white : Colors.black87,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(buttonBorderRadius)),
-                            padding: EdgeInsets.symmetric(horizontal: buttonPaddingH, vertical: buttonPaddingV),
+                            foregroundColor: isOn
+                                ? Colors.white
+                                : Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                buttonBorderRadius,
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: buttonPaddingH,
+                              vertical: buttonPaddingV,
+                            ),
                             minimumSize: Size(buttonMinWidth, 0),
                           ),
                           onPressed: () {},
                           child: Text(
                             isOn ? 'ON' : 'OFF',
-                            style: TextStyle(fontSize: buttonFontSize, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: buttonFontSize,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -884,7 +1042,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -901,7 +1061,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.tune, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.tune,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -925,11 +1089,15 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Expanded(
                       child: Center(
                         child: Container(
-                          constraints: BoxConstraints(maxWidth: availableWidth * 0.85),
+                          constraints: BoxConstraints(
+                            maxWidth: availableWidth * 0.85,
+                          ),
                           child: SliderTheme(
                             data: SliderThemeData(
                               trackHeight: 4 * scaleFactor,
-                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10 * scaleFactor),
+                              thumbShape: RoundSliderThumbShape(
+                                enabledThumbRadius: 10 * scaleFactor,
+                              ),
                             ),
                             child: Slider(
                               value: value,
@@ -940,7 +1108,10 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                               inactiveColor: Colors.grey.shade300,
                               onChanged: (value) {
                                 setState(() {
-                                  widget.onValueChanged('m_value', value.toString());
+                                  widget.onValueChanged(
+                                    'm_value',
+                                    value.toString(),
+                                  );
                                 });
                               },
                             ),
@@ -965,7 +1136,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Center(
                       child: Text(
                         'Range 0 to 100',
-                        style: TextStyle(fontSize: 30 * scaleFactor, color: Colors.grey, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 30 * scaleFactor,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -1008,7 +1183,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8 * scaleFactor),
+                  ),
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(contentPadding),
@@ -1025,7 +1202,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             height: smallIconSize,
                             color: color,
                             errorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.lightbulb, size: smallIconSize, color: color);
+                              return Icon(
+                                Icons.lightbulb,
+                                size: smallIconSize,
+                                color: color,
+                              );
                             },
                           ),
                           SizedBox(width: spacing),
@@ -1060,7 +1241,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                 return Icon(
                                   Icons.lightbulb_outline,
                                   size: lampSize,
-                                  color: value == 1 ? Colors.yellow : Colors.grey,
+                                  color: value == 1
+                                      ? Colors.yellow
+                                      : Colors.grey,
                                 );
                               },
                             ),
@@ -1069,7 +1252,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             Text(
                               value == 1 ? "ON" : "OFF",
                               style: TextStyle(
-                                color: value == 1 ? color : const Color(0xFF555555),
+                                color: value == 1
+                                    ? color
+                                    : const Color(0xFF555555),
                                 fontSize: statusFontSize,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1077,7 +1262,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           ],
                         ),
                       ),
-                      SizedBox(height: spacing), // ใช้ bottomSpacing แทน spacing
+                      SizedBox(
+                        height: spacing,
+                      ), // ใช้ bottomSpacing แทน spacing
                     ],
                   ),
                 ),
@@ -1123,7 +1310,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -1140,7 +1329,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.power_settings_new, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.power_settings_new,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -1168,7 +1361,8 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             value: isOn,
                             activeThumbColor: color,
                             activeTrackColor: light,
-                            inactiveThumbColor: Colors.grey, // เพิ่มบรรทัดนี้ - สีปุ่มตอนปิด
+                            inactiveThumbColor:
+                                Colors.grey, // เพิ่มบรรทัดนี้ - สีปุ่มตอนปิด
                             inactiveTrackColor: Colors.grey[300],
                             onChanged: (value) {
                               setState(() {
@@ -1185,7 +1379,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Center(
                       child: Text(
                         value == 1 ? 'ON' : 'OFF',
-                        style: TextStyle(fontSize: statusFontSize, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: statusFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     SizedBox(height: spacing),
@@ -1217,14 +1415,17 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             final smallIconSize = 55.0 * headerScaleFactor;
             final largeIconSize = 140.0 * scaleFactor;
             final titleFontSize = 30.0 * headerScaleFactor;
-            final valueFontSize = 60.0 * scaleFactor; // Adjusted value font size
+            final valueFontSize =
+                60.0 * scaleFactor; // Adjusted value font size
             final contentPadding = 12.0 * scaleFactor;
             final spacing = 8.0 * scaleFactor;
 
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -1241,7 +1442,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.thermostat, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.thermostat,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -1265,8 +1470,14 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                       child: Center(
                         child: ColorFiltered(
                           colorFilter: value == 0
-                              ? const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.saturation)
-                              : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+                              ? const ColorFilter.mode(
+                                  Color.fromARGB(255, 255, 255, 255),
+                                  BlendMode.saturation,
+                                )
+                              : const ColorFilter.mode(
+                                  Colors.transparent,
+                                  BlendMode.multiply,
+                                ),
                           child: Image.asset(
                             'assets/images/blink_${value == 1 ? '1' : '0'}.gif',
                             width: largeIconSize,
@@ -1280,7 +1491,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     Center(
                       child: Text(
                         value == 1 ? 'ON' : 'OFF',
-                        style: TextStyle(fontSize: valueFontSize, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: TextStyle(
+                          fontSize: valueFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     SizedBox(height: spacing),
@@ -1329,7 +1544,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
             return Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(8 * scaleFactor)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8 * scaleFactor),
+                ),
               ),
               child: Padding(
                 padding: EdgeInsets.all(contentPadding),
@@ -1345,7 +1562,11 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                           height: smallIconSize,
                           color: color,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.show_chart, size: smallIconSize, color: color);
+                            return Icon(
+                              Icons.show_chart,
+                              size: smallIconSize,
+                              color: color,
+                            );
                           },
                         ),
                         SizedBox(width: spacing),
@@ -1369,7 +1590,9 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                     // Center Content: Bar Chart (centered)
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: contentPadding),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: contentPadding,
+                        ),
                         child: BarChart(
                           BarChartData(
                             alignment: BarChartAlignment.spaceAround,
@@ -1383,7 +1606,12 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                   getTitlesWidget: (value, meta) {
                                     final index = value.toInt();
                                     if (index >= 0 && index < rawLabel.length) {
-                                      return Text(rawLabel[index], style: TextStyle(fontSize: chartLabelFontSize));
+                                      return Text(
+                                        rawLabel[index],
+                                        style: TextStyle(
+                                          fontSize: chartLabelFontSize,
+                                        ),
+                                      );
                                     }
                                     return const SizedBox.shrink();
                                   },
@@ -1395,12 +1623,18 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                                   reservedSize: reservedSizeLeft,
                                   getTitlesWidget: (value, meta) => Text(
                                     'V ${value.toStringAsFixed(0)}',
-                                    style: TextStyle(fontSize: chartLabelFontSize),
+                                    style: TextStyle(
+                                      fontSize: chartLabelFontSize,
+                                    ),
                                   ),
                                 ),
                               ),
-                              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
                             ),
                             barGroups: List.generate(rawValue.length, (index) {
                               return BarChartGroupData(
