@@ -224,6 +224,7 @@ class _LivePageState extends State<LivePage> {
     // ✅ Camera List Response
     // ==========================
     if (data['type'] == 'cameraData') {
+      print(data);
       if (data['status'] == 'ok') {
         camList = Map<String, dynamic>.from(data['data']);
 
