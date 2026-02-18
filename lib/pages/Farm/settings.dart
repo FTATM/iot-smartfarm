@@ -10,7 +10,7 @@ import 'package:iot_app/pages/greenhourse/device.dart';
 import 'package:iot_app/pages/greenhourse/group.dart';
 import 'package:iot_app/pages/greenhourse/icons.dart';
 import 'package:iot_app/pages/greenhourse/logos.dart';
-import 'package:iot_app/pages/greenhourse/users_admin.dart';
+import 'package:iot_app/pages/greenhourse/users.dart';
 import 'package:iot_app/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,7 +93,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     _go(const SchedulePage());
                   }),
                 ),
-                _menuItem("Knowledge", Icons.menu_book, () {
+                _menuItem("GuideBook", Icons.menu_book, () {
                   _go(const GuidebookPage());
                 }),
               ]),

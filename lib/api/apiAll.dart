@@ -456,15 +456,15 @@ class ApiService {
   }
 
   // Update mainboard
-  static Future<Map<String, dynamic>> updateMainboardById(Map<String, dynamic> list, Map<String, dynamic> values) async {
+  static Future<Map<String, dynamic>> updateMainboardById(
+    Map<String, dynamic> list,
+    Map<String, dynamic> values,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse("${baseUrl}update-mainboard.php"),
         //  headers: {'Content-Type': 'application/json'},
-        body: {
-          'json': jsonEncode(list),
-          'homebranch' : jsonEncode(values),
-        },
+        body: {'json': jsonEncode(list), 'homebranch': jsonEncode(values)},
       );
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
@@ -1120,6 +1120,31 @@ class ApiService {
     }
   }
 
+  // Delete user
+  static Future<Map<String, dynamic>> deleteUserById(Map<String, dynamic> list) async {
+    try {
+      // print(jsonEncode(list));
+      final response = await http.post(
+        Uri.parse("${baseUrl}delete-user.php"),
+        //  headers: {'Content-Type': 'application/json'},
+        body: {'json': jsonEncode(list)},
+      );
+
+      print(response.body); //ดู error sql
+      // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
   // fetch PDFs
   static Future<Map<String, dynamic>> fetchPDFsById(String id) async {
     try {
@@ -1418,10 +1443,7 @@ class ApiService {
       };
       final url = Uri.parse("http://${CurrentUser['IP']}/iotsf/api_push_data_by_hardware_process.php");
 
-      final response = await http.post(
-        url,
-        body: jsonEncode(bodyData),
-      );
+      final response = await http.post(url, body: jsonEncode(bodyData));
 
       // 🔹 ตรวจสอบว่า HTTP status เป็น 200 หรือไม่
       if (response.statusCode == 200) {
@@ -1437,5 +1459,4 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
-
 }

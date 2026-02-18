@@ -14,6 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool passwordVisible = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _IpServerController = TextEditingController();
@@ -55,11 +56,7 @@ class _LoginPageState extends State<LoginPage> {
     // password = password == "" ? "abc+123" : password;
     // baseURL = "49.0.69.152/iotsf/api-app";
 
-    final response = await ApiService.checkLogin(
-      username,
-      password,
-      'http://$baseURL/',
-    );
+    final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
 
     if (!mounted) return;
     setState(() => _isLoading = false);
@@ -77,16 +74,10 @@ class _LoginPageState extends State<LoginPage> {
 
       await loadUserData();
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const mainboardPage()),
-        (route) => false,
-      );
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')));
     }
   }
 
@@ -104,118 +95,102 @@ class _LoginPageState extends State<LoginPage> {
           child: Stack(
             children: [
               Center(
-                child: Container(
-                  width: maxwidth > 400 ? 400 : maxwidth,
-                  color: Colors.white,
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // SizedBox(
-                      //   height: 50,
-                      //   child: Text("Login", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      // ),
-                      SizedBox(
-                        height: maxheight * 0.2,
-                        child: Image.asset(
-                          "assets/images/Logo.png",
-                          width: 120,
-                        ),
-                      ),
-                      SizedBox(
-                        child: Column(
-                          spacing: 4,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              width: maxwidth,
-                              child: Text(
-                                "Your Username",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: maxwidth > 400 ? 400 : maxwidth,
+                    color: Colors.white,
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // SizedBox(
+                        //   height: 50,
+                        //   child: Text("Login", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        // ),
+                        SizedBox(height: maxheight * 0.2, child: Image.asset("assets/logo_app.png", width: 120)),
+                        SizedBox(
+                          child: Column(
+                            spacing: 4,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: maxwidth,
+                                child: Text("Your Username", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
-                            ),
-                            SizedBox(
-                              height: 60,
-                              child: TextField(
-                                controller: _usernameController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
+                              SizedBox(
+                                height: 60,
+                                child: TextField(
+                                  controller: _usernameController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: maxwidth,
-                              child: Text(
-                                "Your Password",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              SizedBox(
+                                width: maxwidth,
+                                child: Text("Your Password", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
-                            ),
-                            SizedBox(
-                              // height: 60,
-                              child: TextField(
-                                controller: _passwordController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                                obscureText: true,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 50,
-                              child: Align(
-                                alignment: AlignmentGeometry.topCenter,
+                              SizedBox(
+                                // height: 60,
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(statuslogin),
-                                    GestureDetector(
-                                      child: Text("Remember me."),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _passwordController,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                              color: Color.fromARGB(255, 255, 130, 0),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                passwordVisible = !passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        obscureText: !passwordVisible,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            _isLoading
-                                ? const CircularProgressIndicator()
-                                : SizedBox(
-                                    width: maxwidth,
-                                    height: 45,
-                                    child: TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(
-                                          Color.fromARGB(255, 255, 130, 1),
-                                        ),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ), // 👈 ปรับตรงนี้
+                              SizedBox(
+                                height: 50,
+                                child: Align(
+                                  alignment: AlignmentGeometry.topCenter,
+                                  child: Text(baseURL),
+                                ),
+                              ),
+                              _isLoading
+                                  ? const CircularProgressIndicator()
+                                  : SizedBox(
+                                      width: maxwidth,
+                                      height: 45,
+                                      child: TextButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 255, 130, 1)),
+                                          shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8), // 👈 ปรับตรงนี้
+                                            ),
                                           ),
                                         ),
-                                      ),
 
-                                      onPressed: _login,
-                                      child: const Text(
-                                        'Login',
-                                        style: TextStyle(color: Colors.white),
+                                        onPressed: _login,
+                                        child: const Text('Login', style: TextStyle(color: Colors.white)),
                                       ),
                                     ),
-                                  ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(baseURL),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -226,11 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: GestureDetector(
                     child: Padding(
                       padding: EdgeInsetsGeometry.all(20),
-                      child: Icon(
-                        Icons.settings,
-                        size: maxwidth * 0.05,
-                        color: Colors.black,
-                      ),
+                      child: Icon(Icons.settings, size: maxwidth * 0.05, color: Colors.black),
                     ),
                     onTap: () {
                       showDialog(
@@ -238,90 +209,85 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) {
                           return StatefulBuilder(
                             builder: (context, setStateDialog) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              title: Text(
-                                "ตั้งค่า server",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                              title: Text("ตั้งค่า server", style: TextStyle(fontWeight: FontWeight.bold)),
                               backgroundColor: Colors.white,
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // SizedBox(
-                                  //   child: Row(
-                                  //     children: [
-                                  //       SizedBox(
-                                  //         height: maxheight * 0.05,
-                                  //         child: Text('Result : ', style: TextStyle(color: Colors.black)),
-                                  //       ),
-                                  //       SizedBox(width: maxwidth * 0.4, height: maxheight * 0.05, child: Text(baseURL)),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                  // TextField(
-                                  //   controller: _IpServerController,
-                                  //   decoration: const InputDecoration(labelText: 'IP/DNS server.'),
-                                  //   onChanged: (value) {
-                                  //     setStateDialog(() {
-                                  //       baseURL = '$value/${_PathtoAPIController.text}';
-                                  //     });
-                                  //   },
-                                  // ),
-                                  // SizedBox(
-                                  //   width: maxwidth * 0.8,
-                                  //   child: Text('ex. 123.456.789.000', style: TextStyle(color: Colors.black45)),
-                                  // ),
-                                  // TextField(
-                                  //   controller: _PathtoAPIController,
-                                  //   decoration: const InputDecoration(labelText: 'Path to API'),
-                                  //   onChanged: (value) {
-                                  //     setStateDialog(() {
-                                  //       baseURL = '${_IpServerController.text}/$value';
-                                  //     });
-                                  //   },
-                                  // ),
-                                  // SizedBox(
-                                  //   width: maxwidth * 0.8,
-                                  //   child: Text('ex. iot/api', style: TextStyle(color: Colors.black45)),
-                                  // ),
-                                  // TextField(
-                                  //   controller: _portWebsocketController,
-                                  //   decoration: const InputDecoration(labelText: 'Port Websocket'),
-                                  //   onChanged: (value) {
-                                  //     setStateDialog(() {
-                                  //       _IpServerController.text = value;
-                                  //     });
-                                  //   },
-                                  // ),
-                                  _buildTextField(
-                                    label: 'IP / DNS Server',
-                                    placeholder: 'ex. 123.456.789.000',
-                                    textController: _IpServerController
-                                  ),
-                                  SizedBox(height: 16),
-                                  _buildTextField(
-                                    label: 'Path to API',
-                                    placeholder: 'ex. iot/api',
-                                    textController: _PathtoAPIController
-                                  ),
-                                  SizedBox(height: 16),
-                                  _buildTextField(
-                                    label: 'Port Websocket',
-                                    placeholder: 'ex. 8080',
-                                    textController: _portWebsocketController,
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ],
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // SizedBox(
+                                    //   child: Row(
+                                    //     children: [
+                                    //       SizedBox(
+                                    //         height: maxheight * 0.05,
+                                    //         child: Text('Result : ', style: TextStyle(color: Colors.black)),
+                                    //       ),
+                                    //       SizedBox(width: maxwidth * 0.4, height: maxheight * 0.05, child: Text(baseURL)),
+                                    //     ],
+                                    //   ),
+                                    // ),
+                                    // TextField(
+                                    //   controller: _IpServerController,
+                                    //   decoration: const InputDecoration(labelText: 'IP/DNS server.'),
+                                    //   onChanged: (value) {
+                                    //     setStateDialog(() {
+                                    //       baseURL = '$value/${_PathtoAPIController.text}';
+                                    //     });
+                                    //   },
+                                    // ),
+                                    // SizedBox(
+                                    //   width: maxwidth * 0.8,
+                                    //   child: Text('ex. 123.456.789.000', style: TextStyle(color: Colors.black45)),
+                                    // ),
+                                    // TextField(
+                                    //   controller: _PathtoAPIController,
+                                    //   decoration: const InputDecoration(labelText: 'Path to API'),
+                                    //   onChanged: (value) {
+                                    //     setStateDialog(() {
+                                    //       baseURL = '${_IpServerController.text}/$value';
+                                    //     });
+                                    //   },
+                                    // ),
+                                    // SizedBox(
+                                    //   width: maxwidth * 0.8,
+                                    //   child: Text('ex. iot/api', style: TextStyle(color: Colors.black45)),
+                                    // ),
+                                    // TextField(
+                                    //   controller: _portWebsocketController,
+                                    //   decoration: const InputDecoration(labelText: 'Port Websocket'),
+                                    //   onChanged: (value) {
+                                    //     setStateDialog(() {
+                                    //       _IpServerController.text = value;
+                                    //     });
+                                    //   },
+                                    // ),
+                                    _buildTextField(
+                                      label: 'IP / DNS Server',
+                                      placeholder: 'ex. 123.456.789.000',
+                                      textController: _IpServerController,
+                                    ),
+                                    SizedBox(height: 16),
+                                    _buildTextField(
+                                      label: 'Path to API',
+                                      placeholder: 'ex. iot/api',
+                                      textController: _PathtoAPIController,
+                                    ),
+                                    SizedBox(height: 16),
+                                    _buildTextField(
+                                      label: 'Port Websocket',
+                                      placeholder: 'ex. 8080',
+                                      textController: _portWebsocketController,
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ],
+                                ),
                               ),
+
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    'CANCEL',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
+                                  child: Text('CANCEL', style: TextStyle(color: Colors.grey)),
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
@@ -336,14 +302,9 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blueAccent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  child: Text(
-                                    'SAVE',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                  child: Text('SAVE', style: TextStyle(color: Colors.white)),
                                 ),
                                 // TextButton(
                                 //   onPressed: () {
@@ -390,11 +351,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87),
         ),
         TextField(
           keyboardType: keyboardType,
@@ -402,12 +359,8 @@ class _LoginPageState extends State<LoginPage> {
             hintText: placeholder,
             hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
             contentPadding: EdgeInsets.symmetric(vertical: 8),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueAccent, width: 2),
-            ),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[300]!)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent, width: 2)),
           ),
           controller: textController,
         ),

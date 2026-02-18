@@ -414,7 +414,7 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFFFF3E0) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
@@ -426,8 +426,8 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
         child: Column(
           children: [
             Container(
-              width: 24,
-              height: 24,
+              width: 12,
+              height: 12,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -437,10 +437,10 @@ class _DashboardCreatePageState extends State<DashboardCreatePage> {
                 color: isSelected ? const Color(0xFFFF9800) : Colors.transparent,
               ),
               child: isSelected
-                  ? const Icon(Icons.check, size: 16, color: Colors.white)
+                  ? const Icon(Icons.check, size: 10, color: Colors.white)
                   : null,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
