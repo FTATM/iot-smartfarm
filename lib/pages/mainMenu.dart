@@ -68,7 +68,7 @@ class _mainboardPageState extends State<mainboardPage> {
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: "Dashboard"),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt_outlined), label: "Live"),
-          BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined), label: "Knowledge"),
+          BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined), label: "Schedule"),
           BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "Settings"),
         ],
       ),

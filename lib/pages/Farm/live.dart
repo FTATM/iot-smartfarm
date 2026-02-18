@@ -181,7 +181,6 @@ class _LivePageState extends State<LivePage> {
   // Connect
   // =========================
   void _connectSocket() {
-    print(CurrentUser);
     _socket = WebSocketChannel.connect(Uri.parse(wsUrl));
 
     _socketSub = _socket!.stream.listen(

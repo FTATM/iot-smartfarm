@@ -26,6 +26,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
   TextEditingController maxValueController = TextEditingController();
   TextEditingController lineValueController = TextEditingController();
   TextEditingController emailValueController = TextEditingController();
+  TextEditingController smsControllers = TextEditingController();
 
   List<dynamic> data = [];
   List<dynamic> groups = [];
@@ -98,11 +99,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
         ),
         title: Text(
           'Create Configuration',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
       body: SafeArea(
@@ -114,13 +111,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: Offset(0, 4))],
               ),
               child: Column(
                 children: [
@@ -128,39 +119,23 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/default.jpg'),
-                        fit: BoxFit.cover,
-                      ),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                      image: DecorationImage(image: AssetImage('assets/images/default.jpg'), fit: BoxFit.cover),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.3),
-                            Colors.black.withOpacity(0.5),
-                          ],
+                          colors: [Colors.black.withOpacity(0.3), Colors.black.withOpacity(0.5)],
                         ),
                       ),
                       padding: EdgeInsets.all(20),
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'New Configuration',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -188,11 +163,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                         // Configuration Section
                         Text(
                           'Configuration',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                         ),
                         SizedBox(height: 16),
 
@@ -221,10 +192,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                           items: devices.map<DropdownMenuItem<String>>((device) {
                             return DropdownMenuItem<String>(
                               value: device['device_id']?.toString(),
-                              child: Text(
-                                device['divice_name'] ?? '',
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              child: Text(device['divice_name'] ?? '', overflow: TextOverflow.ellipsis),
                             );
                           }).toList(),
                           onChanged: (valued) {
@@ -276,11 +244,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                         // Notify and Time Section
                         Text(
                           'Notify and Time',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
                         ),
                         SizedBox(height: 16),
 
@@ -300,11 +264,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                             SizedBox(width: 8),
                             Text(
                               'min',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
                             ),
                             SizedBox(width: 16),
                             Expanded(
@@ -317,15 +277,8 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                                 child: TextField(
                                   controller: minValueController,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                  ),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+                                  decoration: InputDecoration(border: InputBorder.none, isDense: true),
                                   onChanged: (value) {
                                     setState(() {
                                       item['min_value'] = value;
@@ -354,11 +307,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                             SizedBox(width: 8),
                             Text(
                               'max',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
                             ),
                             SizedBox(width: 16),
                             Expanded(
@@ -371,15 +320,8 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                                 child: TextField(
                                   controller: maxValueController,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                  ),
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+                                  decoration: InputDecoration(border: InputBorder.none, isDense: true),
                                   onChanged: (value) {
                                     setState(() {
                                       item['max_value'] = value;
@@ -393,9 +335,15 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                         SizedBox(height: 16),
 
                         // Line Input
-                        _buildTextField(
+                        _buildTextFieldWithCheckBox(
+                          isChecked: item['is_line'] ?? '0',
                           label: 'Line',
                           controller: lineValueController,
+                          onChangedChecked: () {
+                            setState(() {
+                              item['is_line'] = item['is_line'] == '1' ? '0' : '1';
+                            });
+                          },
                           onChanged: (value) {
                             setState(() {
                               item['input_line'] = value;
@@ -405,12 +353,35 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                         SizedBox(height: 12),
 
                         // Email Input
-                        _buildTextField(
+                        _buildTextFieldWithCheckBox(
+                          isChecked: item['is_email'] ?? '0',
                           label: 'Email',
                           controller: emailValueController,
+                          onChangedChecked: () {
+                            setState(() {
+                              item['is_email'] = item['is_email'] == '1' ? '0' : '1';
+                            });
+                          },
                           onChanged: (value) {
                             setState(() {
                               item['input_email'] = value;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        _buildTextFieldWithCheckBox(
+                          isChecked: item['is_sms'] ?? '0',
+                          label: 'SMS',
+                          controller: smsControllers,
+                          onChangedChecked: () {
+                            setState(() {
+                              item['is_sms'] = item['is_sms'] == '1' ? '0' : '1';
+                            });
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              item['input_line'] = value;
                             });
                           },
                         ),
@@ -427,11 +398,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                               children: [
                                 Text(
                                   day,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
-                                  ),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -448,23 +415,15 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                                     width: 28,
                                     height: 28,
                                     decoration: BoxDecoration(
-                                      color: listTime.contains(index)
-                                          ? Color(0xFFFF9F43)
-                                          : Colors.white,
+                                      color: listTime.contains(index) ? Color(0xFFFF9F43) : Colors.white,
                                       borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
-                                        color: listTime.contains(index)
-                                            ? Color(0xFFFF9F43)
-                                            : Colors.grey[400]!,
+                                        color: listTime.contains(index) ? Color(0xFFFF9F43) : Colors.grey[400]!,
                                         width: 2,
                                       ),
                                     ),
                                     child: listTime.contains(index)
-                                        ? Icon(
-                                            Icons.check,
-                                            color: Colors.white,
-                                            size: 18,
-                                          )
+                                        ? Icon(Icons.check, color: Colors.white, size: 18)
                                         : null,
                                   ),
                                 ),
@@ -504,11 +463,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                             ),
                             child: Text(
                               'ยกเลิก',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
-                              ),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey[700]),
                             ),
                           ),
                         ),
@@ -524,17 +479,11 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 14),
                               backgroundColor: Color(0xFFFF9F43),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
                               'บันทึก',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                           ),
                         ),
@@ -561,30 +510,19 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         SizedBox(height: 6),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
           child: DropdownButton<String>(
             value: value,
             items: items,
             isExpanded: true,
             underline: SizedBox(),
             icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
             onChanged: onChanged,
           ),
         ),
@@ -602,31 +540,66 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         SizedBox(height: 6),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
           child: TextField(
             controller: controller,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              isDense: true,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+            decoration: InputDecoration(border: InputBorder.none, isDense: true),
             onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextFieldWithCheckBox({
+    required String isChecked,
+    required String label,
+    required TextEditingController controller,
+    required Function() onChangedChecked,
+    required Function(String) onChanged,
+  }) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onChangedChecked,
+          child: Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: isChecked == '1' ? Color(0xFFFF9F43) : Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: isChecked == '1' ? Color(0xFFFF9F43) : Colors.grey[400]!, width: 2),
+            ),
+            child: isChecked == '1' ? Icon(Icons.check, color: Colors.white, size: 18) : null,
+          ),
+        ),
+        SizedBox(width: 10,),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 6),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
+                child: TextField(
+                  controller: controller,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+                  decoration: InputDecoration(border: InputBorder.none, isDense: true),
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
           ),
         ),
       ],

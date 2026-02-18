@@ -14,6 +14,7 @@ class ConfigPage extends StatefulWidget {
 
 class _ConfigPageState extends State<ConfigPage> {
   bool isLoading = true;
+  bool isShowDialog = false;
   String txtPath = "";
   Timer? _timer;
 
@@ -21,8 +22,10 @@ class _ConfigPageState extends State<ConfigPage> {
 
   List<TextEditingController> minControllers = [];
   List<TextEditingController> maxControllers = [];
+  List<TextEditingController> namesControllers = [];
   List<TextEditingController> linesControllers = [];
   List<TextEditingController> emailsControllers = [];
+  List<TextEditingController> smsControllers = [];
 
   // List<WorkTime> listTime = [];
 
@@ -42,7 +45,9 @@ class _ConfigPageState extends State<ConfigPage> {
     super.initState();
     _fetchData();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      _fetchData();
+      if (!isShowDialog) {
+        _fetchData();
+      }
     });
   }
 
@@ -65,16 +70,17 @@ class _ConfigPageState extends State<ConfigPage> {
     final tres = await ApiService.fetchTypesBybranchId();
     final xres = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
 
-    debugPrint("======== res ======");
-    debugPrint(response.toString());
-    debugPrint("======== gres ======");
-    debugPrint(gres.toString());
-    debugPrint("======== dres ======");
-    debugPrint(dres.toString());
-    debugPrint("======== tres ======");
-    debugPrint(tres.toString());
-    debugPrint("======== xres ======");
-    debugPrint(xres.toString());
+    // debugPrint("======== res ======");
+    // debugPrint(response.toString());
+    // debugPrint("======== gres ======");
+    // debugPrint(gres.toString());
+    // debugPrint("======== dres ======");
+    // debugPrint(dres.toString());
+    // debugPrint("======== tres ======");
+    // debugPrint(tres.toString());
+    // debugPrint("======== xres ======");
+    // debugPrint(xres.toString());
+    // debugPrint("======== end ======");
 
     if (!mounted) return;
 
@@ -87,7 +93,11 @@ class _ConfigPageState extends State<ConfigPage> {
 
       minControllers = data.map((item) => TextEditingController(text: item['min_value']?.toString() ?? '')).toList();
       maxControllers = data.map((item) => TextEditingController(text: item['max_value']?.toString() ?? '')).toList();
+      namesControllers = data
+          .map((item) => TextEditingController(text: item['monitor_name']?.toString() ?? ''))
+          .toList();
       linesControllers = data.map((item) => TextEditingController(text: item['input_line']?.toString() ?? '')).toList();
+      smsControllers = data.map((item) => TextEditingController(text: item['input_sms']?.toString() ?? '')).toList();
       emailsControllers = data
           .map((item) => TextEditingController(text: item['input_email']?.toString() ?? ''))
           .toList();
@@ -96,7 +106,10 @@ class _ConfigPageState extends State<ConfigPage> {
     });
   }
 
-  void _showEditDialog(int index, var item) {
+  void _showEditDialog(int index, var item) async {
+    setState(() {
+      isShowDialog = true;
+    });
     List<int> listDay = [];
     var raw = item['list_time_of_work'];
     if (raw != null && raw is String && raw.isNotEmpty) {
@@ -106,7 +119,7 @@ class _ConfigPageState extends State<ConfigPage> {
     final raw2 = item['list_time'] as List;
 
     List<WorkTime> listTime = raw2.map((e) => WorkTime.fromApi(e)).toList();
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         void addTimeSlot(StateSetter setStateDialog) {
@@ -216,6 +229,40 @@ class _ConfigPageState extends State<ConfigPage> {
                             SizedBox(height: 24),
                             Divider(thickness: 1, color: Colors.grey[300]),
                             SizedBox(height: 20),
+
+                            // Name Section
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Name',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            // Name Textfield
+                            Container(
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: TextField(
+                                controller: namesControllers[index],
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+                                decoration: InputDecoration(border: InputBorder.none, isDense: true),
+
+                                onChanged: (value) {
+                                  setState(() {
+                                    data[index]['monitor_name'] = value;
+                                  });
+                                  setStateDialog(() {
+                                    item['monitor_name'] = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 12),
 
                             // Configuration Section
                             Align(
@@ -428,8 +475,17 @@ class _ConfigPageState extends State<ConfigPage> {
 
                             // Line Input
                             _buildTextField(
+                              isChecked: item['is_line'],
                               label: 'Line',
                               controller: linesControllers[index],
+                              onChangedChecked: () {
+                                setState(() {
+                                  data[index]['is_line'] = item['is_line'] == '1' ? '0' : '1';
+                                });
+                                setStateDialog(() {
+                                  item['is_line'] = item['is_line'] == '1' ? '0' : '1';
+                                });
+                              },
                               onChanged: (value) {
                                 setState(() {
                                   data[index]['input_line'] = value;
@@ -439,18 +495,51 @@ class _ConfigPageState extends State<ConfigPage> {
                                 });
                               },
                             ),
-                            SizedBox(height: 12),
+                            SizedBox(height: 6),
 
                             // Email Input
                             _buildTextField(
+                              isChecked: item['is_email'],
                               label: 'Email',
                               controller: emailsControllers[index],
+                              onChangedChecked: () {
+                                setState(() {
+                                  data[index]['is_email'] = item['is_email'] == '1' ? '0' : '1';
+                                });
+                                setStateDialog(() {
+                                  item['is_email'] = item['is_email'] == '1' ? '0' : '1';
+                                });
+                              },
                               onChanged: (value) {
                                 setState(() {
                                   data[index]['input_email'] = value;
                                 });
                                 setStateDialog(() {
                                   item['input_email'] = value;
+                                });
+                              },
+                            ),
+                            SizedBox(height: 6),
+
+                            // SMS Input
+                            _buildTextField(
+                              isChecked: item['is_sms'],
+                              label: 'SMS',
+                              controller: smsControllers[index],
+                              onChangedChecked: () {
+                                setState(() {
+                                  data[index]['is_sms'] = item['is_sms'] == '1' ? '0' : '1';
+                                });
+                                setStateDialog(() {
+                                  item['is_sms'] = item['is_sms'] == '1' ? '0' : '1';
+                                });
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  data[index]['input_sms'] = value;
+                                });
+                                setStateDialog(() {
+                                  item['input_sms'] = value;
                                 });
                               },
                             ),
@@ -594,6 +683,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               alignment: Alignment.centerLeft,
                               child: ElevatedButton.icon(
                                 onPressed: () => addTimeSlot(setStateDialog),
+                                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.white)),
                                 icon: const Icon(Icons.add),
                                 label: const Text('เพิ่มช่วงเวลา'),
                               ),
@@ -671,38 +761,11 @@ class _ConfigPageState extends State<ConfigPage> {
         );
       },
     );
+    setState(() {
+      isShowDialog = false;
+    });
   }
 
-  // Widget _buildDropdownField({
-  //   required String label,
-  //   required String? value,
-  //   required List<DropdownMenuItem<String>> items,
-  //   required Function(String?) onChanged,
-  // }) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         label,
-  //         style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
-  //       ),
-  //       SizedBox(height: 6),
-  //       Container(
-  //         padding: EdgeInsets.symmetric(horizontal: 16),
-  //         decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
-  //         child: DropdownButton<String>(
-  //           value: value,
-  //           items: items,
-  //           isExpanded: true,
-  //           underline: SizedBox(),
-  //           icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
-  //           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
-  //           onChanged: onChanged,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
   Widget _buildDropdownField({
     required String label,
     required String? value,
@@ -747,26 +810,48 @@ class _ConfigPageState extends State<ConfigPage> {
   }
 
   Widget _buildTextField({
+    required String isChecked,
     required String label,
     required TextEditingController controller,
+    required Function() onChangedChecked,
     required Function(String) onChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
+        GestureDetector(
+          onTap: onChangedChecked,
+          child: Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: isChecked == '1' ? Color(0xFFFF9F43) : Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: isChecked == '1' ? Color(0xFFFF9F43) : Colors.grey[400]!, width: 2),
+            ),
+            child: isChecked == '1' ? Icon(Icons.check, color: Colors.white, size: 18) : null,
+          ),
         ),
-        SizedBox(height: 6),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
-          child: TextField(
-            controller: controller,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
-            decoration: InputDecoration(border: InputBorder.none, isDense: true),
-            onChanged: onChanged,
+        SizedBox(width: 10,),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 6),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(color: Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
+                child: TextField(
+                  controller: controller,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+                  decoration: InputDecoration(border: InputBorder.none, isDense: true),
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
           ),
         ),
       ],
