@@ -13,6 +13,7 @@ class KnowledgePage extends StatefulWidget {
 class _KnowledgePageState extends State<KnowledgePage> {
   bool isLoading = true;
   int diffDay = 0;
+  int round = 0;
   List<dynamic> tables = [];
   List<dynamic> mainboard = [];
   List<dynamic> filterDates = [];
@@ -27,11 +28,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
     prepare();
   }
 
-
   Future<void> prepare() async {
     final responsetable = await ApiService.fetchTablesknowledgeById(CurrentUser['branch_id']);
 
-    final resBoardMain = await ApiService.fetchMainboard();
+    final resBoardMain = await ApiService.fetchHomeBranch(CurrentUser['branch_id']);
 
     setState(() {
       tables = responsetable['data'];
@@ -40,11 +40,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
     });
 
     filterDates = mainboard.where((element) {
-      return element['name'].toString().startsWith('date');
+      return element['home_row_id'] == '3' || element['home_row_id'] == '6';
     }).toList();
 
-    calculateDay(filterDates[1]['value'], filterDates[0]['value']);
-
+    calculateDay(filterDates[0]['value'], filterDates[1]['value']);
   }
 
   @override
@@ -165,7 +164,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     ...item['rows'].map<TableRow>((row) {
                       final endView = row['d_end_day'] == '999' ? "เป็นต้นไป" : row['d_end_day'];
                       final start = int.parse(row['d_start_day'].toString());
-                      final end = row['d_end_day'].toString() == '999' ? 99999 : int.parse(row['d_end_day'].toString());
+                      final end = row['d_end_day'].toString() == '999' ? 999 : int.parse(row['d_end_day'].toString());
 
                       final isThisDay = start <= diffDay && end >= diffDay;
                       return TableRow(
@@ -406,12 +405,20 @@ class _KnowledgePageState extends State<KnowledgePage> {
     return Icons.table_chart;
   }
 
-  void calculateDay(String start, String end) {
+  void calculateDay(String start, String? roundCycle) {
     final startDate = DateTime.parse(start);
-    final endDate = DateTime.parse(end);
+    final totalDays = DateTime.now().difference(startDate).inDays;
 
     setState(() {
-      diffDay = endDate.difference(startDate).inDays;
+      if (roundCycle != null) {
+        final cycle = int.parse(roundCycle);
+        diffDay = totalDays % cycle; // เศษที่เหลือในรอบปัจจุบัน
+        round = totalDays ~/ cycle; // จำนวนรอบที่ผ่านไปแล้ว
+      } else {
+        diffDay = totalDays;
+        round = 0;
+      }
+      print('totalDays: $totalDays, diffDay: $diffDay, round: $round');
     });
   }
 }
