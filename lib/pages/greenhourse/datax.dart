@@ -30,7 +30,8 @@ class _DataxPageState extends State<DataxPage> {
 
   void _fetchData() async {
     final bres = await ApiService.fetchBranchAll();
-    final response = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
+    // final response = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
+    final response = await ApiService.fetchDataxAll();
     if (!mounted) return;
 
     setState(() {

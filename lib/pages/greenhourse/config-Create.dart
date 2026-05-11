@@ -63,7 +63,7 @@ class _ConfigCreatePageState extends State<ConfigCreatePage> {
     final gres = await ApiService.fetchGroupsBybranchId(CurrentUser['branch_id']);
     final dres = await ApiService.fetchDevicesBybranchId(CurrentUser['branch_id']);
     final tres = await ApiService.fetchTypesBybranchId();
-    final xres = await ApiService.fetchDataxBybranchId(CurrentUser['branch_id']);
+    final xres = await ApiService.fetchDataxAll();
 
     if (!mounted) return;
 

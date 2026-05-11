@@ -183,7 +183,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                   lastDate: DateTime(2100),
                 );
                 if (picked != null) {
-                  var pickedDate = "${picked.year}-${picked.month}-${picked.day}";
+                  var pickedDate = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                   setState(() => homevalue['value'] = pickedDate);
                 }
               },
@@ -545,7 +545,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           children: [
                             Icon(Icons.save, size: 20),
                             SizedBox(width: 8),
-                            Text("Save Configuration", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                            Text("Save Logo", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                           ],
                         ),
                       ),
