@@ -76,7 +76,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: _isOpen
                       ? Column(
                           children: [
-                            _subMenu("Branchs", Icons.account_tree_sharp, () => _go(const BranchPage())),
+                            Visibility(
+                              visible: int.parse(CurrentUser['role_id']) >= 99,
+                              child: _subMenu("Branchs", Icons.account_tree_sharp, () => _go(const BranchPage())),
+                            ),
                             _subMenu("Groups", Icons.group, () => _go(const GroupPage())),
                             _subMenu("Devices", Icons.devices, () => _go(const DevicePage())),
                             _subMenu("Dataxs", Icons.data_usage, () => _go(const DataxPage())),

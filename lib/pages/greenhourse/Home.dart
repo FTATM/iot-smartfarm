@@ -108,9 +108,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _prepareData();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      _prepareData();
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    // _prepareData();
+    // });
   }
 
   @override
@@ -188,8 +188,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       sensors = response['data'] as List;
     });
-    // print("----- sensor ------");
-    // print(sensors);
+    print("----- sensor ------");
+    print(sensors);
   }
 
   @override
@@ -230,9 +230,16 @@ class _HomePageState extends State<HomePage> {
         ? 16.0
         : 12.0;
 
-    final selected1_6 = data.sublist(1, 6);
-    final selected6_15 = data.sublist(6, 15);
-    final selected15_19 = data.sublist(15, 19);
+    final selected1_6 = homebranchs.sublist(1, 6);
+    final selected6_15 = homebranchs.sublist(6, 15);
+    final selected15_19 = homebranchs.sublist(15, 19);
+
+    // print("----- Selected 1-6 ------");
+    // print(selected1_6.toString());
+    // print("----- Selected 6-15 ------");
+    // print(selected6_15.toString());
+    // print("----- Selected 15-19 ------");
+    // print(selected15_19.toString());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -287,6 +294,13 @@ class _HomePageState extends State<HomePage> {
                           : screenWidth < 900
                           ? maxheight * 0.35
                           : maxheight * 0.50;
+
+                      String image = '${user['baseURL']}../';
+                      image += logos.firstWhere(
+                        (i) => i['id'] == homebranchs[0]['icon_id'],
+                        orElse: () => {"path": "img/logos/default.png"},
+                      )['path'];
+
 
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,14 +425,7 @@ class _HomePageState extends State<HomePage> {
                                   width: leftWidth - (leftWidth * 0.15),
                                   height: isLandscape ? 300 : imageHeight,
                                   alignment: Alignment.center,
-                                  child: Image.network(
-                                    "${user['baseURL']}../" +
-                                        logos.firstWhere(
-                                          (i) => i['id'] == data[0]['icon_id'],
-                                          orElse: () => {"path": "img/logos/default.png"},
-                                        )['path'],
-                                    fit: BoxFit.contain,
-                                  ),
+                                  child: Image.network(image, fit: BoxFit.contain),
                                 ),
                               ],
                             ),
@@ -432,28 +439,23 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ...selected1_6.asMap().entries.map((e) {
-                                  // final index = e.key;
                                   final item = e.value;
-                                  final valueBranch = homebranchs
-                                      .where((h) => h['home_row_id'].toString() == item['id'].toString())
-                                      .first;
 
-                                  String value = valueBranch['value'];
+                                  String value = '';
 
                                   if (item['type_values_id'].toString() == '4') {
                                     final sensor = sensors.firstWhere((s) {
-                                      return s['monitor_id'].toString() == valueBranch['value'].toString();
+                                      return s['monitor_id'].toString() == item['value'].toString();
                                     }, orElse: () => {});
 
-                                    value = sensor.isEmpty
-                                        ? "[${valueBranch['value']}]"
-                                        : sensor['datax_value'].toString();
+                                    value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
                                   } else {
-                                    value = valueBranch['value']?.toString() ?? "";
+                                    value = item['value']?.toString() ?? "";
                                   }
                                   return Padding(
                                     padding: EdgeInsets.only(bottom: spacing),
                                     child: Container(
+                                      // child: Text(value),
                                       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -477,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            item['label_text'],
+                                            item['label'] ?? "",
                                             style: TextStyle(
                                               color: Colors.orange,
                                               fontSize: fs_small,
@@ -498,7 +500,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   );
-                                }).toList(),
+                                }),
                               ],
                             ),
                           ),
@@ -539,20 +541,17 @@ class _HomePageState extends State<HomePage> {
                         children: selected6_15.asMap().entries.map((e) {
                           // final index = e.key;
                           final item = e.value;
-                          final valueBranch = homebranchs
-                              .where((h) => h['home_row_id'].toString() == item['id'].toString())
-                              .first;
 
-                          String value = valueBranch['value'];
+                          String value = '';
 
                           if (item['type_values_id'].toString() == '4') {
                             final sensor = sensors.firstWhere((s) {
-                              return s['monitor_id'].toString() == valueBranch['value'].toString();
+                              return s['monitor_id'].toString() == item['value'].toString();
                             }, orElse: () => {});
 
-                            value = sensor.isEmpty ? "[${valueBranch['value']}]" : sensor['datax_value'].toString();
+                            value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
                           } else {
-                            value = valueBranch['value']?.toString() ?? "";
+                            value = item['value']?.toString() ?? "";
                           }
                           return Container(
                             width: itemWidth,
@@ -597,7 +596,7 @@ class _HomePageState extends State<HomePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        item['label_text'],
+                                        item['label'] ?? "N/A",
                                         style: TextStyle(
                                           color: const Color.fromARGB(151, 0, 0, 0),
                                           fontSize: screenWidth < 360 ? 8 : 10,
@@ -608,7 +607,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       SizedBox(height: 1),
                                       Text(
-                                        "$value ${item['unitofvalue'] == '' ? "x" : item['unitofvalue']}",
+                                        "$value ${item['unitofvalue'] != null && item['unitofvalue'] != '' ? item['unitofvalue'] : ""}",
                                         style: TextStyle(
                                           fontSize: screenWidth < 360 ? 18 : 20,
                                           fontWeight: FontWeight.bold,
@@ -663,20 +662,17 @@ class _HomePageState extends State<HomePage> {
                         children: selected15_19.asMap().entries.map((e) {
                           final index = e.key;
                           final item = e.value;
-                          final valueBranch = homebranchs
-                              .where((h) => h['home_row_id'].toString() == item['id'].toString())
-                              .first;
 
-                          String value = valueBranch['value'];
+                          String value = item['value'];
 
                           if (item['type_values_id'].toString() == '4') {
                             final sensor = sensors.firstWhere((s) {
-                              return s['monitor_id'].toString() == valueBranch['value'].toString();
+                              return s['monitor_id'].toString() == item['value'].toString();
                             }, orElse: () => {});
 
-                            value = sensor.isEmpty ? "[${valueBranch['value']}]" : sensor['datax_value'].toString();
+                            value = sensor.isEmpty ? "[${item['value']}]" : sensor['datax_value'].toString();
                           } else {
-                            value = valueBranch['value']?.toString() ?? "";
+                            value = item['value']?.toString() ?? "";
                           }
 
                           return Container(
@@ -726,7 +722,7 @@ class _HomePageState extends State<HomePage> {
                                       SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
-                                          item['label_text'],
+                                          item['label'] ?? "",
                                           style: TextStyle(fontSize: fs_small),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -769,7 +765,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          "${item['unitofvalue'] == '' ? "unit" : item['unitofvalue']}",
+                                          "${item['unitofvalue'] != null && item['unitofvalue'] != '' ? item['unitofvalue'] : "unit"}",
                                           style: TextStyle(fontSize: fs_small),
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
