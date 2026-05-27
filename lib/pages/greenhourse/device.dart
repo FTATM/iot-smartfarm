@@ -16,7 +16,7 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
   bool isLoading = true;
-  Map<String, dynamic> newname = {'newname': ''};
+  Map<String, dynamic> newname = {'newname': '', 'branch_id': CurrentUser['branch_id']};
   List<dynamic> branchs = [];
   List<dynamic> devices = [];
   List<dynamic> temp = [];
@@ -149,7 +149,6 @@ class _DevicePageState extends State<DevicePage> {
   // ================= Premium Create Dialog =================
 
   void _showCreateDeviceDialog(BuildContext context) {
-    String? selectedBranchId;
 
     showDialog(
       context: context,
@@ -273,53 +272,53 @@ class _DevicePageState extends State<DevicePage> {
                               
                               const SizedBox(height: 24),
                               
-                              // เลือก Branch
-                              const Padding(
-                                padding: EdgeInsets.only(left: 4),
-                                child: Text(
-                                  "เลือก Branch",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xff464646),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              DropdownButtonFormField<String>(
-                                value: selectedBranchId,
-                                decoration: InputDecoration(
-                                  hintText: "เลือก Branch ของ Device",
-                                  filled: true,
-                                  fillColor: const Color(0xFFF9FAFB),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 16,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        const BorderSide(color: Color(0xFFE5E7EB)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        const BorderSide(color: brandOrange),
-                                  ),
-                                ),
-                                items: branchs.map<DropdownMenuItem<String>>((b) {
-                                  return DropdownMenuItem(
-                                    value: b['branch_id'],
-                                    child: Text(b['branch_name']),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setStateDialog(() {
-                                    selectedBranchId = value;
-                                    newname['branch_id'] = value;
-                                  });
-                                },
-                              ),
+                              // // เลือก Branch
+                              // const Padding(
+                              //   padding: EdgeInsets.only(left: 4),
+                              //   child: Text(
+                              //     "เลือก Branch",
+                              //     style: TextStyle(
+                              //       fontSize: 14,
+                              //       fontWeight: FontWeight.w500,
+                              //       color: Color(0xff464646),
+                              //     ),
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 8),
+                              // DropdownButtonFormField<String>(
+                              //   value: selectedBranchId,
+                              //   decoration: InputDecoration(
+                              //     hintText: "เลือก Branch ของ Device",
+                              //     filled: true,
+                              //     fillColor: const Color(0xFFF9FAFB),
+                              //     contentPadding: const EdgeInsets.symmetric(
+                              //       horizontal: 16,
+                              //       vertical: 16,
+                              //     ),
+                              //     enabledBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(12),
+                              //       borderSide:
+                              //           const BorderSide(color: Color(0xFFE5E7EB)),
+                              //     ),
+                              //     focusedBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(12),
+                              //       borderSide:
+                              //           const BorderSide(color: brandOrange),
+                              //     ),
+                              //   ),
+                              //   items: branchs.map<DropdownMenuItem<String>>((b) {
+                              //     return DropdownMenuItem(
+                              //       value: b['branch_id'],
+                              //       child: Text(b['branch_name']),
+                              //     );
+                              //   }).toList(),
+                              //   onChanged: (value) {
+                              //     setStateDialog(() {
+                              //       selectedBranchId = value;
+                              //       newname['branch_id'] = value;
+                              //     });
+                              //   },
+                              // ),
                               
                               const SizedBox(height: 28),
                               

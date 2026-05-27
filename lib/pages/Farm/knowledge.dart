@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/appbar.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/functions/function.dart';
 
 class KnowledgePage extends StatefulWidget {
   const KnowledgePage({super.key});
@@ -108,7 +109,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(_getIconForTable(item['name']), color: whiteColor, size: 20),
+                  child: Icon(getIconForTable(item['name']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -232,7 +233,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(color: whiteColor.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(_getIconForTable(parent['name']), color: whiteColor, size: 20),
+                  child: Icon(getIconForTable(parent['name']), color: whiteColor, size: 20),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -394,16 +395,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
     );
   }
 
-  IconData _getIconForTable(String? label) {
-    if (label == null) return Icons.table_chart;
 
-    if (label.contains('แสง')) return Icons.wb_sunny;
-    if (label.contains('ความชื้น')) return Icons.water_drop;
-    if (label.contains('อุณหภูมิ')) return Icons.thermostat;
-    if (label.contains('อาหาร')) return Icons.restaurant;
-
-    return Icons.table_chart;
-  }
 
   void calculateDay(String start, String? roundCycle) {
     final startDate = DateTime.parse(start);

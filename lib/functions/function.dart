@@ -38,6 +38,17 @@ Color hexToColor(String hex) {
   return Color(int.parse(hex, radix: 16));
 }
 
+IconData getIconForTable(String? label) {
+  if (label == null) return Icons.table_chart;
+
+  if (label.contains('แสง')) return Icons.wb_sunny;
+  if (label.contains('ความชื้น')) return Icons.water_drop;
+  if (label.contains('อุณหภูมิ')) return Icons.thermostat;
+  if (label.contains('อาหาร')) return Icons.restaurant;
+
+  return Icons.table_chart;
+}
+
 class ClockService {
   final ValueNotifier<DateTime> currentTime = ValueNotifier(DateTime.now());
   Timer? _timer;

@@ -96,13 +96,12 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   }
 
   Widget _buildChildByCase(index, item, homevalue, maxwidth) {
-    String? selectedValue =
-    sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
+    String? selectedValue = sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
         ? homevalue['value'].toString()
         : null;
     print("initialValue = '${homevalue['value']}'");
     print("items = ${sensors.map((e) => e['monitor_id']).toList()}");
-    print((index + 1).toString() +" \t" + item['id'] + " \t" + homevalue.toString());
+    print((index + 1).toString() + " \t" + item['id'] + " \t" + homevalue.toString());
 
     switch (item['type_values_id']) {
       case "1":
@@ -183,7 +182,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                   lastDate: DateTime(2100),
                 );
                 if (picked != null) {
-                  var pickedDate = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                  var pickedDate =
+                      "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                   setState(() => homevalue['value'] = pickedDate);
                 }
               },
