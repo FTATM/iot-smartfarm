@@ -188,8 +188,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       sensors = response['data'] as List;
     });
-    print("----- sensor ------");
-    print(sensors);
+    // print("----- sensor ------");
+    // print(sensors);
   }
 
   @override
