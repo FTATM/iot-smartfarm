@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/pages/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const Color brandOrange = Color(0xFFFF8021);
 const Color whiteColor = Colors.white;
@@ -17,9 +19,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         decoration: BoxDecoration(
           color: whiteColor,
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(_getResponsiveBorderRadius(context)),
-          ),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(_getResponsiveBorderRadius(context))),
           // border: Border(bottom: BorderSide(width: 3.0, color: Color.fromARGB(255, 255, 131, 0))),
           boxShadow: [
             BoxShadow(
@@ -31,9 +31,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(_getResponsiveBorderRadius(context)),
-          ),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(_getResponsiveBorderRadius(context))),
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -47,12 +45,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            actions: const [
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: AdminBadge(),
-              ),
-            ],
+            actions: const [Padding(padding: EdgeInsets.only(right: 12), child: AdminBadge())],
           ),
         ),
       ),
@@ -62,12 +55,11 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   // ขนาดตัวอักษร
   double _getResponsiveFontSize(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    
+    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
     // ถ้าเป็นแนวนอน ลดขนาดลง 20%
     double multiplier = isLandscape ? 0.8 : 1.0;
-    
+
     // มือถือเล็ก (< 360px)
     if (screenWidth < 360) {
       return 14 * multiplier;
@@ -96,10 +88,9 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   // ความสูง AppBar
   double _getResponsiveAppBarHeight(BuildContext context) {
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     double screenHeight = MediaQuery.of(context).size.height;
-    
+
     // แนวนอน: ใช้ความสูงน้อยกว่า
     if (isLandscape) {
       return screenHeight * 0.09; // 9% ของความสูงหน้าจอ
@@ -112,10 +103,9 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   // ความโค้งมุม
   double _getResponsiveBorderRadius(BuildContext context) {
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     double screenWidth = MediaQuery.of(context).size.width;
-    
+
     // แนวนอน: ลดความโค้งลง
     if (isLandscape) {
       return screenWidth * 0.03; // 3% ของความกว้างหน้าจอ
@@ -136,42 +126,67 @@ class AdminBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String roleText =
-        CurrentUser['username']?.toString() ?? 'แอดมิน';
+    final String nameText = CurrentUser['username']?.toString() ?? 'แอดมิน';
+    final String roleText = CurrentUser['role_id']?.toString() == "99"
+        ? "Global"
+        : CurrentUser['role_id']?.toString() == "88"
+        ? "Superadmin"
+        : CurrentUser['role_id']?.toString() == "55"
+        ? "Admin"
+        : "User";
 
     return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFE8DC),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: const BoxDecoration(
-                color: brandOrange,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person,
-                size: 18,
-                color: Colors.white,
-              ),
+      child: PopupMenuButton<String>(
+        color: Colors.white,
+        offset: const Offset(0, 40),
+        onSelected: (value) async {
+          if (value == 'logout') {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('user');
+            // กลับไปหน้า LoginPage
+            if (context.mounted) {
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const LoginPage()), (route) => false);
+            }
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem<String>(
+            enabled: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  nameText,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 255, 131, 0),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(roleText, style: TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
             ),
-            const SizedBox(width: 10),
-            Text(
-              roleText,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: brandOrange,
-              ),
-            ),
-          ],
+          ),
+          const PopupMenuDivider(),
+          const PopupMenuItem<String>(
+            value: 'logout',
+            child: Row(children: [Icon(Icons.logout, size: 18), SizedBox(width: 8), Text('Logout')]),
+          ),
+        ],
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+          decoration: BoxDecoration(color: const Color(0xFFFFE8DB), borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: const BoxDecoration(color: brandOrange, shape: BoxShape.circle),
+            child: const Icon(Icons.person, size: 18, color: Colors.white),
+          ),
         ),
       ),
     );

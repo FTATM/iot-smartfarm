@@ -60,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!mounted) return;
     setState(() => _isLoading = false);
-
     if (response['status'] == 'success') {
       await RememberConfig.saveRememberConfig(username, password);
       var user = response['user'];
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'] ?? 'something went wrong')));
     }
   }
 

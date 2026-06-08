@@ -133,196 +133,217 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                           onTapOutside: (_) => setState(() {}),
                         ),
 
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Table(
-                            border: TableBorder(horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1)),
-                            columnWidths: {
-                              0: FlexColumnWidth(1),
-                              for (int i = 0; i < childList.length + 1; i++) i + 1: const FlexColumnWidth(1),
-                              childList.length + 2: FixedColumnWidth(isEdit ? 40 : 0),
-                            },
-                            children: [
-                              TableRow(
-                                decoration: BoxDecoration(color: Colors.grey.shade100),
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Center(child: Text("ช่วงเวลา")),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(6),
-                                    child: TextFormField(
-                                      initialValue: parent['label'] ?? "",
-                                      style: TextStyle(fontSize: fsSmall),
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      onChanged: (v) => parent['label'] = v,
-                                      onTapOutside: (_) => setState(() {}),
-                                    ),
-                                  ),
-                                  for (final c in childList)
-                                    Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: TextFormField(
-                                        initialValue: c['label'] ?? "",
-                                        style: TextStyle(fontSize: fsSmall),
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          isDense: true,
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                        ),
-                                        onChanged: (v) => c['label'] = v,
-                                        onTapOutside: (_) => setState(() {}),
-                                      ),
-                                    ),
+                        /// ===== Table =====
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final screenWidth = MediaQuery.of(context).size.width;
+                            // กำหนดความกว้างแต่ละ column
+                            final baseColWidth = screenWidth < 400 ? 100.0 : 120.0;
+                            final dayColWidth = screenWidth < 400 ? 100.0 : 120.0;
 
-                                  Visibility(
-                                    visible: isEdit,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Center(child: Text("")),
-                                    ),
+                            // ความกว้างรวมขั้นต่ำ
+                            final minWidth = dayColWidth + ((childList.length + 1) * baseColWidth);
+
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minWidth: minWidth > constraints.maxWidth ? minWidth : constraints.maxWidth,
+                                ),
+                                child: Table(
+                                  border: TableBorder(
+                                    horizontalInside: BorderSide(color: Colors.grey.shade200, width: 1),
                                   ),
-                                ],
-                              ),
-
-                              ...parent['rows'].asMap().entries.map((e) {
-                                final index = e.key;
-                                final row = e.value;
-
-                                return TableRow(
+                                  columnWidths: {
+                                    0: FixedColumnWidth(dayColWidth),
+                                    for (int i = 0; i < childList.length + 1; i++) i + 1: FixedColumnWidth(baseColWidth),
+                                  },
                                   children: [
-                                    //start - end
-                                    Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    TableRow(
+                                      decoration: BoxDecoration(color: Colors.grey.shade100),
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Center(child: Text("ช่วงเวลา")),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(6),
+                                          child: TextFormField(
+                                            initialValue: parent['label'] ?? "",
+                                            style: TextStyle(fontSize: fsSmall),
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              isDense: true,
+                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            onChanged: (v) => parent['label'] = v,
+                                            onTapOutside: (_) => setState(() {}),
+                                          ),
+                                        ),
+                                        for (final c in childList)
+                                          Padding(
+                                            padding: const EdgeInsets.all(6),
+                                            child: TextFormField(
+                                              initialValue: c['label'] ?? "",
+                                              style: TextStyle(fontSize: fsSmall),
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                              ),
+                                              onChanged: (v) => c['label'] = v,
+                                              onTapOutside: (_) => setState(() {}),
+                                            ),
+                                          ),
+
+                                        // Visibility(
+                                        //   visible: isEdit,
+                                        //   child: const Padding(
+                                        //     padding: EdgeInsets.all(10),
+                                        //     child: Center(child: Text("")),
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+
+                                    ...parent['rows'].asMap().entries.map((e) {
+                                      final index = e.key;
+                                      final row = e.value;
+
+                                      return TableRow(
                                         children: [
-                                          //start_day
-                                          Container(
-                                            width: (maxwidth / ((childs.isEmpty ? 1 : childs.length + 1) * 6)),
-                                            child: TextFormField(
-                                              initialValue: row['d_start_day'] ?? "",
-                                              style: TextStyle(fontSize: fsSmall),
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              onChanged: (v) {
-                                                row['d_start_day'] = v;
-                                                for (final c in childList) {
-                                                  c['rows'][index]['d_start_day'] = v;
-                                                }
-                                              },
-                                              onTapOutside: (_) => setState(() {}),
-                                            ),
-                                          ),
-
-                                          //end_day
-                                          Container(
-                                            width: (maxwidth / ((childs.isEmpty ? 1 : childs.length + 1) * 6)),
-                                            child: TextFormField(
-                                              initialValue: row['d_end_day'] ?? "",
-                                              style: TextStyle(fontSize: fsSmall),
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                              onChanged: (v) {
-                                                row['d_end_day'] = v;
-                                                for (final c in childList) {
-                                                  c['rows'][index]['d_end_day'] = v;
-                                                }
-                                              },
-                                              onTapOutside: (_) => setState(() {}),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    //value
-                                    Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: TextFormField(
-                                        initialValue: row['d_value'] ?? "",
-                                        style: TextStyle(fontSize: fsSmall),
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          isDense: true,
-                                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        onChanged: (v) => row['d_value'] = v,
-                                        onTapOutside: (_) => setState(() {}),
-                                      ),
-                                    ),
-
-                                    // ค่า child
-                                    for (var c in childList)
-                                      Padding(
-                                        padding: const EdgeInsets.all(6),
-                                        child: Center(
-                                          child: Builder(
-                                            builder: (_) {
-                                              final rowsChild = c['rows'] ?? [];
-                                              final match = rowsChild.firstWhere(
-                                                (r) => r['d_row_parent_id'] == row['d_id'],
-                                                orElse: () => null,
-                                              );
-
-                                              if (match == null) return const Text("-");
-
-                                              return TextFormField(
-                                                initialValue: match['d_value'] ?? "",
-                                                style: TextStyle(fontSize: fsSmall),
-                                                decoration: const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  isDense: true,
-                                                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                          //start - end
+                                          Padding(
+                                            padding: const EdgeInsets.all(6),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                //start_day
+                                                Container(
+                                                  width: 50,
+                                                  child: TextFormField(
+                                                    initialValue: row['d_start_day'] ?? "",
+                                                    style: TextStyle(fontSize: fsSmall),
+                                                    decoration: const InputDecoration(
+                                                      border: OutlineInputBorder(),
+                                                      isDense: true,
+                                                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    onChanged: (v) {
+                                                      row['d_start_day'] = v;
+                                                      for (final c in childList) {
+                                                        c['rows'][index]['d_start_day'] = v;
+                                                      }
+                                                    },
+                                                    onTapOutside: (_) => setState(() {}),
+                                                  ),
                                                 ),
-                                                onChanged: (v) {
-                                                  match['d_value'] = v;
-                                                },
-                                                onTapOutside: (event) => setState(() {}),
-                                              );
-                                            },
+
+                                                //end_day
+                                                Container(
+                                                  width: 50,
+                                                  child: TextFormField(
+                                                    initialValue: row['d_end_day'] ?? "",
+                                                    style: TextStyle(fontSize: fsSmall),
+                                                    decoration: const InputDecoration(
+                                                      border: OutlineInputBorder(),
+                                                      isDense: true,
+                                                      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    onChanged: (v) {
+                                                      row['d_end_day'] = v;
+                                                      for (final c in childList) {
+                                                        c['rows'][index]['d_end_day'] = v;
+                                                      }
+                                                    },
+                                                    onTapOutside: (_) => setState(() {}),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
 
-                                    Visibility(
-                                      visible: isEdit,
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          // var res = await ApiService.deleteRowById(row);
-                                          // if (res['status'] == 'success') {
-                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบแถวสำเร็จ.")));
-                                          // } else {
-                                          //   ScaffoldMessenger.of(
-                                          //     context,
-                                          //   ).showSnackBar(SnackBar(content: Text("ลบแถวไม่สำเร็จ กรุณาลองอีกครั้ง.")));
-                                          // }
-                                        },
-                                        icon: Icon(Icons.delete, color: Colors.red),
-                                      ),
-                                    ),
+                                          //value
+                                          Padding(
+                                            padding: const EdgeInsets.all(6),
+                                            child: TextFormField(
+                                              initialValue: row['d_value'] ?? "",
+                                              style: TextStyle(fontSize: fsSmall),
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              onChanged: (v) => row['d_value'] = v,
+                                              onTapOutside: (_) => setState(() {}),
+                                            ),
+                                          ),
+
+                                          // ค่า child
+                                          for (var c in childList)
+                                            Padding(
+                                              padding: const EdgeInsets.all(6),
+                                              child: Center(
+                                                child: Builder(
+                                                  builder: (_) {
+                                                    final rowsChild = c['rows'] ?? [];
+                                                    final match = rowsChild.firstWhere(
+                                                      (r) => r['d_row_parent_id'] == row['d_id'],
+                                                      orElse: () => null,
+                                                    );
+
+                                                    if (match == null) return const Text("-");
+
+                                                    return TextFormField(
+                                                      initialValue: match['d_value'] ?? "",
+                                                      style: TextStyle(fontSize: fsSmall),
+                                                      decoration: const InputDecoration(
+                                                        border: OutlineInputBorder(),
+                                                        isDense: true,
+                                                        contentPadding: EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 8,
+                                                        ),
+                                                      ),
+                                                      onChanged: (v) {
+                                                        match['d_value'] = v;
+                                                      },
+                                                      onTapOutside: (event) => setState(() {}),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+
+                                          // Visibility(
+                                          //   visible: isEdit,
+                                          //   child: IconButton(
+                                          //     onPressed: () async {
+                                          //       // var res = await ApiService.deleteRowById(row);
+                                          //       // if (res['status'] == 'success') {
+                                          //       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ลบแถวสำเร็จ.")));
+                                          //       // } else {
+                                          //       //   ScaffoldMessenger.of(
+                                          //       //     context,
+                                          //       //   ).showSnackBar(SnackBar(content: Text("ลบแถวไม่สำเร็จ กรุณาลองอีกครั้ง.")));
+                                          //       // }
+                                          //     },
+                                          //     icon: Icon(Icons.delete, color: Colors.red),
+                                          //   ),
+                                          // ),
+                                        ],
+                                      );
+                                    }).toList(),
                                   ],
-                                );
-                              }).toList(),
-                            ],
-                          ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-
                         const SizedBox(height: 16),
 
                         Row(
@@ -348,26 +369,22 @@ class _ScheduleCreatePageState extends State<ScheduleCreatePage> {
                               ),
                             ),
 
-                            Visibility(
-                              visible: childList.length < 2,
-                              child:
-                                  /// Add Column
-                                  OutlinedButton.icon(
-                                    style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(color: Colors.orange, width: 2),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                    ),
-                                    onPressed: () {
-                                      helper().addColumn(parent, temps);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.view_column, color: Colors.orange),
-                                    label: const Text(
-                                      "เพิ่มคอลัมใหม่",
-                                      style: TextStyle(color: Colors.orange, fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                            /// Add Column
+                            OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.orange, width: 2),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              ),
+                              onPressed: () {
+                                helper().addColumn(parent, temps);
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.view_column, color: Colors.orange),
+                              label: const Text(
+                                "เพิ่มคอลัมใหม่",
+                                style: TextStyle(color: Colors.orange, fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ],
                         ),
