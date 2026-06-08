@@ -17,7 +17,6 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   String userString = "";
   Map<String, dynamic> user = {};
   Map<String, dynamic> weather = {};
-  List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> logos = [];
   List<dynamic> sensors = [];
@@ -36,14 +35,13 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
   Future<void> _prepareData() async {
     await _fetchicons();
     await _fetchLogos();
-    await _fetchmainBoard();
     await _fetchconfiguration();
     await _fetchWeathers();
     await _fetchHomeBranch();
     setState(() {
       user = CurrentUser;
       isLoading = false;
-      labelControllers = data.map((item) => TextEditingController(text: item['label_text']?.toString() ?? '')).toList();
+      labelControllers = homebranchs.map((item) => TextEditingController(text: item['label']?.toString() ?? '')).toList();
       manualController = homebranchs
           .map((item) => TextEditingController(text: item['value']?.toString() ?? ''))
           .toList();
@@ -80,28 +78,18 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     });
   }
 
-  Future<void> _fetchmainBoard() async {
-    final response = await ApiService.fetchMainboard();
-    setState(() {
-      data = response['data'] as List;
-    });
-  }
-
   Future<void> _fetchconfiguration() async {
     final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
     setState(() {
       sensors = response['data'] as List;
     });
-    print(sensors);
+    // print(sensors);
   }
 
   Widget _buildChildByCase(index, item, homevalue, maxwidth) {
     String? selectedValue = sensors.any((s) => s['monitor_id'].toString() == homevalue['value'].toString())
         ? homevalue['value'].toString()
         : null;
-    print("initialValue = '${homevalue['value']}'");
-    print("items = ${sensors.map((e) => e['monitor_id']).toList()}");
-    print((index + 1).toString() + " \t" + item['id'] + " \t" + homevalue.toString());
 
     switch (item['type_values_id']) {
       case "1":
@@ -321,7 +309,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                     scale: 0.85,
                     child: Switch(
                       value: toggleValue ?? false,
-                      activeColor: const Color(0xFFF97316),
+                      activeThumbColor: const Color(0xFFF97316),
                       onChanged: onToggleChanged,
                     ),
                   ),
@@ -346,7 +334,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
     final maxwidth = MediaQuery.of(context).size.width;
 
-    var foundlogo = logos.where((i) => data[0]['icon_id'] == i['id']);
+    var foundlogo = logos.where((l) => homebranchs[0]['icon_id'] == l['id']);
+
+    print(homebranchs[0]);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -427,19 +417,19 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
               ),
 
               _buildModernCard(
-                title: "${data[0]['id']} ${data[0]['name']}",
+                title: "${homebranchs[0]['id']} ${homebranchs[0]['name'] ?? ""}",
                 icon: Icons.dashboard_customize,
                 showToggle: false,
-                toggleValue: data[0]['is_active'] == 't',
+                toggleValue: homebranchs[0]['is_active'] == 't',
                 onToggleChanged: (value) {
                   setState(() {
-                    data[0]['is_active'] = value ? 't' : 'f';
+                    homebranchs[0]['is_active'] = value ? 't' : 'f';
                   });
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (data[0]['icon_id'] != '0') ...[
+                    if (homebranchs[0]['icon_id'] != '0') ...[
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -461,7 +451,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                   ),
                                 ),
                                 DropdownButtonFormField<String>(
-                                  value: data[0]['icon_id'] == '0' || foundlogo.isEmpty ? null : data[0]['icon_id'],
+                                  initialValue: homebranchs[0]['icon_id'] == '0' || foundlogo.isEmpty ? null : homebranchs[0]['icon_id'],
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.grey[50],
@@ -483,7 +473,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                     return DropdownMenuItem(value: logo['id'], child: Text(logo['name']));
                                   }).toList(),
                                   onChanged: (value) {
-                                    setState(() => data[0]['icon_id'] = value);
+                                    setState(() => homebranchs[0]['icon_id'] = value);
                                   },
                                 ),
                               ],
@@ -504,7 +494,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                               children: [
                                 Expanded(
                                   child: Image.network(
-                                    "${user['baseURL']}../${logos.firstWhere((i) => i['id'] == data[0]['icon_id'], orElse: () => {"path": "img/logos/default.png"})['path']}",
+                                    "${user['baseURL']}../${logos.firstWhere((i) => i['id'] == homebranchs[0]['icon_id'], orElse: () => {"path": "img/logos/default.png"})['path']}",
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -537,7 +527,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: () async {
-                          var response = await ApiService.updateMainboardById(data[0], homebranchs[0]);
+                          var response = await ApiService.updateMainboardById(homebranchs[0], homebranchs[0]);
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'])));
                         },
                         child: const Row(
@@ -554,13 +544,13 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                 ),
               ),
               // Dynamic Data Cards
-              ...data.sublist(1).asMap().entries.map((entry) {
+              ...homebranchs.sublist(1).asMap().entries.map((entry) {
                 int index = entry.key;
                 var item = entry.value;
                 var foundIcon = icons.where((i) => item['icon_id'] == i['id']);
 
                 return _buildModernCard(
-                  title: "${item['id']} ${item['name']}",
+                  title: "${item['id']} ${item['name'] ?? ""}",
                   icon: Icons.dashboard_customize,
                   showToggle: true,
                   toggleValue: item['is_active'] == 't',
@@ -574,10 +564,10 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                     children: [
                       _buildInputField(
                         label: "Label",
-                        initialValue: item['label_text'],
+                        initialValue: item['label'],
                         onChanged: (value) {
                           setState(() {
-                            data[index + 1]['label_text'] = value;
+                            homebranchs[index + 1]['label'] = value;
                             labelControllers[index + 1].text = value;
                           });
                         },
@@ -686,7 +676,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                               ),
                             ),
                             DropdownButtonFormField<String>(
-                              value: item['type_values_id'] == "0" ? '1' : item['type_values_id'],
+                              initialValue: item['type_values_id'] == "0" ? '1' : item['type_values_id'],
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.grey[50],
@@ -736,7 +726,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                         initialValue: item['unitofvalue'],
                         onChanged: (value) {
                           setState(() {
-                            data[index + 1]['unitofvalue'] = value;
+                            homebranchs[index + 1]['unitofvalue'] = value;
                             labelControllers[index + 1].text = value;
                           });
                         },

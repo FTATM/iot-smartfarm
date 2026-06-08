@@ -92,7 +92,6 @@ class _HomePageState extends State<HomePage> {
   String userString = "";
   Map<String, dynamic> user = {};
   Map<String, dynamic> weathers = {'tc': '0.00', 'rh': '0.00', 'rain': '0.00', 'ws10m': '0.00'};
-  List<dynamic> data = [];
   List<dynamic> icons = [];
   List<dynamic> logos = [];
   List<dynamic> homebranchs = [];
@@ -126,7 +125,6 @@ class _HomePageState extends State<HomePage> {
     });
     await _fetchicons();
     await _fetchLogos();
-    await _fetchmainBoard();
     await _fetchDataWeathers();
     await _fetchconfiguration();
     await _fetchHomeBranch();
@@ -174,14 +172,6 @@ class _HomePageState extends State<HomePage> {
     // print(icons.toString());
   }
 
-  Future<void> _fetchmainBoard() async {
-    final response = await ApiService.fetchMainboard();
-    setState(() {
-      data = response['data'] as List;
-    });
-    // print("----- data ------");
-    // print(data.toString());
-  }
 
   Future<void> _fetchconfiguration() async {
     final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
