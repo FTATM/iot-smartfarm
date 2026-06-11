@@ -244,17 +244,11 @@ class _DashboardPageState extends State<DashboardPage> {
                         final size = double.parse(item['size']);
                         final itemIndex = data.indexOf(item);
 
-                        // คำนวณความกว้างตามขนาด
-                        // size 1 = 1 อันต่อแถว (full width)
-                        // size 2 = 2 อันต่อแถว (half width)
-                        // size 3 = 3 อันต่อแถว (third width)
                         final itemWidth = size == 1
-                            ? maxwidth -
-                                  24 // Full width minus padding
+                            ? maxwidth - 24
                             : size == 2
-                            ? (maxwidth - 36) /
-                                  2 // Half width
-                            : (maxwidth - 48) / 3; // Third width
+                            ? (maxwidth - 36) / 2
+                            : (maxwidth - 48) / 3;
                         return Container(
                           width: itemWidth,
                           margin: const EdgeInsets.only(bottom: 12),
@@ -334,38 +328,11 @@ class _DashboardPageState extends State<DashboardPage> {
                     int i = 0;
 
                     while (i < data.length) {
-                      // final currentSize = double.parse(data[i]['size']);
-
                       rows.add(buildRow([data[i]]).first);
                       i++;
-                      // if (currentSize == 1) {
-                      //   // ขนาดใหญ่ - 1 อันต่อแถว
-                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: buildRow([data[i]])));
-                      //   i++;
-                      // } else if (currentSize == 2) {
-                      //   // ขนาดกลาง - 2 อันต่อแถว
-                      //   List<dynamic> rowItems = [data[i]];
-                      //   if (i + 1 < data.length && double.parse(data[i + 1]['size']) == 2) {
-                      //     rowItems.add(data[i + 1]);
-                      //     i += 2;
-                      //   } else {
-                      //     i++;
-                      //   }
-                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
-                      // } else {
-                      //   // ขนาดเล็ก - 3 อันต่อแถว
-                      //   List<dynamic> rowItems = [data[i]];
-                      //   int count = 1;
-                      //   while (count < 3 && i + count < data.length && double.parse(data[i + count]['size']) == 3) {
-                      //     rowItems.add(data[i + count]);
-                      //     count++;
-                      //   }
-                      //   i += count;
-                      //   rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: buildRow(rowItems)));
-                      // }
                     }
 
-                    return Wrap(alignment: WrapAlignment.spaceBetween, children: rows);
+                    return Wrap(alignment: WrapAlignment.spaceBetween, spacing: 10, children: rows);
                   },
                 ),
               ],

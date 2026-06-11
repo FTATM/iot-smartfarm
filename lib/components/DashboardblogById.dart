@@ -995,7 +995,13 @@ class _DashboardBlogByIdWidgetState extends State<DashboardBlogByIdWidget> {
                             ),
                             minimumSize: Size(buttonMinWidth, 0),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                              setState(() {
+                                isOn = !isOn;
+                              });
+                              String x = isOn ? "1" : "0";
+                              widget.onValueChanged('m_value', x);
+                            },
                           child: Text(
                             isOn ? 'ON' : 'OFF',
                             style: TextStyle(
