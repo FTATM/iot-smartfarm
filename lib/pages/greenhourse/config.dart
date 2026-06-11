@@ -20,6 +20,7 @@ class _ConfigPageState extends State<ConfigPage> {
 
   List<String> daysList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  List<TextEditingController> descriptionControllers = [];
   List<TextEditingController> minControllers = [];
   List<TextEditingController> maxControllers = [];
   List<TextEditingController> namesControllers = [];
@@ -92,6 +93,9 @@ class _ConfigPageState extends State<ConfigPage> {
       types = tres['data'] as List;
       dataxs = xres['data'] as List;
 
+      descriptionControllers = data
+          .map((item) => TextEditingController(text: item['description']?.toString() ?? ''))
+          .toList();
       minControllers = data.map((item) => TextEditingController(text: item['min_value']?.toString() ?? '')).toList();
       maxControllers = data.map((item) => TextEditingController(text: item['max_value']?.toString() ?? '')).toList();
       namesControllers = data
@@ -148,7 +152,9 @@ class _ConfigPageState extends State<ConfigPage> {
             if (nameshort.length > 20) {
               nameshort = "${nameshort.substring(0, 20)}...";
             }
-
+            String? selectedTargetDevice = data.any((d) => d['monitor_id']?.toString() == item['target_id'])
+                ? item['target_id']
+                : null;
             String? selectedGroupValue = groups.any((d) => d['group_id']?.toString() == item['group_id'])
                 ? item['group_id']
                 : null;
@@ -223,11 +229,13 @@ class _ConfigPageState extends State<ConfigPage> {
                               style: TextStyle(fontSize: 14, color: Colors.grey[600], fontWeight: FontWeight.w500),
                             ),
                             SizedBox(height: 8),
+
                             Text(
                               item['datax_value'] ?? '0',
                               style: TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Color(0xFFFF9F43)),
                             ),
                             SizedBox(height: 24),
+
                             Divider(thickness: 1, color: Colors.grey[300]),
                             SizedBox(height: 20),
 
@@ -240,6 +248,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               ),
                             ),
                             SizedBox(height: 16),
+
                             // Name Textfield
                             Container(
                               height: 40,
@@ -274,6 +283,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               ),
                             ),
                             SizedBox(height: 16),
+
                             // Group Dropdown
                             _buildDropdownField(
                               label: 'Group',
@@ -281,7 +291,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               items: groups.map<DropdownMenuItem<String>>((group) {
                                 return DropdownMenuItem<String>(
                                   value: group['group_id']?.toString(),
-                                  child: Text(group['group_name'] ?? ''),
+                                  child: Text('[${group['group_id']}] ${group['group_name'] ?? ""}'),
                                 );
                               }).toList(),
                               onChanged: (valueg) {
@@ -294,6 +304,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               },
                             ),
                             SizedBox(height: 12),
+
                             // Device Dropdown
                             _buildDropdownField(
                               label: 'Device',
@@ -301,7 +312,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               items: devices.map<DropdownMenuItem<String>>((device) {
                                 return DropdownMenuItem<String>(
                                   value: device['device_id']?.toString(),
-                                  child: Text(device['divice_name'] ?? '', overflow: TextOverflow.ellipsis),
+                                  child: Text('[${device['device_id']}] ${device['divice_name'] ?? ""}', overflow: TextOverflow.ellipsis),
                                 );
                               }).toList(),
                               onChanged: (valued) {
@@ -343,7 +354,7 @@ class _ConfigPageState extends State<ConfigPage> {
                               items: dataxs.map<DropdownMenuItem<String>>((datax) {
                                 return DropdownMenuItem<String>(
                                   value: datax['datax_id']?.toString(),
-                                  child: Text(datax['datax_name'] ?? ''),
+                                  child: Text('[${datax['datax_id']}] ${datax['datax_name'] ?? ''}'),
                                 );
                               }).toList(),
                               onChanged: (valuex) {
@@ -355,10 +366,77 @@ class _ConfigPageState extends State<ConfigPage> {
                                 });
                               },
                             ),
+                            SizedBox(height: 12),
+
+                            // Description
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Description',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF5F5F5),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: TextField(
+                                controller: descriptionControllers[index],
+                                minLines: 3,
+                                maxLines: 5,
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+                                decoration: InputDecoration(border: InputBorder.none, isDense: true),
+                                onChanged: (value) {
+                                  setState(() {
+                                    data[index]['description'] = value;
+                                  });
+                                  setStateDialog(() {
+                                    item['description'] = value;
+                                  });
+                                },
+                              ),
+                            ),
+
                             SizedBox(height: 24),
+
                             Divider(thickness: 1, color: Colors.grey[300]),
                             SizedBox(height: 20),
-                            // Notify and Time Section
+
+                            // AI Allow switch
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'อนุญาตให้ AI สั่งงาน',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                ),
+                                SizedBox(width: 8),
+                                Switch(
+                                  value: item['ai_allow'] == '1',
+                                  onChanged: (value) {
+                                    setStateDialog(() {
+                                      item['ai_allow'] = value ? '1' : '0';
+                                    });
+                                    setState(() {
+                                      data[index]['ai_allow'] = value ? '1' : '0';
+                                    });
+                                  },
+                                  activeThumbColor: Color(0xFFFF9F43),
+                                  inactiveThumbColor: Colors.grey,
+                                ),
+                                SizedBox(width: 16),
+                              ],
+                            ),
+                            SizedBox(height: 16),
+
+                            Divider(thickness: 1, color: Colors.grey[300]),
+                            SizedBox(height: 16),
+
+                            // Header Notify and Time
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -381,7 +459,7 @@ class _ConfigPageState extends State<ConfigPage> {
                                       data[index]['is_min'] = value ? '1' : '0';
                                     });
                                   },
-                                  activeColor: Color(0xFFFF9F43),
+                                  activeThumbColor: Color(0xFFFF9F43),
                                   inactiveThumbColor: Colors.grey,
                                 ),
                                 SizedBox(width: 8),
@@ -546,6 +624,19 @@ class _ConfigPageState extends State<ConfigPage> {
                             ),
                             SizedBox(height: 24),
 
+                            Divider(thickness: 1, color: Colors.grey[300]),
+                            SizedBox(height: 16),
+
+                            // Header Schedule Day
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Schedule Day',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+
                             // Days of Week Checkboxes
                             ...daysList.asMap().entries.map((entry) {
                               final dayIndex = entry.key;
@@ -595,8 +686,20 @@ class _ConfigPageState extends State<ConfigPage> {
                                   ],
                                 ),
                               );
-                            }).toList(),
+                            }),
+
+                            Divider(thickness: 1, color: Colors.grey[300]),
                             SizedBox(height: 12),
+
+                            // Header Schedule Day
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Schedule Time',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            ),
+                            SizedBox(height: 16),
 
                             ...listTime.asMap().entries.where((e) => e.value.isdelete != 1).map((entry) {
                               final index = entry.key;
@@ -678,8 +781,9 @@ class _ConfigPageState extends State<ConfigPage> {
                                   ],
                                 ),
                               );
-                            }).toList(),
+                            }),
 
+                            // Btn add time
                             Align(
                               alignment: Alignment.centerLeft,
                               child: ElevatedButton.icon(
@@ -689,6 +793,27 @@ class _ConfigPageState extends State<ConfigPage> {
                                 label: const Text('เพิ่มช่วงเวลา'),
                               ),
                             ),
+
+                            // Group Dropdown
+                            _buildDropdownField(
+                              label: 'Target Device',
+                              value: selectedTargetDevice,
+                              items: data.map<DropdownMenuItem<String>>((d) {
+                                return DropdownMenuItem<String>(
+                                  value: d['monitor_id']?.toString(),
+                                  child: Text(d['monitor_name'] ?? ''),
+                                );
+                              }).toList(),
+                              onChanged: (valueg) {
+                                setStateDialog(() {
+                                  item['target_id'] = valueg;
+                                });
+                                setState(() {
+                                  item['target_id'] = valueg;
+                                });
+                              },
+                            ),
+                            SizedBox(height: 12),
                           ],
                         ),
                       ),
@@ -832,7 +957,7 @@ class _ConfigPageState extends State<ConfigPage> {
             child: isChecked == '1' ? Icon(Icons.check, color: Colors.white, size: 18) : null,
           ),
         ),
-        SizedBox(width: 10,),
+        SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
