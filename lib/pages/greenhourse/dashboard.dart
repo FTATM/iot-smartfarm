@@ -40,7 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     _prepareData();
     _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _updateTime();
       _fetchDashboard(CurrentUser['branch_id']);
     });
@@ -271,7 +271,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 child: DashboardBlogByIdWidget(
                                   type: item['item_type_id'],
                                   size: item['size'],
-                                  title: item['item_name'],
+                                  title: item['item_name']?? "Unknown",
                                   value: item['m_value'] ?? "0",
                                   isDialog: false,
                                   pathImage: item['i_path'] ?? "img/icons/default.png",
