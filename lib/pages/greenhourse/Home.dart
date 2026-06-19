@@ -107,9 +107,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _prepareData();
-    // _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-    // _prepareData();
-    // });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _prepareData();
+    });
   }
 
   @override

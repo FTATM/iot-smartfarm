@@ -429,7 +429,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (homebranchs[0]['icon_id'] != '0') ...[
+                    if (homebranchs[0]['icon_id'] != '-1') ...[
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

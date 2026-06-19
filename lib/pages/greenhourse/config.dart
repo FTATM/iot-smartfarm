@@ -45,7 +45,7 @@ class _ConfigPageState extends State<ConfigPage> {
   void initState() {
     super.initState();
     _fetchData();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (!isShowDialog) {
         _fetchData();
       }
