@@ -120,7 +120,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _prepareData() async {
-    if (!mounted) return;
     setState(() {
       user = CurrentUser;
     });
@@ -129,7 +128,6 @@ class _HomePageState extends State<HomePage> {
     await _fetchDataWeathers();
     await _fetchconfiguration();
     await _fetchHomeBranch();
-    if (!mounted) return;
     setState(() {
       isLoading = false;
     });
@@ -138,7 +136,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchDataWeathers() async {
     final response = await ApiService.fetchDataWeathers();
 
-    if (!mounted) return;
     setState(() {
       // print("----- Weather ------");
       // print(response);
@@ -150,7 +147,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchHomeBranch() async {
     final response = await ApiService.fetchHomeBranch(CurrentUser['branch_id']);
-    if (!mounted) return;
     setState(() {
       homebranchs = response['data'] as List;
     });
@@ -160,7 +156,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchLogos() async {
     final response = await ApiService.fetchLogos();
-    if (!mounted) return;
     setState(() {
       logos = response['data'] as List;
     });
@@ -170,7 +165,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchicons() async {
     final response = await ApiService.fetchIcons();
-    if (!mounted) return;
     setState(() {
       icons = response['data'] as List;
     });
@@ -180,7 +174,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchconfiguration() async {
     final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
-    if (!mounted) return;
     setState(() {
       sensors = response['data'] as List;
     });

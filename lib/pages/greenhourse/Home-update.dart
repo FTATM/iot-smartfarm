@@ -41,7 +41,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     setState(() {
       user = CurrentUser;
       isLoading = false;
-      labelControllers = homebranchs.map((item) => TextEditingController(text: item['label']?.toString() ?? '')).toList();
+      labelControllers = homebranchs
+          .map((item) => TextEditingController(text: item['label']?.toString() ?? ''))
+          .toList();
       manualController = homebranchs
           .map((item) => TextEditingController(text: item['value']?.toString() ?? ''))
           .toList();
@@ -80,8 +82,14 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
   Future<void> _fetchconfiguration() async {
     final response = await ApiService.fetchConfigBybranchId(CurrentUser['branch_id']);
+    final List sensorsData = response['data'] as List;
+
+    sensorsData.sort((a, b) {
+      return int.parse(a['device_id'].toString()).compareTo(int.parse(b['device_id'].toString()));
+    });
+
     setState(() {
-      sensors = response['data'] as List;
+      sensors = sensorsData;
     });
     // print(sensors);
   }
@@ -200,7 +208,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
           items: sensors.map<DropdownMenuItem<String>>((b) {
             return DropdownMenuItem(
               value: b['monitor_id'].toString(),
-              child: Text("[${b['monitor_id']}] ${b['monitor_name']}", maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Text("[${b['device_id']}] ${b['monitor_name']}", maxLines: 1, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
           onChanged: (value) {
@@ -336,8 +344,6 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
 
     var foundlogo = logos.where((l) => homebranchs[0]['icon_id'] == l['id']);
 
-    print(homebranchs[0]);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppbarWidget(txtt: "Edit Home"),
@@ -417,7 +423,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
               ),
 
               _buildModernCard(
-                title: "${homebranchs[0]['id']} ${homebranchs[0]['name'] ?? ""}",
+                title: "${homebranchs[0]['home_row_id']} ${homebranchs[0]['name'] ?? ""}",
                 icon: Icons.dashboard_customize,
                 showToggle: false,
                 toggleValue: homebranchs[0]['is_active'] == 't',
@@ -451,7 +457,9 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                                   ),
                                 ),
                                 DropdownButtonFormField<String>(
-                                  initialValue: homebranchs[0]['icon_id'] == '0' || foundlogo.isEmpty ? null : homebranchs[0]['icon_id'],
+                                  initialValue: homebranchs[0]['icon_id'] == '0' || foundlogo.isEmpty
+                                      ? null
+                                      : homebranchs[0]['icon_id'],
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.grey[50],

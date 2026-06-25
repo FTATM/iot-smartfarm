@@ -44,8 +44,9 @@ class _LogosPageState extends State<LogosPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-          backgroundColor: Colors.white,
-          body: Center(child: CircularProgressIndicator()));
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final maxwidth = MediaQuery.of(context).size.width;
 
@@ -66,30 +67,23 @@ class _LogosPageState extends State<LogosPage> {
               spacing: 8,
               runSpacing: 8,
               children: logos.map((item) {
-
                 return Container(
                   width: (maxwidth - 24) / 2,
                   child: Card(
                     elevation: 3,
                     shadowColor: const Color.fromARGB(66, 0, 0, 0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     child: Column(
                       children: [
                         // Image Container with Gradient
                         Container(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                Color(0xFFFFF8F0),
-                                Color(0xFFFFE4CC),
-                              ],
+                              colors: [Color(0xFFFFF8F0), Color.fromARGB(255, 226, 226, 226)],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(16)),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                           ),
                           width: double.infinity,
                           height: (maxwidth - 24) / 2 * 0.7,
@@ -97,21 +91,26 @@ class _LogosPageState extends State<LogosPage> {
                           child: Image.network(
                             "${CurrentUser['baseURL']}../${item['path']}",
                             fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.network(
+                                "${CurrentUser['baseURL']}../img/logos/default.png",
+                                fit: BoxFit.contain,
+                              );
+                            },
                           ),
                         ),
 
                         // Name and Delete Button Container
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                              color: Colors.white, // กำหนดสีพื้นหลังเป็นสีขาว
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(12), // โค้งมุมด้านล่างซ้าย
-                                bottomRight: Radius.circular(12), // โค้งมุมด้านล่างขวา
-                              ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white, // กำหนดสีพื้นหลังเป็นสีขาว
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(12), // โค้งมุมด้านล่างซ้าย
+                              bottomRight: Radius.circular(12), // โค้งมุมด้านล่างขวา
                             ),
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,10 +118,7 @@ class _LogosPageState extends State<LogosPage> {
                               Expanded(
                                 child: Text(
                                   item['name'],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -132,15 +128,8 @@ class _LogosPageState extends State<LogosPage> {
                                 child: Container(
                                   width: 32,
                                   height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.delete_outline,
-                                    size: 18,
-                                    color: Colors.grey[700],
-                                  ),
+                                  decoration: BoxDecoration(color: Colors.grey[300], shape: BoxShape.circle),
+                                  child: Icon(Icons.delete_outline, size: 18, color: Colors.grey[700]),
                                 ),
                               ),
                             ],
@@ -182,22 +171,15 @@ class _LogosPageState extends State<LogosPage> {
                   insetPadding: const EdgeInsets.all(16),
                   backgroundColor: Colors.white,
                   elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                   child: Container(
                     width: 360,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(28),
-                      border:
-                          Border.all(color: Colors.white.withOpacity(0.6)),
+                      border: Border.all(color: Colors.white.withOpacity(0.6)),
                       boxShadow: const [
-                        BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, 0.12),
-                          blurRadius: 40,
-                          offset: Offset(0, 10),
-                        ),
+                        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.12), blurRadius: 40, offset: Offset(0, 10)),
                       ],
                     ),
                     child: Stack(
@@ -208,10 +190,7 @@ class _LogosPageState extends State<LogosPage> {
                           child: Container(
                             width: 96,
                             height: 96,
-                            decoration: BoxDecoration(
-                              color: brandOrange.withOpacity(0.05),
-                              shape: BoxShape.circle,
-                            ),
+                            decoration: BoxDecoration(color: brandOrange.withOpacity(0.05), shape: BoxShape.circle),
                           ),
                         ),
                         Column(
@@ -223,24 +202,13 @@ class _LogosPageState extends State<LogosPage> {
                                 Container(
                                   width: 40,
                                   height: 40,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFFF5ED),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.image,
-                                    color: brandOrange,
-                                    size: 22,
-                                  ),
+                                  decoration: const BoxDecoration(color: Color(0xFFFFF5ED), shape: BoxShape.circle),
+                                  child: const Icon(Icons.image, color: brandOrange, size: 22),
                                 ),
                                 const SizedBox(width: 12),
                                 const Text(
                                   "เพิ่มโลโก้ใหม่",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1A1A1A),
-                                  ),
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF1A1A1A)),
                                 ),
                               ],
                             ),
@@ -255,58 +223,42 @@ class _LogosPageState extends State<LogosPage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                     gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFFFFF8F0),
-                                        Color(0xFFFFE4CC),
-                                      ],
+                                      colors: [Color(0xFFFFF8F0), Color(0xFFFFE4CC)],
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                     ),
-                                    border: Border.all(
-                                        color: Colors.grey[300]!),
+                                    border: Border.all(color: Colors.grey[300]!),
                                   ),
                                   padding: const EdgeInsets.all(16),
-                                  child: Image.memory(fileBytes!,
-                                      fit: BoxFit.contain),
+                                  child: Image.memory(fileBytes!, fit: BoxFit.contain),
                                 ),
                               ),
 
-                            if (fileBytes != null)
-                              const SizedBox(height: 24),
+                            if (fileBytes != null) const SizedBox(height: 24),
 
                             // File Name Input
                             const Padding(
                               padding: EdgeInsets.only(left: 4),
                               child: Text(
                                 "ชื่อไฟล์",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xff464646),
-                                ),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xff464646)),
                               ),
                             ),
                             const SizedBox(height: 8),
                             TextField(
                               controller: input,
                               decoration: InputDecoration(
-                                hintText:
-                                    "ตั้งชื่อไฟล์ (ไม่ใส่จะใช้ชื่อไฟล์ต้นฉบับ)",
+                                hintText: "ตั้งชื่อไฟล์ (ไม่ใส่จะใช้ชื่อไฟล์ต้นฉบับ)",
                                 filled: true,
                                 fillColor: const Color(0xFFF9FAFB),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xFFE5E7EB)),
+                                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide:
-                                      const BorderSide(color: brandOrange),
+                                  borderSide: const BorderSide(color: brandOrange),
                                 ),
                               ),
                             ),
@@ -319,13 +271,11 @@ class _LogosPageState extends State<LogosPage> {
                               child: OutlinedButton.icon(
                                 onPressed: () async {
                                   if (kIsWeb) {
-                                    html.FileUploadInputElement uploadInput =
-                                        html.FileUploadInputElement();
+                                    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
                                     uploadInput.accept = 'image/*';
                                     uploadInput.click();
 
-                                    uploadInput.onChange
-                                        .listen((event) async {
+                                    uploadInput.onChange.listen((event) async {
                                       final file = uploadInput.files?.first;
                                       if (file == null) return;
                                       originalName = file.name;
@@ -334,45 +284,37 @@ class _LogosPageState extends State<LogosPage> {
                                       reader.readAsArrayBuffer(file);
                                       await reader.onLoad.first;
 
-                                      final bytes =
-                                          reader.result as Uint8List;
+                                      final bytes = reader.result as Uint8List;
                                       fileBytes = bytes;
 
                                       final base64Data = base64Encode(bytes);
-                                      html.window.localStorage[file.name] =
-                                          base64Data;
+                                      html.window.localStorage[file.name] = base64Data;
 
                                       setStateDialog(() {});
                                     });
                                   } else {
-                                    final result = await FilePicker.platform
-                                        .pickFiles(
-                                            type: FileType.image,
-                                            withData: true);
+                                    final result = await FilePicker.platform.pickFiles(
+                                      type: FileType.image,
+                                      withData: true,
+                                    );
                                     if (result == null) return;
 
                                     final pickedFile = result.files.first;
                                     fileBytes = pickedFile.bytes!;
                                     originalName = pickedFile.name;
 
-                                    final prefs = await SharedPreferences
-                                        .getInstance();
-                                    await prefs.setString(pickedFile.name,
-                                        base64Encode(fileBytes!));
+                                    final prefs = await SharedPreferences.getInstance();
+                                    await prefs.setString(pickedFile.name, base64Encode(fileBytes!));
 
                                     setStateDialog(() {});
                                   }
                                 },
-                                icon: const Icon(Icons.upload_file,
-                                    size: 20),
+                                icon: const Icon(Icons.upload_file, size: 20),
                                 label: const Text("เลือกไฟล์"),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: brandOrange,
-                                  side: const BorderSide(
-                                      color: brandOrange, width: 1.5),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                  side: const BorderSide(color: brandOrange, width: 1.5),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
                               ),
                             ),
@@ -388,77 +330,55 @@ class _LogosPageState extends State<LogosPage> {
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   padding: EdgeInsets.zero,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
                                 onPressed: () async {
                                   if (fileBytes != null) {
-                                    String saveName = (input.text
-                                                    .trim()
-                                                    .isEmpty ||
-                                                input.text.trim() == "")
+                                    String saveName = (input.text.trim().isEmpty || input.text.trim() == "")
                                         ? originalName
                                         : "${input.text.trim()}.png";
 
-                                    bool success =
-                                        await ApiService.createLogo(
-                                            saveName, fileBytes!);
+                                    bool success = await ApiService.createLogo(saveName, fileBytes!);
                                     if (success) {
                                       if (kIsWeb)
-                                        html.window.localStorage
-                                            .remove(originalName);
+                                        html.window.localStorage.remove(originalName);
                                       else {
-                                        final prefs = await SharedPreferences
-                                            .getInstance();
+                                        final prefs = await SharedPreferences.getInstance();
                                         prefs.remove(originalName);
                                       }
-                                      final newlogos =
-                                          await ApiService.fetchLogos();
+                                      final newlogos = await ApiService.fetchLogos();
                                       setState(() {
                                         logos = newlogos['data'] as List;
                                       });
 
                                       Navigator.pop(context);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content:
-                                                  Text("อัปโหลดสำเร็จ")));
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(const SnackBar(content: Text("อัปโหลดสำเร็จ")));
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  "อัปโหลดไม่สำเร็จ")));
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(const SnackBar(content: Text("อัปโหลดไม่สำเร็จ")));
                                     }
                                   }
                                 },
                                 child: Ink(
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        brandOrange,
-                                        brandOrangeLight,
-                                      ],
-                                    ),
+                                    gradient: const LinearGradient(colors: [brandOrange, brandOrangeLight]),
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: const [
                                       BoxShadow(
-                                        color: Color.fromRGBO(
-                                            255, 128, 33, 0.35),
+                                        color: Color.fromRGBO(255, 128, 33, 0.35),
                                         blurRadius: 14,
                                         offset: Offset(0, 4),
                                       ),
                                     ],
                                   ),
-                                  
+
                                   child: const Center(
                                     child: Text(
                                       "บันทึก",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -469,22 +389,14 @@ class _LogosPageState extends State<LogosPage> {
                               child: TextButton(
                                 onPressed: () async {
                                   if (kIsWeb)
-                                    html.window.localStorage
-                                        .remove(originalName);
+                                    html.window.localStorage.remove(originalName);
                                   else {
-                                    final prefs = await SharedPreferences
-                                        .getInstance();
+                                    final prefs = await SharedPreferences.getInstance();
                                     prefs.remove(originalName);
                                   }
                                   Navigator.pop(context);
                                 },
-                                child: const Text(
-                                  "ยกเลิก",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                                child: const Text("ยกเลิก", style: TextStyle(fontSize: 16, color: Colors.grey)),
                               ),
                             ),
                           ],
@@ -506,7 +418,7 @@ class _LogosPageState extends State<LogosPage> {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.1),
-      builder: (context) {
+      builder: (dialogContext) {
         return Stack(
           children: [
             // iOS blur background
@@ -520,20 +432,14 @@ class _LogosPageState extends State<LogosPage> {
                 insetPadding: const EdgeInsets.all(20),
                 backgroundColor: const Color(0xFFF6F1F4),
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                 child: Container(
                   width: 340,
                   padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.18),
-                        blurRadius: 30,
-                        offset: Offset(0, 12),
-                      ),
+                      BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.18), blurRadius: 30, offset: Offset(0, 12)),
                     ],
                   ),
                   child: Column(
@@ -543,11 +449,7 @@ class _LogosPageState extends State<LogosPage> {
                       // Title
                       const Text(
                         "แจ้งเตือน",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A1A1A),
-                        ),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Color(0xFF1A1A1A)),
                       ),
 
                       const SizedBox(height: 16),
@@ -555,21 +457,14 @@ class _LogosPageState extends State<LogosPage> {
                       // Message
                       Text(
                         "คุณต้องการลบ '${item['name']}' ใช่หรือไม่?",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFFE53935),
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: const TextStyle(fontSize: 16, color: Color(0xFFE53935), fontWeight: FontWeight.w500),
                       ),
 
                       const SizedBox(height: 8),
 
                       const Text(
                         "หากลบแล้วไม่สามารถกู้คืนได้",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Color(0xFFE53935),
-                        ),
+                        style: TextStyle(fontSize: 15, color: Color(0xFFE53935)),
                       ),
 
                       const SizedBox(height: 28),
@@ -580,14 +475,8 @@ class _LogosPageState extends State<LogosPage> {
                         children: [
                           // Cancel
                           TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              "ยกเลิก",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF9E9E9E),
-                              ),
-                            ),
+                            onPressed: () => Navigator.pop(dialogContext),
+                            child: const Text("ยกเลิก", style: TextStyle(fontSize: 16, color: Color(0xFF9E9E9E))),
                           ),
 
                           const SizedBox(width: 12),
@@ -600,23 +489,19 @@ class _LogosPageState extends State<LogosPage> {
                                 elevation: 0,
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                               ),
                               onPressed: () async {
-                                Navigator.pop(context);
-                                var response =
-                                    await ApiService.deleteIconById(item);
+                                Navigator.pop(dialogContext);
+                                var response = await ApiService.deleteLogoById(item);
                                 if (response['status'] == 'success') {
-                                  final newlogos =
-                                      await ApiService.fetchLogos();
+                                  final newlogos = await ApiService.fetchLogos();
                                   setState(() {
                                     logos = newlogos['data'] as List;
                                   });
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                          content: Text("ลบสำเร็จ")));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ลบสำเร็จ")));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("เกิดข้อผิดพลาดในการลบ")));
                                 }
                               },
                               child: Ink(
@@ -625,24 +510,16 @@ class _LogosPageState extends State<LogosPage> {
                                   borderRadius: BorderRadius.circular(24),
                                   boxShadow: const [
                                     BoxShadow(
-                                      color: Color.fromRGBO(
-                                          244, 67, 54, 0.35),
+                                      color: Color.fromRGBO(244, 67, 54, 0.35),
                                       blurRadius: 12,
                                       offset: Offset(0, 4),
                                     ),
                                   ],
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                  vertical: 8,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
                                 child: const Text(
                                   "ลบ",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                                 ),
                               ),
                             ),
