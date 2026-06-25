@@ -336,7 +336,7 @@ class ApiService {
   // update monitor
   static Future<Map<String, dynamic>> updateMonitorById(Map<String, dynamic> list) async {
     try {
-      print(jsonEncode(list));
+      // print(jsonEncode(list));
       final response = await http.post(
         Uri.parse("${baseUrl}update-monitor.php"),
         //  headers: {'Content-Type': 'application/json'},
@@ -361,7 +361,7 @@ class ApiService {
   // Create monitor
   static Future<Map<String, dynamic>> createMonitorById(Map<String, dynamic> list) async {
     try {
-      print(jsonEncode(list));
+      // print(jsonEncode(list));
       final response = await http.post(
         Uri.parse("${baseUrl}create-monitor.php"),
         //  headers: {'Content-Type': 'application/json'},
