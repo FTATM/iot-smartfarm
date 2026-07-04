@@ -40,10 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     _prepareData();
     _updateTime();
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      _updateTime();
-      _fetchDashboard(CurrentUser['branch_id']);
-    });
+    _settimer();
   }
 
   @override
@@ -61,8 +58,17 @@ class _DashboardPageState extends State<DashboardPage> {
     super.dispose();
   }
 
+  void _settimer() {
+    print("Setting timer");
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      _updateTime();
+      _fetchDashboard(CurrentUser['branch_id']);
+    });
+  }
+
   void _updateTime() {
     final now = DateTime.now();
+    print("Update data $now");
     setState(() {
       _currentDateTime = now;
       _currentTime =
@@ -271,7 +277,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 child: DashboardBlogByIdWidget(
                                   type: item['item_type_id'],
                                   size: item['size'],
-                                  title: item['item_name']?? "Unknown",
+                                  title: item['item_name'] ?? "Unknown",
                                   value: item['m_value'] ?? "0",
                                   isDialog: false,
                                   pathImage: item['i_path'] ?? "img/icons/default.png",
@@ -284,6 +290,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     });
                                     if (["2", "4"].contains(item['m_type_id'])) {
                                       final result = await ApiService.updateSensorById(item);
+                                      print(result);
                                     }
                                   },
                                 ),
@@ -344,6 +351,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _showEditDialog(BuildContext context, var item, int index, double maxwidth, double maxheight, Color bg) {
+    _timer?.cancel();
     showDialog(
       context: context,
       builder: (context) {
@@ -663,6 +671,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: OutlinedButton.icon(
                               onPressed: () async {
                                 await _handleDelete(context, item);
+                                _settimer();
                               },
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.red,
@@ -680,6 +689,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: ElevatedButton.icon(
                               onPressed: () async {
                                 await _handleSave(context, item, index);
+                                print("Data saved");
+                                _settimer();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFFF9800),
@@ -757,6 +768,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildEnhancedDataItem(BuildContext context, var item2, StateSetter setStateDialog) {
+    var foundMonitor = monitors.firstWhere(
+      (m) => m['monitor_id'].toString() == item2['monitor_id'].toString(),
+      orElse: () => {},
+    );
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -786,7 +801,7 @@ class _DashboardPageState extends State<DashboardPage> {
             // Label Name
             Expanded(
               child: Text(
-                item2["label_name"] ?? '',
+                foundMonitor["monitor_name"] ?? '',
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF424242)),
               ),
             ),
@@ -892,22 +907,19 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _handleSave(BuildContext context, var item, int index) async {
-    Navigator.of(context).pop();
-
-    if (!mounted) return;
-    setState(() {
-      data[index] = clone[index];
-    });
+    print("Saving data for item: ${item['id']}");
 
     await ApiService.updateDashboardById(item);
 
     final responsedata = await ApiService.fetchDashboardBybranchId(CurrentUser['branch_id'].toString());
 
+    if (!mounted) return;
     setState(() {
       // เรียงลำดับเหมือนกับ _fetchDashboard
       data = (responsedata['data'] as List);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("บันทึกสำเร็จ")));
+    Navigator.of(context).pop();
   }
 }

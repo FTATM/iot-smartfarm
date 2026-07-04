@@ -49,9 +49,7 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
               items: widget.monitors.map<DropdownMenuItem<String>>((m) {
                 final id = m['monitor_id'].toString();
 
-                return DropdownMenuItem(
-                  value: id, 
-                  child: Text("[${m['monitor_id']}] ${m['monitor_name']}"));
+                return DropdownMenuItem(value: id, child: Text("[${m['monitor_id']}] ${m['monitor_name']}"));
               }).toList(),
               onChanged: (v) {
                 setState(() {
@@ -68,21 +66,50 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
                 Container(
                   width: 40,
                   height: 25,
-                  decoration: BoxDecoration(color: chooseColor, border: Border.all()),
+                  decoration: BoxDecoration(
+                    color: chooseColor,
+                    border: Border.all(color: Colors.white),
+                  ),
                 ),
                 SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: () async {
-                    final result = await showDialog(
-                      context: context,
-                      builder: (_) => ColorPickerDialog(initialColor: chooseColor),
-                    );
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [
+                        Colors.red,
+                        Colors.orange,
+                        Colors.yellow,
+                        Colors.green,
+                        Colors.blue,
+                        Colors.indigo,
+                        Colors.purple,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    onPressed: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (_) => ColorPickerDialog(initialColor: chooseColor),
+                      );
 
-                    if (result != null && result is Color) {
-                      setState(() => chooseColor = result);
-                    }
-                  },
-                  child: Text("เลือกสี"),
+                      if (result != null && result is Color) {
+                        setState(() => chooseColor = result);
+                      }
+                    },
+                    child: Text("เลือกสี", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                  ),
                 ),
               ],
             ),
@@ -101,9 +128,15 @@ class _EditDashboardItemDialogState extends State<EditDashboardItemDialog> {
 
             Row(
               children: [
-                TextButton(child: Text("ยกเลิก"), onPressed: () => Navigator.pop(context, null)),
                 TextButton(
-                  child: Text("บันทึก"),
+                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.grey)),
+                  child: Text("ยกเลิก", style: TextStyle(color: Colors.white)),
+                  onPressed: () => Navigator.pop(context, null),
+                ),
+                SizedBox(width: 4),
+                TextButton(
+                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.green)),
+                  child: Text("บันทึก", style: TextStyle(color: Colors.white)),
                   onPressed: () {
                     Navigator.pop(context, {
                       'monitor_id': monitorId,

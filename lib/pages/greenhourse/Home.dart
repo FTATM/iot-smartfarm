@@ -695,7 +695,7 @@ class _HomePageState extends State<HomePage> {
                                           orElse: () => {"path": "img/icons/default.png"},
                                         )['path'],
                                     fit: BoxFit.contain,
-                                    color: Color.fromARGB(255, 255, 131, 0),
+                                    // color: Color.fromARGB(255, 255, 131, 0),
                                     colorBlendMode: BlendMode.srcATop,
                                   ),
                                 ),
