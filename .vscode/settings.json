@@ -57,5 +57,8 @@
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
-  "cmake.sourceDirectory": "F:/Flutter/Projects/iot_app/windows/runner"
+  "cmake.sourceDirectory": "F:/Flutter/Projects/iot_app/windows/runner",
+  "github.copilot.chat.agent.currentEditorContext.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.backgroundAgent.enabled": true
 }

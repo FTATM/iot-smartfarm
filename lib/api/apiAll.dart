@@ -1434,14 +1434,16 @@ class ApiService {
   static Future<Map<String, dynamic>> updateSensorById(Map<String, dynamic> list) async {
     try {
       // ✅ สร้าง JSON body ตามที่ API ต้องการ
-      final bodyData = {
-        "group_id": list["m_group_id"].toString(),
-        "device_id": list["m_device_id"].toString(),
-        "type_id": list["m_type_id"].toString(),
-        "datax_id": list["m_datax_id"].toString(),
-        "data_value": double.parse(list["m_value"].toString()),
-      };
-      final url = Uri.parse("http://${CurrentUser['IP']}/iotsf/api_push_data_by_hardware_process.php");
+      final bodyData = [
+        {
+          "group_id": list["m_group_id"].toString(),
+          "device_id": list["m_device_id"].toString(),
+          "type_id": list["m_type_id"].toString(),
+          "datax_id": list["m_datax_id"].toString(),
+          "data_value": double.parse(list["m_value"].toString()),
+        },
+      ];
+      final url = Uri.parse("http://${CurrentUser['IP']}/iotsf/api_push_data_by_hardware_multidata.php");
 
       final response = await http.post(url, body: jsonEncode(bodyData));
 
