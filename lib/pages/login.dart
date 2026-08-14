@@ -4,7 +4,6 @@ import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
 import 'package:iot_app/pages/mainMenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final _PathtoAPIController = TextEditingController(text: "iotsf/api-app");
   final _portWebsocketController = TextEditingController(text: "8765");
   bool _isLoading = false;
+  String _protocol = 'http';
   String baseURL = "";
 
   String statuslogin = '';
@@ -42,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
       _portWebsocketController.text = config['portws'] ?? _portWebsocketController.text;
       _PathtoAPIController.text = config['path'] ?? _PathtoAPIController.text;
       baseURL = "${_IpServerController.text}/${_PathtoAPIController.text}";
+      _protocol = config['protocol'] ?? 'http';
     });
   }
 
@@ -52,11 +53,7 @@ class _LoginPageState extends State<LoginPage> {
     var username = _usernameController.text.trim();
     var password = _passwordController.text.trim();
 
-    // username = username == "" ? "superadmin" : username;
-    // password = password == "" ? "abc+123" : password;
-    // baseURL = "49.0.69.152/iotsf/api-app";
-
-    final response = await ApiService.checkLogin(username, password, 'http://$baseURL/');
+    final response = await ApiService.checkLogin(username, password, '$_protocol://$baseURL/');
 
     if (!mounted) return;
     setState(() => _isLoading = false);
@@ -65,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       var user = response['user'];
       user['IP'] = _IpServerController.text;
       user['portws'] = _portWebsocketController.text;
-      user['baseURL'] = 'http://$baseURL/';
+      user['baseURL'] = '$_protocol://$baseURL/';
 
       final prefs = await SharedPreferences.getInstance();
       String userJson = jsonEncode(user);
@@ -73,10 +70,14 @@ class _LoginPageState extends State<LoginPage> {
 
       await loadUserData();
 
+      print('From login is : ' + user['baseURL']);
+
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const mainboardPage()), (route) => false);
     } else {
       // เข้าสู่ระบบไม่สำเร็จ
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'] ?? 'something went wrong')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(response['message'] ?? 'something went wrong')));
     }
   }
 
@@ -89,7 +90,6 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        // appBar: AppBar(title: const Text('เข้าสู่ระบบ')),
         body: SafeArea(
           child: Stack(
             children: [
@@ -160,10 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               SizedBox(
                                 height: 50,
-                                child: Align(
-                                  alignment: AlignmentGeometry.topCenter,
-                                  child: Text(baseURL),
-                                ),
+                                child: Align(alignment: AlignmentGeometry.topCenter, child: Text('$_protocol://${_IpServerController.text}')),
                               ),
                               _isLoading
                                   ? const CircularProgressIndicator()
@@ -187,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 0),
                       ],
                     ),
                   ),
@@ -206,6 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                       showDialog(
                         context: context,
                         builder: (context) {
+                          String selectedProtocol = _protocol;
                           return StatefulBuilder(
                             builder: (context, setStateDialog) => AlertDialog(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
@@ -215,52 +213,50 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // SizedBox(
-                                    //   child: Row(
-                                    //     children: [
-                                    //       SizedBox(
-                                    //         height: maxheight * 0.05,
-                                    //         child: Text('Result : ', style: TextStyle(color: Colors.black)),
-                                    //       ),
-                                    //       SizedBox(width: maxwidth * 0.4, height: maxheight * 0.05, child: Text(baseURL)),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    // TextField(
-                                    //   controller: _IpServerController,
-                                    //   decoration: const InputDecoration(labelText: 'IP/DNS server.'),
-                                    //   onChanged: (value) {
-                                    //     setStateDialog(() {
-                                    //       baseURL = '$value/${_PathtoAPIController.text}';
-                                    //     });
-                                    //   },
-                                    // ),
-                                    // SizedBox(
-                                    //   width: maxwidth * 0.8,
-                                    //   child: Text('ex. 123.456.789.000', style: TextStyle(color: Colors.black45)),
-                                    // ),
-                                    // TextField(
-                                    //   controller: _PathtoAPIController,
-                                    //   decoration: const InputDecoration(labelText: 'Path to API'),
-                                    //   onChanged: (value) {
-                                    //     setStateDialog(() {
-                                    //       baseURL = '${_IpServerController.text}/$value';
-                                    //     });
-                                    //   },
-                                    // ),
-                                    // SizedBox(
-                                    //   width: maxwidth * 0.8,
-                                    //   child: Text('ex. iot/api', style: TextStyle(color: Colors.black45)),
-                                    // ),
-                                    // TextField(
-                                    //   controller: _portWebsocketController,
-                                    //   decoration: const InputDecoration(labelText: 'Port Websocket'),
-                                    //   onChanged: (value) {
-                                    //     setStateDialog(() {
-                                    //       _IpServerController.text = value;
-                                    //     });
-                                    //   },
-                                    // ),
+                                    // =========================
+                                    // HTTP / HTTPS
+                                    // =========================
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Text('Protocol:', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+
+                                    const SizedBox(width: 10),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: RadioListTile<String>(
+                                            contentPadding: EdgeInsets.zero,
+                                            dense: true,
+                                            title: const Text('HTTP'),
+                                            value: 'http',
+                                            groupValue: selectedProtocol,
+                                            onChanged: (value) {
+                                              setStateDialog(() {
+                                                selectedProtocol = value!;
+                                              });
+                                            },
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: RadioListTile<String>(
+                                            contentPadding: EdgeInsets.zero,
+                                            dense: true,
+                                            title: const Text('HTTPS'),
+                                            value: 'https',
+                                            groupValue: selectedProtocol,
+                                            onChanged: (value) {
+                                              setStateDialog(() {
+                                                selectedProtocol = value!;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 16),
                                     _buildTextField(
                                       label: 'IP / DNS Server',
                                       placeholder: 'ex. 123.456.789.000',
@@ -290,39 +286,33 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    // จัดการการบันทึกข้อมูลที่นี่
+                                    // Protocol ที่เลือก
+                                    setState(() {
+                                      _protocol = selectedProtocol;
+                                    });
+
+                                    // Server
+                                    final server = _IpServerController.text.trim();
+
+                                    // Path API
+                                    final apiPath = _PathtoAPIController.text.trim();
+
                                     await ServerConfig.saveServerConfig(
-                                      _IpServerController.text.trim(),
-                                      _PathtoAPIController.text.trim(),
+                                      server,
+                                      apiPath,
                                       _portWebsocketController.text.trim(),
+                                      _protocol,
                                     );
+
                                     await loadConfig();
                                     Navigator.pop(context);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
+                                    backgroundColor: Color.fromARGB(255, 255, 130, 0),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                   child: Text('SAVE', style: TextStyle(color: Colors.white)),
                                 ),
-                                // TextButton(
-                                //   onPressed: () {
-                                //     Navigator.pop(context);
-                                //   },
-                                //   child: Text("ปิด"),
-                                // ),
-                                // TextButton(
-                                //   onPressed: () async {
-                                //     await ServerConfig.saveServerConfig(
-                                //       _IpServerController.text.trim(),
-                                //       _PathtoAPIController.text.trim(),
-                                //       _portWebsocketController.text.trim(),
-                                //     );
-                                //     await loadConfig();
-                                //     Navigator.pop(context);
-                                //   },
-                                //   child: Text("บันทึก"),
-                                // ),
                               ],
                             ),
                           );

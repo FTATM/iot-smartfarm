@@ -9,8 +9,9 @@ const Color blackColor = Colors.black;
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String txtt;
+  final IconData? icon;
 
-  const AppbarWidget({super.key, required this.txtt});
+  const AppbarWidget({super.key, required this.txtt, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +38,23 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
             elevation: 0,
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.black),
-            title: Text(
-              txtt,
-              style: TextStyle(
-                color: blackColor,
-                fontSize: _getResponsiveFontSize(context),
-                fontWeight: FontWeight.bold,
-              ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                if (icon != null)
+                  Icon(
+                    icon,
+                  ),
+                Text(
+                  txtt,
+                  style: TextStyle(
+                    color: blackColor,
+                    fontSize: _getResponsiveFontSize(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             actions: const [Padding(padding: EdgeInsets.only(right: 12), child: AdminBadge())],
           ),
