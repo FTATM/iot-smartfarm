@@ -12,11 +12,12 @@ Future<void> loadUserData() async {
 }
 
 class ServerConfig {
-  static Future<void> saveServerConfig(String ip, String path, portws) async {
+  static Future<void> saveServerConfig(String ip, String path,String portws, String protocol) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('server_ip', ip);
     await prefs.setString('port_ws', portws);
     await prefs.setString('server_path', path);
+    await prefs.setString('protocol', protocol);
   }
 
   static Future<Map<String, String?>> loadServerConfig() async {
@@ -25,6 +26,7 @@ class ServerConfig {
       'ip': prefs.getString('server_ip'),
       'portws': prefs.getString('port_ws'),
       'path': prefs.getString('server_path'),
+      'protocol': prefs.getString('protocol'),
     };
   }
 
@@ -33,6 +35,7 @@ class ServerConfig {
     await prefs.remove('server_ip');
     await prefs.remove('port_ws');
     await prefs.remove('server_path');
+    await prefs.remove('protocol');
   }
 }
 

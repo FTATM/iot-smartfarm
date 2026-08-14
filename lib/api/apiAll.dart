@@ -1461,4 +1461,73 @@ class ApiService {
       return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
+
+  // fetch Icons
+  static Future<Map<String, dynamic>> fetchAIInfo() async {
+    try {
+      print('=== Get baseURL from file API ===');
+      print(baseUrl);
+      final response = await http.post(
+        Uri.parse("${baseUrl}../api-website/fetch_env.php"),
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: jsonEncode({
+          "keys": ["AI_MODE", "AI_MODEL", "AI_EXTERNAL_MODEL"],
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return Map<String, dynamic>.from(data);
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  // fetch Icons
+  static Future<Map<String, dynamic>> fetchAIPing() async {
+    try {
+      final response = await http.get(Uri.parse("${baseUrl}../api-website/AI-ping.php"));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return Map<String, dynamic>.from(data);
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  static Future<Map<String, dynamic>> sendAIMessage(String message) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}../api-website/AI-ask.php"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"message": message, "branch_id": CurrentUser['branch_id']}),
+      );
+
+      print("AI Response Status : ${response.statusCode}");
+      print("AI Response Body   : ${response.body}");
+
+      if (response.statusCode != 200) {
+        return {"success": false, "message": "HTTP ${response.statusCode}"};
+      }
+
+      final data = jsonDecode(response.body);
+
+      return Map<String, dynamic>.from(data);
+    } catch (e) {
+      print("sendAIMessage Error : $e");
+
+      return {"success": false, "message": e.toString()};
+    }
+  }
 }

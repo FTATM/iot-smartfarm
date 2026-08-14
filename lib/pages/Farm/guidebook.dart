@@ -48,7 +48,7 @@ class _GuidebookPageState extends State<GuidebookPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    final maxwidth = MediaQuery.of(context).size.width;
+    // final maxwidth = MediaQuery.of(context).size.width;
     // final maxheight = MediaQuery.of(context).size.height - kTextTabBarHeight;
     return Scaffold(
       floatingActionButton: Visibility(

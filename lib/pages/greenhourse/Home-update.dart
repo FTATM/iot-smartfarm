@@ -55,8 +55,8 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
     setState(() {
       homebranchs = response['data'] as List;
     });
-    // print("----- homeBranch ------");
-    // print(homebranchs.toString());
+    print("----- homeBranch ------");
+    print(homebranchs.toString());
   }
 
   Future<void> _fetchLogos() async {
@@ -580,7 +580,7 @@ class _HomeUpdatePageState extends State<HomeUpdatePage> {
                           });
                         },
                       ),
-                      if (item['icon_id'] != '-1') ...[
+                      if (item['icon_id'] != '-1' || int.parse(item['home_row_id'].toString()) > 7) ...[
                         const SizedBox(height: 16),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

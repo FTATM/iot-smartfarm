@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:iot_app/api/apiAll.dart';
 import 'package:iot_app/components/session.dart';
+import 'package:iot_app/pages/Farm/ai-assistant.dart';
 import 'package:iot_app/pages/greenhourse/Home-update.dart';
 
 class HomePage extends StatefulWidget {
@@ -198,11 +199,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
     final orientation = MediaQuery.of(context).orientation;
     final isLandscape = orientation == Orientation.landscape;
     final maxwidth = screenWidth;
-    final maxheight = screenHeight;
+    // final maxheight = screenHeight;
 
     // Responsive font sizes
     final fs_small = screenWidth < 360
@@ -241,15 +242,31 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       floatingActionButton: Visibility(
         visible: int.parse(CurrentUser['role_id']) >= 88,
-        child: FloatingActionButton(
-          backgroundColor: primaryColor,
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUpdatePage())).then((_) {
-              _prepareData();
-            });
-          },
-          shape: const CircleBorder(),
-          child: const Icon(Icons.edit, color: Colors.white, size: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          spacing: 10,
+          children: [
+            FloatingActionButton(
+              backgroundColor: primaryColor,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomeUpdatePage())).then((_) {
+                  _prepareData();
+                });
+              },
+              shape: const CircleBorder(),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
+            ),
+            FloatingActionButton(
+              backgroundColor: primaryColor,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AiAssistantPage())).then((_) {
+                  _prepareData();
+                });
+              },
+              shape: const CircleBorder(),
+              child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -279,17 +296,17 @@ class _HomePageState extends State<HomePage> {
                       final leftWidth = (containerWidth - spacing) / 2;
                       final rightWidth = (containerWidth - spacing) / 2;
                       // ปรับขนาดรูปให้ขยายตามหน้าจอและแนวการจัดวาง
-                      final imageHeight = isLandscape
-                          ? maxheight * 0.55
-                          : maxheight > 800
-                          ? 280.00
-                          : screenWidth < 360
-                          ? maxheight * 0.35
-                          : screenWidth < 600
-                          ? maxheight * 0.40
-                          : screenWidth < 900
-                          ? maxheight * 0.35
-                          : maxheight * 0.50;
+                      // final imageHeight = isLandscape
+                      //     ? maxheight * 0.55
+                      //     : maxheight > 800
+                      //     ? 280.00
+                      //     : screenWidth < 360
+                      //     ? maxheight * 0.35
+                      //     : screenWidth < 600
+                      //     ? maxheight * 0.40
+                      //     : screenWidth < 900
+                      //     ? maxheight * 0.35
+                      //     : maxheight * 0.50;
 
                       String image = '${user['baseURL']}../';
                       image += logos.firstWhere(
