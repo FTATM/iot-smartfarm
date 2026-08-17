@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 Map<String, dynamic> CurrentUser = {};
 
@@ -12,7 +13,7 @@ Future<void> loadUserData() async {
 }
 
 class ServerConfig {
-  static Future<void> saveServerConfig(String ip, String path,String portws, String protocol) async {
+  static Future<void> saveServerConfig(String ip, String path, String portws, String protocol) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('server_ip', ip);
     await prefs.setString('port_ws', portws);
@@ -46,12 +47,9 @@ class RememberConfig {
     await prefs.setString('pass', pass);
   }
 
-    static Future<Map<String, String?>> loadRememberConfig() async {
+  static Future<Map<String, String?>> loadRememberConfig() async {
     final prefs = await SharedPreferences.getInstance();
-    return {
-      'e': prefs.getString('email'),
-      'p': prefs.getString('pass'),
-    };
+    return {'e': prefs.getString('email'), 'p': prefs.getString('pass')};
   }
 
   static Future<void> clearRememberConfig() async {
@@ -59,4 +57,10 @@ class RememberConfig {
     await prefs.remove('email');
     await prefs.remove('pass');
   }
+}
+
+Future<String> getAppVersion() async {
+  final info = await PackageInfo.fromPlatform();
+
+  return '${info.version}+${info.buildNumber}';
 }

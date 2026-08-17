@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iot_app/components/session.dart';
 import 'package:iot_app/pages/Farm/account.dart';
+import 'package:iot_app/pages/Farm/ai-management.dart';
 import 'package:iot_app/pages/Farm/guidebook.dart';
 import 'package:iot_app/pages/Farm/schedules.dart';
 import 'package:iot_app/pages/greenhourse/branch.dart';
@@ -24,6 +25,24 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool isLoading = false;
   bool _isOpen = false;
+
+  String version = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadVersion();
+  }
+
+  Future<void> loadVersion() async {
+    final result = await getAppVersion();
+
+    if (!mounted) return;
+
+    setState(() {
+      version = result;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +115,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     _go(const SchedulePage());
                   }),
                 ),
+                Visibility(
+                  visible: int.parse(CurrentUser['role_id']) >= 88,
+                  child: _menuItem("AI Management", Icons.psychology, () {
+                    _go(const AiManagementPage());
+                  }),
+                ),
                 _menuItem("GuideBook", Icons.menu_book, () {
                   _go(const GuidebookPage());
                 }),
@@ -122,6 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 }, color: Colors.red),
               ]),
               const SizedBox(height: 40),
+              Text("version : $version", style: TextStyle(fontSize: 11)),
             ],
           ),
         ),

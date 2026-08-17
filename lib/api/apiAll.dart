@@ -1488,7 +1488,7 @@ class ApiService {
     }
   }
 
-  // fetch Icons
+  // fetch AI ping
   static Future<Map<String, dynamic>> fetchAIPing() async {
     try {
       final response = await http.get(Uri.parse("${baseUrl}../api-website/AI-ping.php"));
@@ -1528,6 +1528,95 @@ class ApiService {
       print("sendAIMessage Error : $e");
 
       return {"success": false, "message": e.toString()};
+    }
+  }
+
+  // fetch Check script
+  static Future<Map<String, dynamic>> fetchCheckscriptAI() async {
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}../api-website/service-command.php"),
+        body: {'action': 'dashboard', 'service': 'runtime_ai'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return Map<String, dynamic>.from(data);
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  //fetch AI config devices
+  static Future<Map<String, dynamic>> fetchAIConfigDevices() async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl../api-website/fetch-config-forAI.php?bid=${CurrentUser['branch_id']}"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return Map<String, dynamic>.from(data);
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateDevicesAI(List<Map<String, dynamic>> list) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}../api-website/update-configulation.php"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(list),
+      );
+
+      // print("AI Response Status : ${response.statusCode}");
+      // print("AI Response Body   : ${response.body}");
+
+      if (response.statusCode != 200) {
+        return {"success": false, "message": "HTTP ${response.statusCode}"};
+      }
+
+      final data = jsonDecode(response.body);
+
+      return Map<String, dynamic>.from(data);
+    } catch (e) {
+      print("sendAIMessage Error : $e");
+
+      return {"success": false, "message": e.toString()};
+    }
+  }
+
+  // fetch AI ping
+  static Future<Map<String, dynamic>> fetchAILog() async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl../api-website/fetch-AI-logs.php?bid=${CurrentUser['branch_id']}"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['data'] is List) {
+          data['data'] = (data['data'] as List).map((e) => Map<String, dynamic>.from(e)).toList();
+        }
+
+        return data;
+      } else {
+        return {"status": "error", "message": "เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${response.statusCode})"};
+      }
+    } catch (e) {
+      // 🔹 จัดการกรณีเชื่อมต่อ API ไม่ได้ เช่น ไม่มีอินเทอร์เน็ต
+      return {"status": "error", "message": "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: $e"};
     }
   }
 }
